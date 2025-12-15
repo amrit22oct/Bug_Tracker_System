@@ -153,10 +153,10 @@ const Dashboard = () => {
             <button
               key={status}
               onClick={() => setSelectedStatus(status)}
-              className={`px-4 py-2 rounded-2xl transition ${
+              className={`px-4 py-2 rounded-2xl transition cursor-pointer ${
                 selectedStatus === status
-                  ? "bg-[var(--secondary)] text-white"
-                  : "bg-white"
+                  ? "bg-[var(--primary)] text-(--accent-light)"
+                  : " border"
               }`}
             >
               {status}
