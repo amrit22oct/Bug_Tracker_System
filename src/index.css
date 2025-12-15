@@ -1,0 +1,134 @@
+@import "tailwindcss";
+
+/* Import Gabriela */
+@import url("https://fonts.googleapis.com/css2?family=Gabriela&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Cookie&family=Gabriela&family=Winky+Rough:ital,wght@0,300..900;1,300..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Cookie&family=Gabriela&family=Iceberg&family=Winky+Rough:ital,wght@0,300..900;1,300..900&display=swap");
+
+:root {
+  /* Base Colors */
+  --primary: #1a1f23;
+  --primary-rgb: 26, 31, 35; /* RGB for glassy / translucent usage */
+  --primary-hover: #474d53;
+  --primary-hover-rgb: 71, 77, 83;
+
+  --secondary: #1cb6bb;
+  --secondary-rgb: 28, 182, 187; /* RGB for glassy / translucent usage */
+  --secondary-hover: #61dafb;
+  --secondary-hover-rgb: 97, 218, 251;
+
+  --accent: #67eead;
+  --accent-rgb: 103, 238, 173; /* RGB for glassy / translucent usage */
+  --accent-light: #aef4ec;
+  --accent-light-rgb: 174, 244, 236;
+
+  --background: #99acae;
+  --background-rgb: 186, 210, 212;
+
+  /* Text Colors (optional) */
+  --text-primary: #1a1f23;
+  --text-secondary: #1cb6bb;
+
+  /* Font Defaults */
+  font-family: "Gabriela", serif;
+  line-height: 1.5;
+  font-weight: 400;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  color: var(--text-primary);
+  background-color: var(--background);
+}
+
+body {
+  color: #000;
+  font-family: "Gabriela", serif;
+  background-color: var(--background);
+}
+
+
+/* Optional class for using Gabriela */
+.gabriela-regular {
+  font-family: "Gabriela", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* dropdown */
+.dropdown-open {
+  opacity: 1;
+  transform: translateY(0) rotateX(0deg) scale(1);
+  pointer-events: auto;
+  animation: dropdownOpen 260ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dropdown-close {
+  opacity: 0;
+  transform: translateY(-8px) rotateX(-14deg) scale(0.95);
+  pointer-events: none;
+  animation: dropdownClose 160ms cubic-bezier(0.4, 0, 1, 1);
+}
+
+@keyframes dropdownOpen {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px) rotateX(-14deg) scale(0.94);
+  }
+  70% {
+    transform: translateY(2px) rotateX(2deg) scale(1.01);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) rotateX(0deg) scale(1);
+  }
+}
+
+@keyframes dropdownClose {
+  from {
+    opacity: 1;
+    transform: translateY(0) rotateX(0deg) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-6px) rotateX(-12deg) scale(0.96);
+  }
+}
+
+.cookie-regular {
+  font-family: "Cookie", cursive;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.iceberg-regular {
+  font-family: "Iceberg", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* hide scrollbar  */
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+*::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+* {
+  -ms-overflow-style: none; /* IE & Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+/* for specific */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* <div className="overflow-auto no-scrollbar"> ... </div> */
