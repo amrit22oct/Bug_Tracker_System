@@ -1,4 +1,4 @@
-import HeaderProfile from "./HeaderProfile";
+import HeaderProfile from "./HeaderProfile.jsx";
 
 const AppHeader = ({ headerContent, setIsAuth }) => {
   return (

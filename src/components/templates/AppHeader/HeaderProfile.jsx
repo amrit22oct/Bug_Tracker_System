@@ -6,9 +6,9 @@ import {
 } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 
-import ProfilePic from "../../atoms/Profile/ProfilePic";
+import ProfilePic from "../../atoms/Profile/ProfilePic.jsx";
 import PrimaryButton from "../../atoms/Buttons/PrimaryButton";
-import { showSuccess } from "@/utils/Toast";
+import { showSuccess } from "@/utils/Toast.jsx";
 
 const HeaderProfile = ({ setIsAuth }) => {
   const [open, setOpen] = useState(false);

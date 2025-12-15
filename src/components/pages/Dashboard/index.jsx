@@ -1,15 +1,15 @@
 import React, { useState } from "react";
-import ProfileHeader from "../../organisms/Test/ProfileHeader";
-import StatsCards from "../../organisms/Test/StatsCard";
-import ProjectsTable from "../../organisms/Test/ProjectTable";
-import BugsTable from "../../organisms/Test/BugTable";
-import ActivityList from "../../organisms/Test/Activity";
-import CalendarWidget from "../../organisms/Test/CalendarWidget";
-import Notifications from "../../organisms/Test/Notificatioin";
-import TeamProgress from "../../organisms/Test/TeamProgress";
-import TeamList from "../../organisms/Test/TeamList";
-import HeaderContent from "../../templates/AppHeader/HeaderContent";
-import PrimarySearchBar from "../../atoms/Searchbar/PrimarySearchBar";
+import ProfileHeader from "../../organisms/Test/ProfileHeader.jsx";
+import StatsCards from "../../organisms/Test/StatsCard.jsx";
+import ProjectsTable from "../../organisms/Test/ProjectTable.jsx";
+import BugsTable from "../../organisms/Test/BugTable.jsx";
+import ActivityList from "../../organisms/Test/Activity.jsx";
+import CalendarWidget from "../../organisms/Test/CalendarWidget.jsx";
+import Notifications from "../../organisms/Test/Notificatioin.jsx";
+import TeamProgress from "../../organisms/Test/TeamProgress.jsx";
+import TeamList from "../../organisms/Test/TeamList.jsx";
+import HeaderContent from "../../templates/AppHeader/HeaderContent.jsx";
+import PrimarySearchBar from "../../atoms/Searchbar/PrimarySearchBar.jsx";
 
 const Dashboard = () => {
   const [selectedStatus, setSelectedStatus] = useState("All");

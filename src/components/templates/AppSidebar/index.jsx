@@ -3,7 +3,7 @@ import { FaHome, FaBug } from "react-icons/fa";
 import { BiLogOut } from "react-icons/bi";
 import PrimaryButton from "../../atoms/Buttons/PrimaryButton";
 import AppNav from "../../molecules/AppNav";
-import { showSuccess } from "@/utils/Toast";
+import { showSuccess } from "@/utils/Toast.jsx";
 
 function AppSidebar({ setIsAuth }) {
   const navigate = useNavigate();

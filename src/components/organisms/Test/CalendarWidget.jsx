@@ -1,6 +1,6 @@
 import React from "react";
 import PressedContainer from "../../atoms/PressedContainer";
-import { getCalendarDays } from "../../../utils/GetCalenderDays";
+import { getCalendarDays } from "../../../utils/GetCalenderDays.jsx";
 
 const CalendarWidget = () => {
   const today = new Date();

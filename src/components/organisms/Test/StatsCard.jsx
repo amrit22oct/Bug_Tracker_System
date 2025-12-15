@@ -4,7 +4,7 @@ import {
   FaBug,
   FaProjectDiagram,
 } from "react-icons/fa";
-import PressedContainer from "../../atoms/PressedContainer/index";
+import PressedContainer from "../../atoms/PressedContainer";
 
 const cards = [
   {

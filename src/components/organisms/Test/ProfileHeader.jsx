@@ -1,6 +1,6 @@
 import React from "react";
 import { FaPlus, FaProjectDiagram, FaBug, FaUsers } from "react-icons/fa";
-import ProfilePic from "../../atoms/Profile/ProfilePic";
+import ProfilePic from "../../atoms/Profile/ProfilePic.jsx";
 import PrimaryButton from "../../atoms/Buttons/PrimaryButton";
 import PressedContainer from "../../atoms/PressedContainer";
 
