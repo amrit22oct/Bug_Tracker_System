@@ -1,8 +1,13 @@
-import Dashboard from "@/components/pages/Dashboard";
-import SimplePage from "@/components/pages/SimplePage";
-import Login from "@/components/pages/Login";
-import BugPage from "@/components/pages/Bugs";
-
+// Import all pages from your centralized pages export
+import {
+  Dashboard,
+  SimplePage,
+  Login,
+  BugPage,
+  ProjectsPage,
+  ReportsPage,
+  Settings,
+} from "@/components/pages";
 
 export const routes = [
   {
@@ -24,9 +29,27 @@ export const routes = [
     protectedRoute: true,
   },
   {
-    id: "LoginPage",
+    id: "Projects",
+    path: "/projects",
+    component: <ProjectsPage />,
+    protectedRoute: true,
+  },
+  {
+    id: "Reports",
+    path: "/reports",
+    component: <ReportsPage />,
+    protectedRoute: true,
+  },
+  {
+    id: "Settings",
+    path: "/settings",
+    component: <Settings />,
+    protectedRoute: true,
+  },  
+  {
+    id: "Login",
     path: "/login",
     component: <Login />,
-    protectedRoute: false, 
+    protectedRoute: false,
   },
 ];
