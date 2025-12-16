@@ -30,9 +30,9 @@ const ProfilePic = ({
         perspective: 1400,
       }}
       animate={{
-        rotateX: [0, 2, -2, 0], // subtle 3D rocking
+        rotateX: [0, 2, -2, 0],
         rotateY: [0, -2, 2, 0],
-        y: [0, -2, 2, 0], // floating effect
+        y: [0, -2, 2, 0],
       }}
       transition={{
         repeat: Infinity,

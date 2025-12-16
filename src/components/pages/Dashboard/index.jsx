@@ -176,15 +176,15 @@ const Dashboard = ({ searchValue = "" }) => {
       <BugsTable bugs={filteredBugs} />
 
       <div className="space-y-4">
-        <div className="flex flex-wrap gap-2 mb-2">
+        <div className="flex flex-wrap gap-2 mb-2 ">
           {statuses.map((status) => (
             <button
               key={status}
               onClick={() => setSelectedStatus(status)}
-              className={`px-4 py-2 rounded-2xl ${
+              className={`px-4 py-2 rounded-2xl cursor-pointer hover:bg-[var(--primary)] hover:text-(--accent-light) ${
                 selectedStatus === status
                   ? "bg-[var(--primary)] text-(--accent-light)"
-                  : "border"
+                  : "border "
               }`}
             >
               {status}
