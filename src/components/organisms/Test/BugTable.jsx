@@ -1,13 +1,12 @@
 // BugsTable.jsx
 import React from "react";
-import { Table } from "../../molecules/Table"; // PressedTable can also be used
-import PrimaryButton from "../../atoms/Buttons/PrimaryButton"; // same as ProjectsTable
+import { Table } from "../../molecules/Table";
+import PrimaryButton from "../../atoms/Buttons/PrimaryButton";
 
 const bugColumns = [
   { key: "title", label: "Bug" },
   { key: "priority", label: "Priority", align: "center" },
   { key: "status", label: "Status", align: "center" },
- 
   { key: "created", label: "Created", align: "center" },
   { key: "actions", label: "Actions", align: "center" },
 ];
@@ -33,12 +32,19 @@ const BugsTable = ({ bugs, onView }) => {
       trHoverColor="hover:bg-[var(--secondary)]/20 hover:text-white"
       renderCell={(bug, key) => {
         if (key === "status") {
-          const style = statusStyles[bug.status.toLowerCase()] || { bg: "#ccc", text: "#000" };
+          const style =
+            statusStyles[bug.status.toLowerCase()] || {
+              bg: "#ccc",
+              text: "#000",
+            };
           return (
             <div className="flex items-center justify-center">
               <span
                 className="px-2 py-1 rounded-full text-xs font-semibold shadow-sm"
-                style={{ backgroundColor: style.bg, color: style.text }}
+                style={{
+                  backgroundColor: style.bg,
+                  color: style.text,
+                }}
               >
                 {bug.status}
               </span>
@@ -47,12 +53,19 @@ const BugsTable = ({ bugs, onView }) => {
         }
 
         if (key === "priority") {
-          const style = priorityStyles[bug.priority.toLowerCase()] || { bg: "#ccc", text: "#000" };
+          const style =
+            priorityStyles[bug.priority.toLowerCase()] || {
+              bg: "#ccc",
+              text: "#000",
+            };
           return (
             <div className="flex items-center justify-center">
               <span
                 className="px-2 py-1 rounded-full text-xs font-semibold shadow-sm"
-                style={{ backgroundColor: style.bg, color: style.text }}
+                style={{
+                  backgroundColor: style.bg,
+                  color: style.text,
+                }}
               >
                 {bug.priority}
               </span>

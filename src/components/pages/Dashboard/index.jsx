@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import ProfileHeader from "../../organisms/Test/ProfileHeader.jsx";
 import StatsCards from "../../organisms/Test/StatsCard.jsx";
 import ProjectsTable from "../../organisms/Test/ProjectTable.jsx";
@@ -11,9 +11,14 @@ import TeamList from "../../organisms/Test/TeamList.jsx";
 import HeaderContent from "../../templates/AppHeader/HeaderContent.jsx";
 import PrimarySearchBar from "../../atoms/Searchbar/PrimarySearchBar.jsx";
 
-const Dashboard = () => {
+/* 🔎 Generic search helper */
+const matchesSearch = (value, search) =>
+  value?.toString().toLowerCase().includes(search.toLowerCase());
+
+const Dashboard = ({ searchValue = "" }) => {
   const [selectedStatus, setSelectedStatus] = useState("All");
-  const [searchValue, setSearchValue] = useState("");
+
+  /* ---------------- DATA ---------------- */
 
   const statuses = [
     "All",
@@ -33,7 +38,6 @@ const Dashboard = () => {
       manager: "Alice",
       status: "Active",
       progress: 65,
-      deadline: "2025-01-15",
     },
     {
       id: 202,
@@ -41,7 +45,6 @@ const Dashboard = () => {
       manager: "Bob",
       status: "Completed",
       progress: 100,
-      deadline: "2024-12-30",
     },
     {
       id: 203,
@@ -49,7 +52,6 @@ const Dashboard = () => {
       manager: "John",
       status: "In Progress",
       progress: 40,
-      deadline: "2025-02-10",
     },
     {
       id: 204,
@@ -57,7 +59,6 @@ const Dashboard = () => {
       manager: "Alice",
       status: "On Hold",
       progress: 20,
-      deadline: "2025-03-01",
     },
     {
       id: 205,
@@ -65,7 +66,6 @@ const Dashboard = () => {
       manager: "Bob",
       status: "Delayed",
       progress: 50,
-      deadline: "2025-01-20",
     },
     {
       id: 206,
@@ -73,7 +73,6 @@ const Dashboard = () => {
       manager: "John",
       status: "Cancelled",
       progress: 0,
-      deadline: "2025-02-28",
     },
     {
       id: 207,
@@ -81,32 +80,18 @@ const Dashboard = () => {
       manager: "Alice",
       status: "Recent",
       progress: 10,
-      deadline: "2025-03-15",
     },
   ];
 
   const bugs = [
-    {
-      id: 101,
-      title: "Login page error",
-      priority: "High",
-      status: "Open",
-      created: "2025-12-01",
-    },
+    { id: 101, title: "Login page error", priority: "High", status: "Open" },
     {
       id: 102,
       title: "Signup validation",
       priority: "Medium",
       status: "In Progress",
-      created: "2025-11-28",
     },
-    {
-      id: 103,
-      title: "Dashboard slow",
-      priority: "Low",
-      status: "Closed",
-      created: "2025-11-25",
-    },
+    { id: 103, title: "Dashboard slow", priority: "Low", status: "Closed" },
   ];
 
   const activities = [
@@ -130,60 +115,103 @@ const Dashboard = () => {
     "Mobile App marked completed",
   ];
 
-  const filteredProjects =
-    selectedStatus === "All"
-      ? projects
-      : projects.filter((p) => p.status === selectedStatus);
+  /* ---------------- FILTERING ---------------- */
+
+  const search = searchValue.trim().toLowerCase();
+
+  const filteredProjects = useMemo(() => {
+    const statusFiltered =
+      selectedStatus === "All"
+        ? projects
+        : projects.filter((p) => p.status === selectedStatus);
+
+    if (!search) return statusFiltered;
+
+    return statusFiltered.filter(
+      (p) =>
+        matchesSearch(p.name, search) ||
+        matchesSearch(p.manager, search) ||
+        matchesSearch(p.status, search)
+    );
+  }, [projects, selectedStatus, search]);
+
+  const filteredBugs = useMemo(() => {
+    if (!search) return bugs;
+
+    return bugs.filter(
+      (b) =>
+        matchesSearch(b.title, search) ||
+        matchesSearch(b.status, search) ||
+        matchesSearch(b.priority, search)
+    );
+  }, [bugs, search]);
+
+  const filteredTeam = useMemo(() => {
+    if (!search) return team;
+
+    return team.filter(
+      (m) => matchesSearch(m.name, search) || matchesSearch(m.role, search)
+    );
+  }, [team, search]);
+
+  const filteredActivities = useMemo(() => {
+    if (!search) return activities;
+
+    return activities.filter((a) => matchesSearch(a, search));
+  }, [activities, search]);
+
+  const filteredNotifications = useMemo(() => {
+    if (!search) return notifications;
+
+    return notifications.filter((n) => matchesSearch(n, search));
+  }, [notifications, search]);
+
+  /* ---------------- UI ---------------- */
 
   return (
-    <div className="h-full w-full p-8 bg-[var(--accent-light)]/60 overflow-auto space-y-10">
-      {/* PROFILE */}
+    <div className="h-full w-full p-8 bg-[var(--accent-light)] overflow-auto space-y-10">
       <ProfileHeader />
-
-      {/* STATS */}
       <StatsCards />
 
-      {/* BUGS */}
-      <BugsTable bugs={bugs} />
+      <BugsTable bugs={filteredBugs} />
 
-      {/* PROJECTS */}
       <div className="space-y-4">
         <div className="flex flex-wrap gap-2 mb-2">
           {statuses.map((status) => (
             <button
               key={status}
               onClick={() => setSelectedStatus(status)}
-              className={`px-4 py-2 rounded-2xl transition cursor-pointer ${
+              className={`px-4 py-2 rounded-2xl ${
                 selectedStatus === status
                   ? "bg-[var(--primary)] text-(--accent-light)"
-                  : " border"
+                  : "border"
               }`}
             >
               {status}
             </button>
           ))}
         </div>
+
         <ProjectsTable projects={filteredProjects} />
       </div>
 
-      {/* TEAM */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <TeamProgress team={team} />
-        <TeamList team={team} />
+        <TeamProgress team={filteredTeam} />
+        <TeamList team={filteredTeam} />
       </div>
 
-      {/* CALENDAR + NOTIFICATIONS + ACTIVITY */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 grid grid-cols-1 lg:grid-cols-2 gap-6">
           <CalendarWidget />
-          <Notifications notifications={notifications} />
+          <Notifications notifications={filteredNotifications} />
         </div>
-        <ActivityList activities={activities} />
+        <ActivityList activities={filteredActivities} />
       </div>
     </div>
   );
 };
 
+/* HEADER */
 Dashboard.header = ({ searchValue, setSearchValue }) => (
   <HeaderContent
     title="Dashboard"
@@ -191,8 +219,7 @@ Dashboard.header = ({ searchValue, setSearchValue }) => (
       <PrimarySearchBar
         value={searchValue}
         onChange={setSearchValue}
-        placeholder="Search projects..."
-        height="42px"
+        placeholder="Search everything..."
       />
     }
   />

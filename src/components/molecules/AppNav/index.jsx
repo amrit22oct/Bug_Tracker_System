@@ -1,12 +1,18 @@
 import { NavLink } from "react-router-dom";
 
-function AppNav({ menu }) {
+function AppNav({ menu, onNavigate }) {
+  const handleClick = (e, path) => {
+    // You can prevent default if needed, but usually NavLink handles routing
+    onNavigate?.(); // Close mobile sidebar
+  };
+
   return (
     <nav className="p-4 flex-1 space-y-3 overflow-y-auto perspective-[1500px]">
       {menu.map((item) => (
         <NavLink
           key={item.path}
           to={item.path}
+          onClick={(e) => handleClick(e, item.path)} // <-- call onNavigate
           className={({ isActive }) => {
             return `
               group relative flex items-center gap-3 px-4 py-3 rounded-2xl

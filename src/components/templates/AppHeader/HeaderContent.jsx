@@ -7,14 +7,14 @@ function HeaderContent({
   rightComponent,
 }) {
   return (
-    <div className="flex items-center justify-between w-full h-full gap-6">
+    <div className="flex items-center justify-between w-full h-full gap-6 ">
       {/* Left */}
       <div className="flex items-center gap-4 h-full">
         {leftComponent}
         {title && (
           <FluidText
             fontFamily="Gabriela"
-            maxScale={1.3} 
+            maxScale={1.3}
             className="gabriela-regular !text-(--primary) text-2xl sm:text-3xl"
           >
             {title}
@@ -24,8 +24,8 @@ function HeaderContent({
 
       {/* Center + Right */}
       <div className="flex items-center gap-4 h-full">
-        {/* Center (Search) */}
-        <div className="flex justify-center items-center h-full">
+        {/* Center (Search) - hide on mobile */}
+        <div className="hidden sm:flex justify-center items-center h-full">
           {searchComponent}
         </div>
 
