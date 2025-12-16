@@ -10,6 +10,8 @@ import {
 } from "@/components/pages";
 import AddBug from "../../components/organisms/AddBug";
 import AddProject from "../../components/organisms/AddProject";
+import BugDetail from "../../components/organisms/BugDetail";
+import ProjectDetail from "../../components/organisms/ProjectDetails";
 
 export const routes = [
   {
@@ -31,11 +33,24 @@ export const routes = [
     protectedRoute: true,
   },
   {
+    id: "Bug-Detail",
+    path: "/view-bug-detail/:id",
+    component: <BugDetail />,
+    protectedRoute: true,
+  }, 
+  {
     id: "Projects",
     path: "/projects",
     component: <ProjectsPage />,
     protectedRoute: true,
   },
+
+{
+  id: "Project-Detail",
+  path: "/view-project-detail/:id",
+  component: <ProjectDetail />,
+  protectedRoute: true,
+},
   {
     id: "Reports",
     path: "/reports",

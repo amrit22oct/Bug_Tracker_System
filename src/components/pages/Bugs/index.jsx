@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import BugsTable from "../../organisms/Test/BugTable.jsx";
 import PrimaryButton from "../../atoms/Buttons/PrimaryButton";
 import HeaderContent from "../../templates/AppHeader/HeaderContent.jsx";
@@ -6,6 +7,7 @@ import PrimarySearchBar from "../../atoms/Searchbar/PrimarySearchBar.jsx";
 
 const BugPage = ({ searchValue }) => {
   const [currentPage, setCurrentPage] = useState(1);
+  const navigate = useNavigate();
 
   const allBugs = Array.from({ length: 27 }, (_, i) => ({
     id: i + 1,
@@ -14,6 +16,12 @@ const BugPage = ({ searchValue }) => {
     status: ["Open", "In Progress", "Closed"][i % 3],
     created: `2025-11-${(i % 28) + 1}`,
   }));
+
+ 
+
+  const handleViewBug = (bug) => {
+    navigate(`/view-bug-detail/${bug.id}`);
+  };
 
   // ✅ Filter using searchValue from AppNavigator
   const filteredBugs = allBugs.filter((bug) =>
@@ -40,7 +48,7 @@ const BugPage = ({ searchValue }) => {
 
   return (
     <div className="w-full h-full p-4 bg-[var(--accent-light)]/60 flex flex-col gap-4 overflow-auto">
-      <BugsTable bugs={currentBugs} />
+      <BugsTable bugs={currentBugs} onView={handleViewBug} />
 
       {/* Pagination */}
       <div className="flex justify-end">

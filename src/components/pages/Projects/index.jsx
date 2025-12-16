@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
 import ProjectsTable from "../../organisms/Test/ProjectTable.jsx";
 import PrimaryButton from "../../atoms/Buttons/PrimaryButton";
 import HeaderContent from "../../templates/AppHeader/HeaderContent.jsx";
@@ -6,6 +8,12 @@ import PrimarySearchBar from "../../atoms/Searchbar/PrimarySearchBar.jsx";
 
 const ProjectsPage = ({ searchValue }) => {
   const [currentPage, setCurrentPage] = useState(1);
+  const navigate = useNavigate();
+
+const handleViewProject = (project) => {
+  navigate(`/view-project-detail/${project.id}`);
+};
+
 
   /* ---------------- DATA ---------------- */
   const allProjects = Array.from({ length: 27 }, (_, i) => ({
@@ -53,7 +61,11 @@ const ProjectsPage = ({ searchValue }) => {
   return (
     <div className="w-full h-full p-4 bg-[var(--accent-light)]/60 flex flex-col gap-4 overflow-auto">
       {/* Table */}
-      <ProjectsTable projects={currentProjects} />
+      <ProjectsTable
+  projects={currentProjects}
+  onView={handleViewProject}
+/>
+
 
       {/* Pagination */}
       <div className="flex justify-end">

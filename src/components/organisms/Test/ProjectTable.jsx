@@ -82,7 +82,7 @@ const ProjectsTable = ({ projects, onView }) => {
             <div className="flex justify-center">
               <PrimaryButton
                 title="View"
-                onClick={() => onView && onView(project)}
+                handler={() => onView && onView(project)}
                 className="px-2 py-1 text-xs min-w-[65px] max-w-[90px] h-[30px] hover:bg-(--primary) hover:text-(--accent-light)"
                 variant="outline"
               />

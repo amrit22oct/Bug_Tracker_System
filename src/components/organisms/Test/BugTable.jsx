@@ -88,12 +88,13 @@ const BugsTable = ({ bugs, onView }) => {
         if (key === "actions") {
           return (
             <div className="flex justify-center">
-              <PrimaryButton
-                title="View"
-                onClick={() => onView && onView(bug)}
-                className="px-2 py-1 text-xs min-w-[65px] max-w-[90px] h-[30px] hover:bg-(--primary) hover:text-(--accent-light)"
-                variant="outline"
-              />
+             <PrimaryButton
+  title="View"
+  handler={() => onView && onView(bug)}
+  className="px-2 py-1 text-xs min-w-[65px] max-w-[90px] h-[30px] hover:bg-(--primary) hover:text-(--accent-light)"
+  variant="outline"
+/>
+
             </div>
           );
         }
