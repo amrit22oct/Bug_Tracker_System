@@ -93,19 +93,17 @@ const Settings = () => {
   };
 
   const cardStyle =
-    "bg-white shadow-lg rounded-xl p-6 border border-gray-100 hover:shadow-2xl transition-all duration-300";
+    "bg-white shadow-lg rounded-xl p-6 border border-gray-100 hover:shadow-2xl transition-all duration-300 w-full";
 
   return (
-    <div className="w-full h-full p-6 bg-(--accent-light) space-y-6 overflow-auto">
-    
-
+    <div className="w-full h-full p-4 sm:p-6 bg-(--accent-light) space-y-6 overflow-auto">
       {/* PROFILE */}
       <PressedContainer className={cardStyle}>
         <div className="flex items-center gap-3 mb-4">
           <FiUser size={24} className="text-blue-600" />
           <h2 className="text-xl font-semibold text-gray-800">Profile</h2>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {["name", "email", "role"].map((field) => (
             <div key={field} className="flex flex-col gap-1">
               <label className="text-gray-600 font-medium capitalize">{field}</label>
@@ -135,61 +133,62 @@ const Settings = () => {
         </div>
       </PressedContainer>
 
-   <div className="flex flec-col-2 gap-4">
-       {/* PREFERENCES */}
-       <PressedContainer className={cardStyle}>
-        <div className="flex items-center gap-3 mb-4">
-          <FiSettings size={24} className="text-green-600" />
-          <h2 className="text-xl font-semibold text-gray-800">Preferences</h2>
-        </div>
-        <div className="flex flex-col gap-3">
-          {Object.keys(preferences).map((pref) => (
-            <label key={pref} className="flex items-center justify-between cursor-pointer">
-              <span className="text-gray-700 font-medium capitalize">
-                {pref.replace(/([A-Z])/g, " $1")}
-              </span>
+      <div className="flex flex-col lg:flex-row gap-4">
+        {/* PREFERENCES */}
+        <PressedContainer className={cardStyle}>
+          <div className="flex items-center gap-3 mb-4">
+            <FiSettings size={24} className="text-green-600" />
+            <h2 className="text-xl font-semibold text-gray-800">Preferences</h2>
+          </div>
+          <div className="flex flex-col gap-3">
+            {Object.keys(preferences).map((pref) => (
+              <label key={pref} className="flex items-center justify-between cursor-pointer">
+                <span className="text-gray-700 font-medium capitalize">
+                  {pref.replace(/([A-Z])/g, " $1")}
+                </span>
+                <input
+                  type="checkbox"
+                  name={pref}
+                  checked={preferences[pref]}
+                  onChange={handlePreferencesChange}
+                  className="w-5 h-5 sm:w-6 sm:h-6 cursor-pointer"
+                />
+              </label>
+            ))}
+          </div>
+        </PressedContainer>
+
+        {/* SECURITY */}
+        <PressedContainer className={cardStyle}>
+          <div className="flex items-center gap-3 mb-4">
+            <FiShield size={24} className="text-red-500" />
+            <h2 className="text-xl font-semibold text-gray-800">Account Security</h2>
+          </div>
+          <div className="grid grid-cols-1 gap-4">
+            <div className="flex flex-col gap-1">
+              <label className="text-gray-600 font-medium">New Password</label>
+              <input
+                type="password"
+                name="changePassword"
+                value={security.changePassword}
+                onChange={handleSecurityChange}
+                className="border border-gray-300 rounded-lg px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+                placeholder="Enter new password"
+              />
+            </div>
+            <label className="flex items-center justify-between cursor-pointer">
+              <span className="text-gray-700 font-medium">Two-Factor Authentication</span>
               <input
                 type="checkbox"
-                name={pref}
-                checked={preferences[pref]}
-                onChange={handlePreferencesChange}
+                name="twoFactorAuth"
+                checked={security.twoFactorAuth}
+                onChange={handleSecurityChange}
                 className="w-5 h-5 sm:w-6 sm:h-6 cursor-pointer"
               />
             </label>
-          ))}
-        </div>
-      </PressedContainer>
-
-      {/* SECURITY */}
-      <PressedContainer className={cardStyle}>
-        <div className="flex items-center gap-3 mb-4">
-          <FiShield size={24} className="text-red-500" />
-          <h2 className="text-xl font-semibold text-gray-800">Account Security</h2>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="flex flex-col gap-1">
-            <label className="text-gray-600 font-medium">New Password</label>
-            <input
-              type="password"
-              name="changePassword"
-              value={security.changePassword}
-              onChange={handleSecurityChange}
-              className="border border-gray-300 rounded-lg px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-red-500"
-              placeholder="Enter new password"
-            />
           </div>
-          <label className="flex items-center justify-between cursor-pointer col-span-1 sm:col-span-2">
-            <span className="text-gray-700 font-medium">Two-Factor Authentication</span>
-            <input
-              type="checkbox"
-              name="twoFactorAuth"
-              checked={security.twoFactorAuth}
-              onChange={handleSecurityChange}
-              className="w-5 h-5 sm:w-6 sm:h-6 cursor-pointer"
-            />
-          </label>
-        </div>
-      </PressedContainer>
+        </PressedContainer>
+      </div>
 
       {/* PRIVACY */}
       <PressedContainer className={cardStyle}>
@@ -197,7 +196,7 @@ const Settings = () => {
           <FiLock size={24} className="text-yellow-500" />
           <h2 className="text-xl font-semibold text-gray-800">Privacy</h2>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="flex flex-col gap-1">
             <label className="text-gray-600 font-medium">Profile Visibility</label>
             <select
@@ -229,7 +228,7 @@ const Settings = () => {
           <FiGlobe size={24} className="text-purple-600" />
           <h2 className="text-xl font-semibold text-gray-800">Language & Region</h2>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="flex flex-col gap-1">
             <label className="text-gray-600 font-medium">Language</label>
             <select
@@ -258,65 +257,65 @@ const Settings = () => {
           </div>
         </div>
       </PressedContainer>
-   </div>
 
-<div className="flex gap-4 ">
+      <div className="flex flex-col lg:flex-row gap-4">
         {/* NOTIFICATIONS */}
         <PressedContainer className={cardStyle}>
-        <div className="flex items-center gap-3 mb-4">
-          <FiBell size={24} className="text-indigo-500" />
-          <h2 className="text-xl font-semibold text-gray-800">Notifications</h2>
-        </div>
-        <div className="flex flex-col gap-3">
-          {Object.keys(notifications).map((key) => (
-            <label key={key} className="flex items-center justify-between cursor-pointer">
-              <span className="text-gray-700 font-medium capitalize">
-                {key.replace(/([A-Z])/g, " $1")}
-              </span>
-              <input
-                type="checkbox"
-                name={key}
-                checked={notifications[key]}
-                onChange={handleNotificationsChange}
-                className="w-5 h-5 sm:w-6 sm:h-6 cursor-pointer"
-              />
-            </label>
-          ))}
-        </div>
-      </PressedContainer>
+          <div className="flex items-center gap-3 mb-4">
+            <FiBell size={24} className="text-indigo-500" />
+            <h2 className="text-xl font-semibold text-gray-800">Notifications</h2>
+          </div>
+          <div className="flex flex-col gap-3">
+            {Object.keys(notifications).map((key) => (
+              <label key={key} className="flex items-center justify-between cursor-pointer">
+                <span className="text-gray-700 font-medium capitalize">
+                  {key.replace(/([A-Z])/g, " $1")}
+                </span>
+                <input
+                  type="checkbox"
+                  name={key}
+                  checked={notifications[key]}
+                  onChange={handleNotificationsChange}
+                  className="w-5 h-5 sm:w-6 sm:h-6 cursor-pointer"
+                />
+              </label>
+            ))}
+          </div>
+        </PressedContainer>
 
-      {/* CONNECTED APPS */}
-      <PressedContainer className={cardStyle}>
-        <div className="flex items-center gap-3 mb-4">
-          <FiLink size={24} className="text-teal-500" />
-          <h2 className="text-xl font-semibold text-gray-800">Connected Apps</h2>
-        </div>
-        <div className="flex flex-col gap-3">
-          {connectedApps.map((app, idx) => (
-            <div
-              key={app.name}
-              className="flex items-center justify-between border border-gray-200 rounded-md px-4 py-2 hover:shadow-md transition-all duration-200"
-            >
-              <span className="text-gray-700 font-medium">{app.name}</span>
-              <PrimaryButton
-                title={app.connected ? "Disconnect" : "Connect"}
-                onClick={() => handleConnectedAppToggle(idx)}
-                variant="outline"
-                className="px-3 py-1 text-sm max-w-[160px] hover:text-(--accent-light) hover:bg-(--primary)"
-              />
-            </div>
-          ))}
-        </div>
-      </PressedContainer>
-</div>
+        {/* CONNECTED APPS */}
+        <PressedContainer className={cardStyle}>
+  <div className="flex items-center gap-3 mb-4">
+    <FiLink size={24} className="text-teal-500" />
+    <h2 className="text-xl font-semibold text-gray-800">Connected Apps</h2>
+  </div>
+  <div className="flex flex-col gap-3">
+    {connectedApps.map((app, idx) => (
+      <div
+        key={app.name}
+        className="flex flex-col sm:flex-row sm:items-center sm:justify-between border border-gray-200 rounded-md px-4 py-3 hover:shadow-md transition-all duration-200 gap-2"
+      >
+        <span className="text-gray-700 font-medium">{app.name}</span>
+        <PrimaryButton
+          title={app.connected ? "Disconnect" : "Connect"}
+          onClick={() => handleConnectedAppToggle(idx)}
+          variant="outline"
+          className="w-full sm:w-auto min-w-[160px] max-w-[250px] px-3 py-2 text-sm hover:text-(--accent-light) hover:bg-(--primary)"
+        />
+      </div>
+    ))}
+  </div>
+</PressedContainer>
+
+      </div>
 
       {/* SAVE BUTTON */}
-      <div className="flex justify-end max-w-[300px]">
+      <div className="flex justify-end">
         <PrimaryButton
           title="Save Changes"
           onClick={handleSave}
           variant="outline"
-          className="px-6 py-2 text-base hover:text-(--accent-light) hover:bg-(--primary)"
+          className="px-6 py-2 text-base hover:text-(--accent-light) hover:bg-(--primary) min-w-[160px] max-w-[250px] "
         />
       </div>
     </div>
