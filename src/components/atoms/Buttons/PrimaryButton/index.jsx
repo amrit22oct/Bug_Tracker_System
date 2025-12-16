@@ -28,9 +28,9 @@ const VARIANTS = {
   text-[var(--primary)]
 `,
   disabled: `
-    bg-gray-300
+    bg-gray-400
     text-black
-    opacity-60
+    opacity-80
   `,
 };
 

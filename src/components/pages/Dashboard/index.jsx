@@ -102,11 +102,48 @@ const Dashboard = ({ searchValue = "" }) => {
   ];
 
   const team = [
-    { name: "Alice", role: "Frontend Developer", progress: 78 },
-    { name: "Bob", role: "Backend Developer", progress: 62 },
-    { name: "John", role: "API Engineer", progress: 55 },
-    { name: "Sarah", role: "QA Engineer", progress: 88 },
+    {
+      name: "Alice",
+      role: "Frontend Developer",
+      progress: 78,
+      projectsAssigned: 3,
+      bugsAssigned: 5,
+      completedTasks: 18,
+      pendingTasks: 4,
+      deadline: "2025-01-20",
+    },
+    {
+      name: "Bob",
+      role: "Backend Developer",
+      progress: 62,
+      projectsAssigned: 4,
+      bugsAssigned: 2,
+      completedTasks: 14,
+      pendingTasks: 6,
+      deadline: "2025-01-25",
+    },
+    {
+      name: "John",
+      role: "API Engineer",
+      progress: 55,
+      projectsAssigned: 2,
+      bugsAssigned: 7,
+      completedTasks: 10,
+      pendingTasks: 5,
+      deadline: "2025-01-18",
+    },
+    {
+      name: "Sarah",
+      role: "QA Engineer",
+      progress: 88,
+      projectsAssigned: 3,
+      bugsAssigned: 9,
+      completedTasks: 22,
+      pendingTasks: 2,
+      deadline: "2025-01-15",
+    },
   ];
+  
 
   const notifications = [
     "New bug assigned to you",
@@ -195,10 +232,7 @@ const Dashboard = ({ searchValue = "" }) => {
         <ProjectsTable projects={filteredProjects} />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <TeamProgress team={filteredTeam} />
-        <TeamList team={filteredTeam} />
-      </div>
+      <TeamList team={filteredTeam} />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 grid grid-cols-1 lg:grid-cols-2 gap-6">
