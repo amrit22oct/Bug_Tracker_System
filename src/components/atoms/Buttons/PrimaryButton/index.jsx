@@ -3,7 +3,7 @@ import React from "react";
 const VARIANTS = {
   primary: `
     bg-[var(--primary)]
-    text-white
+    text-[var(--accent-light)]
   `,
   secondary: `
     bg-[var(--secondary)]

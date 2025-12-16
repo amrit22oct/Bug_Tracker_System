@@ -8,6 +8,8 @@ import {
   ReportsPage,
   Settings,
 } from "@/components/pages";
+import AddBug from "../../components/organisms/AddBug";
+import AddProject from "../../components/organisms/AddProject";
 
 export const routes = [
   {
@@ -44,6 +46,20 @@ export const routes = [
     id: "Settings",
     path: "/settings",
     component: <Settings />,
+    protectedRoute: true,
+  },  
+
+  {
+    id: "Add Bug",
+    path: "/add-bug",
+    component: <AddBug />,
+    protectedRoute: true,
+  },  
+
+  {
+    id: "Add Project",
+    path: "/add-project",
+    component: <AddProject />,
     protectedRoute: true,
   },  
   {

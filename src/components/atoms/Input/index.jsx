@@ -19,7 +19,7 @@ export default function Input({
         className={`
           w-full px-4 py-3 rounded-xl
           ${rightAction ? "pr-11" : ""}
-          bg-white/90
+         
           text-[var(--primary)]
           border border-[var(--primary)]
           focus:outline-none focus:ring-1 focus:ring-[var(--primary)]

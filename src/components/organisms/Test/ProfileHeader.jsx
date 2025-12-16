@@ -5,35 +5,16 @@ import PrimaryButton from "../../atoms/Buttons/PrimaryButton";
 import PressedContainer from "../../atoms/PressedContainer";
 
 const ProfileHeader = ({
-  name = "John Doe",
-  role = "Senior Project Manager",
-  location = "New York",
-  email = "johndoe@example.com",
-  stats = [
-    { label: "Projects", value: 12, icon: <FaProjectDiagram /> },
-    { label: "Open Bugs", value: 7, icon: <FaBug /> },
-    { label: "Team Members", value: 4, icon: <FaUsers /> },
-  ],
+  name,
+  role,
+  location,
+  email,
+  stats = [],
   profileSize = 100,
-  actions = [
-    {
-      label: "New Bug",
-      icon: <FaPlus />,
-      variant: "primary",
-      onClick: () => {},
-    },
-    {
-      label: "New Project",
-      icon: <FaProjectDiagram />,
-      variant: "outline",
-      className: "w-full hover:bg-(--primary) hover:text-(--accent-light)",
-      onClick: () => {},
-    },
-  ],
+  actions = [],
 }) => {
   return (
     <PressedContainer className="relative p-4 sm:p-6 bg-(--accent-light)">
-      
       {/* Profile Info */}
       <div className="flex flex-col md:flex-row items-center md:items-start gap-4 md:gap-6">
         <ProfilePic
@@ -43,7 +24,6 @@ const ProfileHeader = ({
           textColor="#fff"
           className="flex-shrink-0"
         />
-
         <div className="flex-1 flex flex-col gap-1 md:gap-2 text-center md:text-left">
           <h1 className="text-xl md:text-3xl font-bold text-(--primary)">{name}</h1>
           <p className="text-(--primary)/90 text-sm md:text-base">{role}</p>
