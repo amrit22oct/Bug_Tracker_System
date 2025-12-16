@@ -27,7 +27,7 @@ export default function InputField({
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
           className="w-full p-4 min-h-[120px] rounded-xl border border-(--primary)
-                     focus:outline-none focus:ring-2 focus:ring-blue-500
+                     focus:outline-none focus:ring-2 focus:ring-(--primary) 
                      transition-all duration-200 placeholder-(--primary-hover)"
           {...rest}
         />
@@ -37,7 +37,7 @@ export default function InputField({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           className="w-full p-4 rounded-xl border border-(--primary)
-                     focus:outline-none focus:ring-2 focus:ring-blue-500
+                     focus:outline-none focus:ring-2 focus:ring-(--primary)
                      transition-all duration-200"
           {...rest}
         >

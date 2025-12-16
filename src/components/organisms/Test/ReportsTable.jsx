@@ -31,7 +31,6 @@ const ReportsTable = ({ reports, onView }) => {
               bg: "#ccc",
               text: "#000",
             };
-
           return (
             <div className="flex justify-center">
               <span
@@ -62,7 +61,7 @@ const ReportsTable = ({ reports, onView }) => {
               <PrimaryButton
                 title="View"
                 onClick={() => onView && onView(report)}
-                className="px-2 py-1 text-xs min-w-[70px] h-[30px] hover:bg-(--primary) hover:text-(--accent-light)"
+                className="px-2 py-1 text-xs min-w-[65px] max-w-[90px] h-[30px] hover:bg-(--primary) hover:text-(--accent-light)"
                 variant="outline"
               />
             </div>

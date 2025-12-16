@@ -56,7 +56,11 @@ const ReportsPage = ({ searchValue }) => {
             variant={currentPage === 1 ? "disabled" : "outline"}
             disabled={currentPage === 1}
             handler={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-            className="min-w-[120px] h-8 text-xs"
+            className={`min-w-[120px] h-8 text-xs ${
+              currentPage !== 1
+                ? "hover:bg-(--primary) hover:text-(--accent-light)"
+                : ""
+            }`}
           />
 
           <div className="flex items-center justify-center h-8 px-3 min-w-[70px] text-sm font-medium text-(--accent-light) bg-(--primary) rounded-md">
@@ -67,10 +71,12 @@ const ReportsPage = ({ searchValue }) => {
             title="Next"
             variant={currentPage === totalPages ? "disabled" : "outline"}
             disabled={currentPage === totalPages}
-            handler={() =>
-              setCurrentPage((p) => Math.min(p + 1, totalPages))
-            }
-            className="min-w-[120px] h-8 text-xs"
+            handler={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+            className={`min-w-[120px] h-8 text-xs ${
+              currentPage !== totalPages
+                ? "hover:bg-(--primary) hover:text-(--accent-light)"
+                : ""
+            }`}
           />
         </div>
       </div>

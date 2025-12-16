@@ -29,7 +29,7 @@ export default function Form({
   return (
     <form
       onSubmit={handleSubmit}
-      className="w-full max-w-6xl mx-auto space-y-10 "
+      className="w-full  mx-auto space-y-10 "
     >
       {/* HEADER */}
       <div className="bg-(--primary) rounded-2xl border shadow-sm p-8 text-center ">
@@ -42,7 +42,7 @@ export default function Form({
       </div>
 
       {/* FORM CONTENT */}
-      <div className="bg-(--text-secondary)/20 rounded-2xl border shadow-lg p-8 space-y-12">
+      <div className="bg-(--accent-light) rounded-2xl border shadow-lg p-8 space-y-12">
         {sections.map((section, index) => (
           <div key={section.title}>
             {/* Section Header */}
