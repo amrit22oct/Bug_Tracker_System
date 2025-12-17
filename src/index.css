@@ -9,20 +9,22 @@
   /* Base Colors */
   --primary: #1a1f23;
   --primary-rgb: 26, 31, 35; /* RGB for glassy / translucent usage */
-  --primary-hover: #474d53;
+  --primary-hover: #02121a;
   --primary-hover-rgb: 71, 77, 83;
 
-  --secondary: #1cb6bb;
-  --secondary-rgb: 28, 182, 187; /* RGB for glassy / translucent usage */
-  --secondary-hover: #61dafb;
-  --secondary-hover-rgb: 97, 218, 251;
+  /* --secondary: #1cb6bb; */
+  --secondary: rgb(174, 180, 180);
+  --secondary-rgb: 174, 180, 180; /* RGB for glassy / translucent usage */
+  --secondary-hover: #445356
+  --secondary-hover-rgb: 68, 83, 86;
 
   --accent: #67eead;
   --accent-rgb: 103, 238, 173; /* RGB for glassy / translucent usage */
-  --accent-light: #aef4ec;
-  --accent-light-rgb: 174, 244, 236;
+  /* --accent-light: #aef4ec; */
+  --accent-light: rgba(255, 255, 255, 0.843);
+  --accent-light-rgb: 255, 255, 255,;
 
-  --background: #99acae;
+  --background: #b5c7c9;
   --background-rgb: 186, 210, 212;
 
   /* Text Colors (optional) */
@@ -30,7 +32,7 @@
   --text-secondary: #1cb6bb;
 
   /* Font Defaults */
-  font-family: "Gabriela", serif;
+  /* font-family: "Gabriela", serif; */
   line-height: 1.5;
   font-weight: 400;
   font-synthesis: none;
@@ -44,7 +46,7 @@
 
 body {
   color: #000;
-  font-family: "Gabriela", serif;
+  /* font-family: "Gabriela", serif; */
   background-color: var(--background);
 }
 
