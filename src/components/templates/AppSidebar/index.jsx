@@ -1,9 +1,17 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { FaHome, FaBug, FaProjectDiagram, FaChartBar, FaCog, FaTimes } from "react-icons/fa";
+import {
+  FaHome,
+  FaBug,
+  FaProjectDiagram,
+  FaChartBar,
+  FaCog,
+  FaTimes,
+} from "react-icons/fa";
 import { BiLogOut } from "react-icons/bi";
 import PrimaryButton from "../../atoms/Buttons/PrimaryButton";
 import AppNav from "../../molecules/AppNav";
 import { showSuccess } from "@/utils/Toast.jsx";
+import Cookies from "js-cookie";
 
 function AppSidebar({ setIsAuth, onClose }) {
   const navigate = useNavigate();
@@ -19,11 +27,25 @@ function AppSidebar({ setIsAuth, onClose }) {
   ];
 
   const handleLogout = () => {
+    const appPrefix = "bt_";
+
+    // Remove all auth cookies
+    Cookies.remove(`${appPrefix}userId`);
+    Cookies.remove(`${appPrefix}username`);
+    Cookies.remove(`${appPrefix}accessToken`);
+    Cookies.remove(`${appPrefix}role`);
+
+    // Optional: remove localStorage flag if you use it
     localStorage.removeItem("isLoggedIn");
+
+    // Update parent auth state
     setIsAuth(false);
+
+    // Show toast
     showSuccess("Logged out successfully!");
+
+    // Redirect to login
     navigate("/login", { replace: true });
-    onClose?.();
   };
 
   return (
@@ -36,7 +58,10 @@ function AppSidebar({ setIsAuth, onClose }) {
         Bug Tracker
         {/* Close button for mobile */}
         {onClose && (
-          <button onClick={onClose} className="lg:hidden p-1 rounded-md hover:bg-[var(--primary)]/20">
+          <button
+            onClick={onClose}
+            className="lg:hidden p-1 rounded-md hover:bg-[var(--primary)]/20"
+          >
             <FaTimes className="text-[var(--primary)]" />
           </button>
         )}

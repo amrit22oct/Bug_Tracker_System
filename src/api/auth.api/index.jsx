@@ -2,7 +2,7 @@ import api from "../base.api";
 
 // LOGIN
 export const loginApi = async (credentials) => {
-  const res = await api.post("/auth/login", credentials);
+  const res = await api.post("/public/auth/login", credentials);
 
   if (res.data.token) {
     localStorage.setItem("token", res.data.token);

@@ -5,6 +5,7 @@ import {
   IoLogOutOutline,
 } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
 
 import ProfilePic from "../../atoms/Profile/ProfilePic.jsx";
 import PrimaryButton from "../../atoms/Buttons/PrimaryButton";
@@ -12,13 +13,23 @@ import { showSuccess } from "@/utils/Toast.jsx";
 
 const HeaderProfile = ({ setIsAuth }) => {
   const [open, setOpen] = useState(false);
-  const [pressed, setPressed] = useState(false); // for 3D press effect
+  const [pressed, setPressed] = useState(false);
   const ref = useRef(null);
   const navigate = useNavigate();
 
-  const name = "John Doe";
+  const appPrefix = "bt_";
+
+  // 🔹 Get username and role from cookies
+  const username = Cookies.get(`${appPrefix}username`) || "User";
+  const role = Cookies.get(`${appPrefix}role`) || "Developer";
 
   const handleLogout = () => {
+    // Remove all auth cookies
+    Cookies.remove(`${appPrefix}userId`);
+    Cookies.remove(`${appPrefix}username`);
+    Cookies.remove(`${appPrefix}accessToken`);
+    Cookies.remove(`${appPrefix}role`);
+
     localStorage.removeItem("isLoggedIn");
     setIsAuth(false);
     showSuccess("Logged out successfully!");
@@ -37,14 +48,14 @@ const HeaderProfile = ({ setIsAuth }) => {
 
   return (
     <div ref={ref} className="relative shrink-0">
-      {/* Profile Button with increased width */}
+      {/* Profile Button */}
       <button
         onMouseDown={() => setPressed(true)}
         onMouseUp={() => setPressed(false)}
         onMouseLeave={() => setPressed(false)}
         onClick={() => setOpen(!open)}
         className={`
-          flex items-center gap-3 px-4 py-2 rounded-2xl
+          flex flex-col items-start gap-1 px-4 py-2 rounded-2xl
           bg-[var(--accent-light)]
           border border-[var(--primary)] border-2
           min-w-[260px] justify-start
@@ -56,19 +67,29 @@ const HeaderProfile = ({ setIsAuth }) => {
           }
         `}
       >
-        <ProfilePic name={name} size={40} bgColor="#10B981" textColor="#fff" />
-        <span className="text-sm font-semibold text-[var(--primary)] truncate">
-          {name}
-        </span>
-        <IoChevronDown
-          className={`ml-auto transition-transform duration-200 ${
-            open ? "rotate-180" : ""
-          }`}
-          size={18}
-        />
+        <div className="flex items-center gap-3 w-full">
+          <ProfilePic
+            name={username}
+            size={40}
+            bgColor="#10B981"
+            textColor="#fff"
+          />
+          <div className="flex flex-col items-start truncate">
+            <span className="text-sm font-semibold text-[var(--primary)] truncate">
+              {username}
+            </span>
+            <span className="text-xs opacity-70 truncate">{role}</span>
+          </div>
+          <IoChevronDown
+            className={`ml-auto transition-transform duration-200 ${
+              open ? "rotate-180" : ""
+            }`}
+            size={18}
+          />
+        </div>
       </button>
 
-      {/* Dropdown remains unchanged */}
+      {/* Dropdown */}
       {open && (
         <div
           className={`
@@ -79,7 +100,7 @@ const HeaderProfile = ({ setIsAuth }) => {
         >
           <button
             onClick={() => navigate("/profile")}
-            className="w-full flex items-center gap-2 px-4 py-2 text-sm font-medium  rounded-xl  transition-colors hover:bg-(--primary) cursor-pointer hover:text-(--accent-light) "
+            className="w-full flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-xl transition-colors hover:bg-(--primary) cursor-pointer hover:text-(--accent-light)"
           >
             <IoPersonOutline size={18} />
             View Profile
@@ -95,7 +116,7 @@ const HeaderProfile = ({ setIsAuth }) => {
               </span>
             }
             variant="outline"
-            className="w-full h-10 text-sm rounded-xl mb-2  hover:bg-(--primary) hover:text-(--accent-light)"
+            className="w-full h-10 text-sm rounded-xl mb-2 hover:bg-(--primary) hover:text-(--accent-light)"
             handler={handleLogout}
           />
         </div>

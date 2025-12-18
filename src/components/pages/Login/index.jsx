@@ -7,9 +7,6 @@ export default function Login({ setIsAuth }) {
   const handleLoginSuccess = () => {
     localStorage.setItem("isLoggedIn", "true");
     setIsAuth(true);
-
-    // Show 3D toast
-    showSuccess("Login Successful 🎉");
   };
 
   return (

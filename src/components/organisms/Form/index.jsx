@@ -24,7 +24,7 @@ export default function Form({
   };
 
   return (
-    <div className="w-full rounded-xl p-6 bg-[rgba(var(--accent-rgb),0.06)]">
+    <div className="w-full rounded-xl p-6 bg-(var(--accent)">
       <form onSubmit={handleSubmit} className="flex flex-col gap-5">
         <h2 className="text-xl font-semibold text-center text-[var(--primary)]">
           {title}

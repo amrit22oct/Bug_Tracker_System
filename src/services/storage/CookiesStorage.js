@@ -1,63 +1,100 @@
 import Cookies from "js-cookie";
 
-class CookieStorage {
-  setLogin = (username, userId, remember = false, role, accessToken, studentId = null) => {
-    let thirtyDays = remember ? 30 * 24 * 60 * 60 : 7 * 24 * 60 * 60;
-
-    const expirationDate = new Date(Date.now() + thirtyDays * 1000);
-    const appPrefix = "vcsg_";
+class BugTrackerCookieStorage {
+  setLogin = (
+    username,
+    userId,
+    remember = false,
+    role,
+    accessToken,
+    organizationId = null,
+    projectId = null
+  ) => {
+    const maxAgeSeconds = remember ? 30 * 24 * 60 * 60 : 7 * 24 * 60 * 60;
+    const expirationDate = new Date(Date.now() + maxAgeSeconds * 1000);
+    const appPrefix = "bt_";
 
     Cookies.set(`${appPrefix}username`, username, { expires: expirationDate });
     Cookies.set(`${appPrefix}userId`, userId, { expires: expirationDate });
     Cookies.set(`${appPrefix}role`, role, { expires: expirationDate });
     Cookies.set(`${appPrefix}accessToken`, accessToken, { expires: expirationDate });
 
-    // Store studentId if available
-    if (studentId) {
-      Cookies.set(`${appPrefix}studentId`, studentId, { expires: expirationDate });
+    if (organizationId) {
+      Cookies.set(`${appPrefix}organizationId`, organizationId, { expires: expirationDate });
+    }
+
+    if (projectId) {
+      Cookies.set(`${appPrefix}projectId`, projectId, { expires: expirationDate });
     }
   };
 
-  getLogin = () => {
-    const appPrefix = "vcsg_";
-    return Cookies.get(`${appPrefix}username`) && Cookies.get(`${appPrefix}userId`) && Cookies.get(`${appPrefix}role`) && Cookies.get(`${appPrefix}accessToken`);
+  // Store bug-related context (can be updated independently)
+  setBugContext = (
+    bugId,
+    bugStatus = null,
+    priority = null,
+    severity = null,
+    assigneeId = null
+  ) => {
+    const appPrefix = "bt_";
+
+    if (bugId) Cookies.set(`${appPrefix}bugId`, bugId);
+    if (bugStatus) Cookies.set(`${appPrefix}bugStatus`, bugStatus);
+    if (priority) Cookies.set(`${appPrefix}priority`, priority);
+    if (severity) Cookies.set(`${appPrefix}severity`, severity);
+    if (assigneeId) Cookies.set(`${appPrefix}assigneeId`, assigneeId);
   };
 
-  // Get studentId from cookies
-  getStudentId = () => {
-    const appPrefix = "vcsg_";
-    return Cookies.get(`${appPrefix}studentId`);
+  isLoggedIn = () => {
+    const appPrefix = "bt_";
+    return (
+      !!Cookies.get(`${appPrefix}username`) &&
+      !!Cookies.get(`${appPrefix}userId`) &&
+      !!Cookies.get(`${appPrefix}role`) &&
+      !!Cookies.get(`${appPrefix}accessToken`)
+    );
   };
 
-  // Get token from cookies
-  getToken = () => {
-    const appPrefix = "vcsg_";
-    return Cookies.get(`${appPrefix}accessToken`);
-  };
+  // Auth & user getters
+  getToken = () => Cookies.get("bt_accessToken");
+  getRole = () => Cookies.get("bt_role");
+  getUserId = () => Cookies.get("bt_userId");
+  getUsername = () => Cookies.get("bt_username");
 
-  // Get user role
-  getRole = () => {
-    const appPrefix = "vcsg_";
-    return Cookies.get(`${appPrefix}role`);
+  // Organization & project
+  getOrganizationId = () => Cookies.get("bt_organizationId");
+  getProjectId = () => Cookies.get("bt_projectId");
+
+  // Bug context getters
+  getBugId = () => Cookies.get("bt_bugId");
+  getBugStatus = () => Cookies.get("bt_bugStatus");
+  getPriority = () => Cookies.get("bt_priority");
+  getSeverity = () => Cookies.get("bt_severity");
+  getAssigneeId = () => Cookies.get("bt_assigneeId");
+
+  clearBugContext = () => {
+    const appPrefix = "bt_";
+    Cookies.remove(`${appPrefix}bugId`);
+    Cookies.remove(`${appPrefix}bugStatus`);
+    Cookies.remove(`${appPrefix}priority`);
+    Cookies.remove(`${appPrefix}severity`);
+    Cookies.remove(`${appPrefix}assigneeId`);
   };
 
   logout = () => {
-    const appPrefix = "vcsg_";
+    const appPrefix = "bt_";
     Cookies.remove(`${appPrefix}username`);
     Cookies.remove(`${appPrefix}userId`);
     Cookies.remove(`${appPrefix}role`);
     Cookies.remove(`${appPrefix}accessToken`);
-    Cookies.remove(`${appPrefix}studentId`);
+    Cookies.remove(`${appPrefix}organizationId`);
+    Cookies.remove(`${appPrefix}projectId`);
+    this.clearBugContext();
   };
 
   deleteAccount = () => {
-    const appPrefix = "vcsg_";
-    Cookies.remove(`${appPrefix}username`);
-    Cookies.remove(`${appPrefix}userId`);
-    Cookies.remove(`${appPrefix}role`);
-    Cookies.remove(`${appPrefix}accessToken`);
-    Cookies.remove(`${appPrefix}studentId`);
+    this.logout();
   };
 }
 
-export default CookieStorage;
+export default BugTrackerCookieStorage;
