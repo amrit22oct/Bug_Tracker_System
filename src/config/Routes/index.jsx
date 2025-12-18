@@ -1,14 +1,11 @@
-// Centralized route configuration for Bug Tracker system
-// Roles: Admin | ProjectManager | Developer | QA
-
 import {
-  Dashboard,
   SimplePage,
   Login,
   BugPage,
   ProjectsPage,
   ReportsPage,
   Settings,
+  RoleBasedDashboard,
 } from "@/components/pages";
 
 import AddBug from "@/components/organisms/AddBug";
@@ -21,10 +18,11 @@ export const routes = [
   {
     id: "Dashboard",
     path: "/",
-    component: <Dashboard />,
+    component: <RoleBasedDashboard />,
     protectedRoute: true,
     allowedRoles: ["Admin", "ProjectManager", "Developer", "QA"],
   },
+  
 
   // ---------------- SIMPLE PAGE ----------------
   {
@@ -44,14 +42,14 @@ export const routes = [
     allowedRoles: ["Developer", "QA", "ProjectManager", "Admin"],
   },
   {
-    id: "Bug-Detail",
+    id: "BugDetail",
     path: "/view-bug-detail/:id",
     component: <BugDetail />,
     protectedRoute: true,
     allowedRoles: ["Developer", "QA", "ProjectManager", "Admin"],
   },
   {
-    id: "Add Bug",
+    id: "AddBug",
     path: "/add-bug",
     component: <AddBug />,
     protectedRoute: true,
@@ -67,14 +65,14 @@ export const routes = [
     allowedRoles: ["ProjectManager", "Admin"],
   },
   {
-    id: "Project-Detail",
+    id: "ProjectDetail",
     path: "/view-project-detail/:id",
     component: <ProjectDetail />,
     protectedRoute: true,
     allowedRoles: ["ProjectManager", "Admin"],
   },
   {
-    id: "Add Project",
+    id: "AddProject",
     path: "/add-project",
     component: <AddProject />,
     protectedRoute: true,

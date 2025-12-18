@@ -16,15 +16,20 @@ import Cookies from "js-cookie";
 function AppSidebar({ setIsAuth, onClose }) {
   const navigate = useNavigate();
   const location = useLocation();
+  const role = Cookies.get("bt_role");
 
   const menu = [
-    { label: "Dashboard", path: "/", icon: <FaHome /> },
-    { label: "Simple Page", path: "/simple", icon: <FaBug /> },
-    { label: "Bugs", path: "/bugs", icon: <FaBug /> },
-    { label: "Projects", path: "/projects", icon: <FaProjectDiagram /> },
-    { label: "Reports", path: "/reports", icon: <FaChartBar /> },
-    { label: "Settings", path: "/settings", icon: <FaCog /> },
-  ];
+  { label: "Dashboard", path: "/", icon: <FaHome /> },
+  { label: "Bugs", path: "/bugs", icon: <FaBug /> },
+
+  ...(role !== "Developer" && role !== "QA"
+    ? [{ label: "Projects", path: "/projects", icon: <FaProjectDiagram /> }]
+    : []),
+
+  ...(role === "Admin"
+    ? [{ label: "Settings", path: "/settings", icon: <FaCog /> }]
+    : []),
+];
 
   const handleLogout = () => {
     const appPrefix = "bt_";
