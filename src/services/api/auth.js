@@ -9,11 +9,15 @@ const authService = {
       const response = await api.post("/auth/login", { loginId, password });
       const { user, token } = response.data.data;
 
+      // Store basic auth info
       Cookies.set(`${appPrefix}userId`, user._id, { expires: 1 });
       Cookies.set(`${appPrefix}username`, user.username, { expires: 1 });
       Cookies.set(`${appPrefix}accessToken`, token, { expires: 1 });
       Cookies.set(`${appPrefix}role`, user.role || "Developer", { expires: 1 });
+      Cookies.set(`${appPrefix}name`, user.name || "User", { expires: 1 });
+      Cookies.set(`${appPrefix}email`, user.email, { expires: 1 });
 
+     
       return { user, token };
     } catch (error) {
       // only throw, do not alert here
@@ -26,6 +30,8 @@ const authService = {
     Cookies.remove(`${appPrefix}username`);
     Cookies.remove(`${appPrefix}accessToken`);
     Cookies.remove(`${appPrefix}role`);
+    Cookies.remove(`${appPrefix}name`);   // remove name
+    Cookies.remove(`${appPrefix}email`);  // remove email
     localStorage.removeItem("isLoggedIn");
   },
 
@@ -33,6 +39,8 @@ const authService = {
     userId: Cookies.get(`${appPrefix}userId`),
     username: Cookies.get(`${appPrefix}username`),
     role: Cookies.get(`${appPrefix}role`) || "Developer",
+    name: Cookies.get(`${appPrefix}name`),    
+    email: Cookies.get(`${appPrefix}email`), 
   }),
 };
 

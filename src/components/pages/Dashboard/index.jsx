@@ -11,6 +11,8 @@ import TeamList from "../../organisms/Test/TeamList.jsx";
 import HeaderContent from "../../templates/AppHeader/HeaderContent.jsx";
 import PrimarySearchBar from "../../atoms/Searchbar/PrimarySearchBar.jsx";
 import { FaPlus, FaProjectDiagram, FaBug, FaUsers } from "react-icons/fa";
+import authService from "@/services/api/auth.js";
+
 
 /* 🔎 Generic search helper */
 const matchesSearch = (value, search) =>
@@ -20,6 +22,9 @@ const Dashboard = ({ searchValue = "" }) => {
   const navigate = useNavigate();
   const [selectedStatus, setSelectedStatus] = useState("All");
 
+  const currentUser = authService.getCurrentUser();
+  const { name, username, role, email } = currentUser; // get name and email too
+  
   /* ---------------- DATA ---------------- */
   const statuses = ["All", "Recent", "Active", "In Progress", "On Hold", "Completed", "Delayed", "Cancelled"];
 
@@ -115,17 +120,18 @@ const Dashboard = ({ searchValue = "" }) => {
   return (
     <div className="h-full w-full p-8 bg-[var(--accent-light)] overflow-auto space-y-10">
       <ProfileHeader
-        name="John Doe"
-        role="Senior Project Manager"
-        location="New York"
-        email="johndoe@example.com"
-        stats={[
-          { label: "Projects", value: 12, icon: <FaProjectDiagram /> },
-          { label: "Open Bugs", value: 7, icon: <FaBug /> },
-          { label: "Team Members", value: 4, icon: <FaUsers /> },
-        ]}
-        actions={profileActions} // Buttons with navigation
-      />
+      name={name || username}   // fallback to username if name is not stored
+      role={role}
+      location="New York"       // static for now
+      email={email || `${username}@example.com`} // fallback if email not stored
+      stats={[
+        { label: "Projects", value: 12, icon: <FaProjectDiagram /> },
+        { label: "Open Bugs", value: 7, icon: <FaBug /> },
+        { label: "Team Members", value: 4, icon: <FaUsers /> },
+      ]}
+      actions={profileActions}
+    />
+
 
       <StatsCards />
       <BugsTable bugs={filteredBugs} />
