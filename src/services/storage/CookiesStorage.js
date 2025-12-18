@@ -4,8 +4,8 @@ class BugTrackerCookieStorage {
   setLogin = (
     username,
     userId,
-    name,       // New
-    email,      // New
+    name, // New
+    email, // New
     remember = false,
     role,
     accessToken,
@@ -19,18 +19,26 @@ class BugTrackerCookieStorage {
     Cookies.set(`${appPrefix}username`, username, { expires: expirationDate });
     Cookies.set(`${appPrefix}userId`, userId, { expires: expirationDate });
     Cookies.set(`${appPrefix}role`, role, { expires: expirationDate });
-    Cookies.set(`${appPrefix}accessToken`, accessToken, { expires: expirationDate });
+    Cookies.set(`${appPrefix}accessToken`, accessToken, {
+      expires: expirationDate,
+    });
 
     // New cookies for name and email
-    if (name) Cookies.set(`${appPrefix}name`, name, { expires: expirationDate });
-    if (email) Cookies.set(`${appPrefix}email`, email, { expires: expirationDate });
+    if (name)
+      Cookies.set(`${appPrefix}name`, name, { expires: expirationDate });
+    if (email)
+      Cookies.set(`${appPrefix}email`, email, { expires: expirationDate });
 
     if (organizationId) {
-      Cookies.set(`${appPrefix}organizationId`, organizationId, { expires: expirationDate });
+      Cookies.set(`${appPrefix}organizationId`, organizationId, {
+        expires: expirationDate,
+      });
     }
 
     if (projectId) {
-      Cookies.set(`${appPrefix}projectId`, projectId, { expires: expirationDate });
+      Cookies.set(`${appPrefix}projectId`, projectId, {
+        expires: expirationDate,
+      });
     }
   };
 
@@ -66,8 +74,8 @@ class BugTrackerCookieStorage {
   getRole = () => Cookies.get("bt_role");
   getUserId = () => Cookies.get("bt_userId");
   getUsername = () => Cookies.get("bt_username");
-  getName = () => Cookies.get("bt_name");      // New
-  getEmail = () => Cookies.get("bt_email");    // New
+  getName = () => Cookies.get("bt_name"); // New
+  getEmail = () => Cookies.get("bt_email"); // New
 
   // Organization & project
   getOrganizationId = () => Cookies.get("bt_organizationId");
@@ -95,8 +103,8 @@ class BugTrackerCookieStorage {
     Cookies.remove(`${appPrefix}userId`);
     Cookies.remove(`${appPrefix}role`);
     Cookies.remove(`${appPrefix}accessToken`);
-    Cookies.remove(`${appPrefix}name`);       // Remove name
-    Cookies.remove(`${appPrefix}email`);      // Remove email
+    Cookies.remove(`${appPrefix}name`); // Remove name
+    Cookies.remove(`${appPrefix}email`); // Remove email
     Cookies.remove(`${appPrefix}organizationId`);
     Cookies.remove(`${appPrefix}projectId`);
     this.clearBugContext();
