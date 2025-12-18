@@ -17,7 +17,6 @@ const authService = {
       Cookies.set(`${appPrefix}name`, user.name || "User", { expires: 1 });
       Cookies.set(`${appPrefix}email`, user.email, { expires: 1 });
 
-     
       return { user, token };
     } catch (error) {
       // only throw, do not alert here
@@ -30,8 +29,8 @@ const authService = {
     Cookies.remove(`${appPrefix}username`);
     Cookies.remove(`${appPrefix}accessToken`);
     Cookies.remove(`${appPrefix}role`);
-    Cookies.remove(`${appPrefix}name`);   // remove name
-    Cookies.remove(`${appPrefix}email`);  // remove email
+    Cookies.remove(`${appPrefix}name`); // remove name
+    Cookies.remove(`${appPrefix}email`); // remove email
     localStorage.removeItem("isLoggedIn");
   },
 
@@ -39,8 +38,8 @@ const authService = {
     userId: Cookies.get(`${appPrefix}userId`),
     username: Cookies.get(`${appPrefix}username`),
     role: Cookies.get(`${appPrefix}role`) || "Developer",
-    name: Cookies.get(`${appPrefix}name`),    
-    email: Cookies.get(`${appPrefix}email`), 
+    name: Cookies.get(`${appPrefix}name`),
+    email: Cookies.get(`${appPrefix}email`),
   }),
 };
 

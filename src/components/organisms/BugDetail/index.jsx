@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import HeaderContent from "../../templates/AppHeader/HeaderContent.jsx";
 import PrimaryButton from "../../atoms/Buttons/PrimaryButton";
@@ -9,7 +9,10 @@ import {
   FiTag,
   FiEdit,
   FiTrash2,
+  FiUser,
+  FiLayers,
 } from "react-icons/fi";
+import bugService from "../../../services/api/bug.service.js";
 
 const statusStyles = {
   open: { bg: "var(--secondary)", text: "var(--primary)" },
@@ -22,38 +25,38 @@ const BugDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  // Mock data (replace with API later)
-  const bug = {
-    id: `BUG-${id}`,
-    title: "Login page crashes on submit",
-    status: "In Progress",
-    priority: "High",
-    severity: "Major",
-    project: "Website Redesign",
-    reportedBy: "Alice",
-    assignedTo: "John Doe",
-    createdAt: "2025-01-10",
-    dueDate: "2025-01-20",
-    description:
-      "When submitting the login form with valid credentials, the application crashes unexpectedly.",
-    steps: [
-      "Go to login page",
-      "Enter valid credentials",
-      "Click submit",
-      "Application crashes",
-    ],
-    activity: [
-      { user: "Alice", action: "created the bug", date: "Jan 10, 2025" },
-      {
-        user: "John",
-        action: "changed status to In Progress",
-        date: "Jan 11, 2025",
-      },
-    ],
-  };
+  const [bug, setBug] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const statusStyle =
-    statusStyles[bug.status.toLowerCase()] || statusStyles.open;
+  /* ================= FETCH BUG ================= */
+  useEffect(() => {
+    const fetchBug = async () => {
+      try {
+        setLoading(true);
+        const res = await bugService.getBugById(id);
+        setBug(res.data);
+      } catch (error) {
+        console.error("Failed to fetch bug:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBug();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-full text-gray-500">
+        Loading bug details...
+      </div>
+    );
+  }
+
+  if (!bug) return null;
+
+  const statusKey = bug.status?.toLowerCase();
+  const statusStyle = statusStyles[statusKey] || statusStyles.open;
 
   return (
     <div className="w-full h-full bg-[var(--accent-light)] p-6 overflow-auto space-y-6">
@@ -63,7 +66,7 @@ const BugDetail = () => {
           <h1 className="text-2xl font-bold text-[var(--primary)]">
             {bug.title}
           </h1>
-          <p className="text-sm text-gray-500">{bug.id}</p>
+          <p className="text-sm text-gray-500">BUG-{bug._id}</p>
         </div>
 
         <div className="flex gap-2">
@@ -82,8 +85,8 @@ const BugDetail = () => {
         </div>
       </div>
 
-      {/* STATUS */}
-      <PressedContainer className="p-4 bg-white rounded-xl border flex flex-wrap gap-4">
+      {/* STATUS & META */}
+      <PressedContainer className="p-4 bg-white rounded-xl border flex flex-wrap gap-6 items-center">
         <span
           className="px-3 py-1 rounded-full text-sm font-semibold"
           style={{ backgroundColor: statusStyle.bg, color: statusStyle.text }}
@@ -98,52 +101,97 @@ const BugDetail = () => {
         <span className="flex items-center gap-1 text-sm">
           <FiAlertCircle /> Severity: <strong>{bug.severity}</strong>
         </span>
+
+        <span className="flex items-center gap-1 text-sm">
+          <FiLayers /> Environment:{" "}
+          <strong>{bug.environment || "N/A"}</strong>
+        </span>
       </PressedContainer>
 
       {/* DETAILS */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <PressedContainer className="p-6 bg-white rounded-xl border space-y-2">
+        {/* BUG INFO */}
+        <PressedContainer className="p-6 bg-white rounded-xl border space-y-3">
           <h2 className="font-semibold text-lg">Bug Info</h2>
-          <p><strong>Project:</strong> {bug.project}</p>
-          <p><strong>Reported By:</strong> {bug.reportedBy}</p>
-          <p><strong>Assigned To:</strong> {bug.assignedTo}</p>
+
+          <p>
+            <strong>Project:</strong> {bug.projectId?.name}
+          </p>
+
+          <p className="flex items-center gap-1">
+            <FiUser />
+            <strong>Reported By:</strong> {bug.reportedBy?.name}
+          </p>
+
+          <p className="flex items-center gap-1">
+            <FiUser />
+            <strong>Assigned To:</strong>{" "}
+            {bug.assignedTo?.name || "Unassigned"}
+          </p>
+
           <p>
             <FiClock className="inline mr-1" />
             <strong>Created:</strong>{" "}
             {new Date(bug.createdAt).toLocaleDateString()}
           </p>
-          <p>
-            <strong>Due:</strong>{" "}
-            {new Date(bug.dueDate).toLocaleDateString()}
-          </p>
+
+          {bug.dueDate && (
+            <p>
+              <strong>Due:</strong>{" "}
+              {new Date(bug.dueDate).toLocaleDateString()}
+            </p>
+          )}
+
+          {bug.estimatedFixTime && (
+            <p>
+              <strong>Estimated Fix Time:</strong> {bug.estimatedFixTime} hrs
+            </p>
+          )}
         </PressedContainer>
 
+        {/* DESCRIPTION */}
         <PressedContainer className="p-6 bg-white rounded-xl border space-y-4">
           <h2 className="font-semibold text-lg">Description</h2>
-          <p className="text-sm">{bug.description}</p>
+          <p className="text-sm">{bug.description || "No description"}</p>
 
-          <ol className="list-decimal list-inside text-sm space-y-1">
-            {bug.steps.map((step, i) => (
-              <li key={i}>{step}</li>
-            ))}
-          </ol>
+          {bug.tags?.length > 0 && (
+            <div className="flex gap-2 flex-wrap">
+              {bug.tags.map((tag, i) => (
+                <span
+                  key={i}
+                  className="px-2 py-1 text-xs rounded bg-gray-200"
+                >
+                  #{tag}
+                </span>
+              ))}
+            </div>
+          )}
         </PressedContainer>
       </div>
 
-      {/* ACTIVITY */}
-      <PressedContainer className="p-6 bg-white rounded-xl border space-y-3">
+      {/* COMMENTS / ACTIVITY */}
+      <PressedContainer className="p-6 bg-white rounded-xl border space-y-4">
         <h2 className="font-semibold text-lg">Activity</h2>
 
-        {bug.activity.map((item, i) => (
-          <div key={i} className="flex gap-3 border-b pb-2 last:border-none">
+        {bug.comments?.length === 0 && (
+          <p className="text-sm text-gray-500">No activity yet</p>
+        )}
+
+        {bug.comments?.map((comment) => (
+          <div
+            key={comment._id}
+            className="flex gap-3 border-b pb-3 last:border-none"
+          >
             <div className="w-8 h-8 rounded-full bg-[var(--primary)] text-white flex items-center justify-center text-sm">
-              {item.user[0]}
+              {comment.user?.name?.[0] || "U"}
             </div>
             <div>
               <p className="text-sm">
-                <strong>{item.user}</strong> {item.action}
+                <strong>{comment.user?.name}</strong> {comment.message}
               </p>
-              <p className="text-xs text-gray-500">{item.date}</p>
+              <p className="text-xs text-gray-500">
+                {new Date(comment.createdAt).toLocaleString()}
+              </p>
             </div>
           </div>
         ))}

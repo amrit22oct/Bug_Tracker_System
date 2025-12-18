@@ -1,10 +1,10 @@
-// BugsTable.jsx
 import React from "react";
 import { Table } from "../../molecules/Table";
 import PrimaryButton from "../../atoms/Buttons/PrimaryButton";
 
 const bugColumns = [
   { key: "title", label: "Bug" },
+  { key: "project", label: "Project", align: "center" }, // ✅ New Project column
   { key: "priority", label: "Priority", align: "center" },
   { key: "status", label: "Status", align: "center" },
   { key: "created", label: "Created", align: "center" },
@@ -32,11 +32,10 @@ const BugsTable = ({ bugs, onView }) => {
       trHoverColor="hover:bg-[var(--secondary)]/20 hover:text-white"
       renderCell={(bug, key) => {
         if (key === "status") {
-          const style =
-            statusStyles[bug.status.toLowerCase()] || {
-              bg: "#ccc",
-              text: "#000",
-            };
+          const style = statusStyles[bug.status?.toLowerCase()] || {
+            bg: "#ccc",
+            text: "#000",
+          };
           return (
             <div className="flex items-center justify-center">
               <span
@@ -53,11 +52,10 @@ const BugsTable = ({ bugs, onView }) => {
         }
 
         if (key === "priority") {
-          const style =
-            priorityStyles[bug.priority.toLowerCase()] || {
-              bg: "#ccc",
-              text: "#000",
-            };
+          const style = priorityStyles[bug.priority?.toLowerCase()] || {
+            bg: "#ccc",
+            text: "#000",
+          };
           return (
             <div className="flex items-center justify-center">
               <span
@@ -85,16 +83,23 @@ const BugsTable = ({ bugs, onView }) => {
           );
         }
 
+        if (key === "project") {
+          return (
+            <span className="text-sm text-[var(--text-primary)] font-medium">
+              {bug.projectId?.name || "N/A"}
+            </span>
+          );
+        }
+
         if (key === "actions") {
           return (
             <div className="flex justify-center">
-             <PrimaryButton
-  title="View"
-  handler={() => onView && onView(bug)}
-  className="px-2 py-1 text-xs min-w-[65px] max-w-[90px] h-[30px] hover:bg-(--primary) hover:text-(--accent-light)"
-  variant="outline"
-/>
-
+              <PrimaryButton
+                title="View"
+                handler={() => onView && onView(bug)}
+                className="px-2 py-1 text-xs min-w-[65px] max-w-[90px] h-[30px] hover:bg-(--primary) hover:text-(--accent-light)"
+                variant="outline"
+              />
             </div>
           );
         }

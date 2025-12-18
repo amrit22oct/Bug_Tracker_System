@@ -13,7 +13,6 @@ import PrimarySearchBar from "../../atoms/Searchbar/PrimarySearchBar.jsx";
 import { FaPlus, FaProjectDiagram, FaBug, FaUsers } from "react-icons/fa";
 import authService from "@/services/api/auth.js";
 
-
 /* 🔎 Generic search helper */
 const matchesSearch = (value, search) =>
   value?.toString().toLowerCase().includes(search.toLowerCase());
@@ -24,23 +23,79 @@ const Dashboard = ({ searchValue = "" }) => {
 
   const currentUser = authService.getCurrentUser();
   const { name, username, role, email } = currentUser; // get name and email too
-  
+
   /* ---------------- DATA ---------------- */
-  const statuses = ["All", "Recent", "Active", "In Progress", "On Hold", "Completed", "Delayed", "Cancelled"];
+  const statuses = [
+    "All",
+    "Recent",
+    "Active",
+    "In Progress",
+    "On Hold",
+    "Completed",
+    "Delayed",
+    "Cancelled",
+  ];
 
   const projects = [
-    { id: 201, name: "Website Redesign", manager: "Alice", status: "Active", progress: 65 },
-    { id: 202, name: "Mobile App", manager: "Bob", status: "Completed", progress: 100 },
-    { id: 203, name: "API Development", manager: "John", status: "In Progress", progress: 40 },
-    { id: 204, name: "CRM Integration", manager: "Alice", status: "On Hold", progress: 20 },
-    { id: 205, name: "Analytics Dashboard", manager: "Bob", status: "Delayed", progress: 50 },
-    { id: 206, name: "Marketing Website", manager: "John", status: "Cancelled", progress: 0 },
-    { id: 207, name: "Support Portal", manager: "Alice", status: "Recent", progress: 10 },
+    {
+      id: 201,
+      name: "Website Redesign",
+      manager: "Alice",
+      status: "Active",
+      progress: 65,
+    },
+    {
+      id: 202,
+      name: "Mobile App",
+      manager: "Bob",
+      status: "Completed",
+      progress: 100,
+    },
+    {
+      id: 203,
+      name: "API Development",
+      manager: "John",
+      status: "In Progress",
+      progress: 40,
+    },
+    {
+      id: 204,
+      name: "CRM Integration",
+      manager: "Alice",
+      status: "On Hold",
+      progress: 20,
+    },
+    {
+      id: 205,
+      name: "Analytics Dashboard",
+      manager: "Bob",
+      status: "Delayed",
+      progress: 50,
+    },
+    {
+      id: 206,
+      name: "Marketing Website",
+      manager: "John",
+      status: "Cancelled",
+      progress: 0,
+    },
+    {
+      id: 207,
+      name: "Support Portal",
+      manager: "Alice",
+      status: "Recent",
+      progress: 10,
+    },
   ];
 
   const bugs = [
     { id: 101, title: "Login page error", priority: "High", status: "Open" },
-    { id: 102, title: "Signup validation", priority: "Medium", status: "In Progress" },
+    {
+      id: 102,
+      title: "Signup validation",
+      priority: "Medium",
+      status: "In Progress",
+    },
     { id: 103, title: "Dashboard slow", priority: "Low", status: "Closed" },
   ];
 
@@ -52,10 +107,46 @@ const Dashboard = ({ searchValue = "" }) => {
   ];
 
   const team = [
-    { name: "Alice", role: "Frontend Developer", progress: 78, projectsAssigned: 3, bugsAssigned: 5, completedTasks: 18, pendingTasks: 4, deadline: "2025-01-20" },
-    { name: "Bob", role: "Backend Developer", progress: 62, projectsAssigned: 4, bugsAssigned: 2, completedTasks: 14, pendingTasks: 6, deadline: "2025-01-25" },
-    { name: "John", role: "API Engineer", progress: 55, projectsAssigned: 2, bugsAssigned: 7, completedTasks: 10, pendingTasks: 5, deadline: "2025-01-18" },
-    { name: "Sarah", role: "QA Engineer", progress: 88, projectsAssigned: 3, bugsAssigned: 9, completedTasks: 22, pendingTasks: 2, deadline: "2025-01-15" },
+    {
+      name: "Alice",
+      role: "Frontend Developer",
+      progress: 78,
+      projectsAssigned: 3,
+      bugsAssigned: 5,
+      completedTasks: 18,
+      pendingTasks: 4,
+      deadline: "2025-01-20",
+    },
+    {
+      name: "Bob",
+      role: "Backend Developer",
+      progress: 62,
+      projectsAssigned: 4,
+      bugsAssigned: 2,
+      completedTasks: 14,
+      pendingTasks: 6,
+      deadline: "2025-01-25",
+    },
+    {
+      name: "John",
+      role: "API Engineer",
+      progress: 55,
+      projectsAssigned: 2,
+      bugsAssigned: 7,
+      completedTasks: 10,
+      pendingTasks: 5,
+      deadline: "2025-01-18",
+    },
+    {
+      name: "Sarah",
+      role: "QA Engineer",
+      progress: 88,
+      projectsAssigned: 3,
+      bugsAssigned: 9,
+      completedTasks: 22,
+      pendingTasks: 2,
+      deadline: "2025-01-15",
+    },
   ];
 
   const notifications = [
@@ -66,8 +157,19 @@ const Dashboard = ({ searchValue = "" }) => {
   ];
 
   const profileActions = [
-    { label: "New Bug", icon: <FaPlus />, variant: "primary", onClick: () => navigate("/add-bug"),  },
-    { label: "New Project", icon: <FaProjectDiagram />, variant: "outline", onClick: () => navigate("/add-project") ,className:"hover:bg-(--primary) hover:text-(--accent-light)" },
+    {
+      label: "New Bug",
+      icon: <FaPlus />,
+      variant: "primary",
+      onClick: () => navigate("/add-bug"),
+    },
+    {
+      label: "New Project",
+      icon: <FaProjectDiagram />,
+      variant: "outline",
+      onClick: () => navigate("/add-project"),
+      className: "hover:bg-(--primary) hover:text-(--accent-light)",
+    },
   ];
 
   /* ---------------- FILTERING ---------------- */
@@ -120,18 +222,17 @@ const Dashboard = ({ searchValue = "" }) => {
   return (
     <div className="h-full w-full p-8 bg-[var(--accent-light)] overflow-auto space-y-10">
       <ProfileHeader
-      name={name || username}   // fallback to username if name is not stored
-      role={role}
-      location="New York"       // static for now
-      email={email || `${username}@example.com`} // fallback if email not stored
-      stats={[
-        { label: "Projects", value: 12, icon: <FaProjectDiagram /> },
-        { label: "Open Bugs", value: 7, icon: <FaBug /> },
-        { label: "Team Members", value: 4, icon: <FaUsers /> },
-      ]}
-      actions={profileActions}
-    />
-
+        name={name || username} // fallback to username if name is not stored
+        role={role}
+        location="New York" // static for now
+        email={email || `${username}@example.com`} // fallback if email not stored
+        stats={[
+          { label: "Projects", value: 12, icon: <FaProjectDiagram /> },
+          { label: "Open Bugs", value: 7, icon: <FaBug /> },
+          { label: "Team Members", value: 4, icon: <FaUsers /> },
+        ]}
+        actions={profileActions}
+      />
 
       <StatsCards />
       <BugsTable bugs={filteredBugs} />

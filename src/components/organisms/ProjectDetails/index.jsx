@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import HeaderContent from "../../templates/AppHeader/HeaderContent.jsx";
 import PrimaryButton from "../../atoms/Buttons/PrimaryButton";
@@ -10,6 +10,8 @@ import {
   FiAlertTriangle,
   FiArrowLeft,
 } from "react-icons/fi";
+
+import projectService from "../../../services/api/project.service.js";
 
 const statusStyles = {
   active: { bg: "var(--primary)", text: "var(--accent-light)" },
@@ -23,28 +25,37 @@ const ProjectDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  /* Mock Data (replace with API later) */
-  const project = {
-    id: `PRJ-${id}`,
-    name: `Project ${id}`,
-    manager: "Alice",
-    status: "In Progress",
-    progress: 68,
-    startDate: "2025-01-01",
-    deadline: "2025-12-20",
-    description:
-      "This project focuses on delivering a modern, scalable platform with improved performance and UX.",
-    team: ["Alice", "Bob", "John", "Sarah"],
-    milestones: [
-      { title: "Planning", done: true },
-      { title: "Design", done: true },
-      { title: "Development", done: false },
-      { title: "Testing", done: false },
-    ],
-  };
+  const [project, setProject] = useState(null);
+
+  /* ================= FETCH PROJECT ================= */
+  useEffect(() => {
+    const fetchProject = async () => {
+      try {
+        const response = await projectService.getProjectById(id);
+
+        // ✅ Console log backend response
+        console.log("📦 Project Detail API Response:", response);
+
+        // ⚠️ Using backend response directly (NO UI CHANGES)
+        setProject(response.data);
+      } catch (error) {
+        console.error("❌ Failed to fetch project:", error);
+      }
+    };
+
+    fetchProject();
+  }, [id]);
+
+  if (!project) {
+    return (
+      <div className="w-full h-full bg-[var(--accent-light)] p-6">
+        Loading...
+      </div>
+    );
+  }
 
   const statusStyle =
-    statusStyles[project.status.toLowerCase()] || statusStyles.active;
+    statusStyles[project.status?.toLowerCase()] || statusStyles.active;
 
   return (
     <div className="w-full h-full bg-[var(--accent-light)] p-6 overflow-auto space-y-6">
@@ -106,7 +117,7 @@ const ProjectDetail = () => {
           </p>
 
           <p>
-            <strong>Team:</strong> {project.team.join(", ")}
+            <strong>Team:</strong> {project.team?.join(", ")}
           </p>
         </PressedContainer>
 
@@ -128,11 +139,8 @@ const ProjectDetail = () => {
         </h2>
 
         <ul className="space-y-2">
-          {project.milestones.map((m, i) => (
-            <li
-              key={i}
-              className="flex items-center gap-2 text-sm"
-            >
+          {project.milestones?.map((m, i) => (
+            <li key={i} className="flex items-center gap-2 text-sm">
               <span
                 className={`w-3 h-3 rounded-full ${
                   m.done ? "bg-green-500" : "bg-gray-300"

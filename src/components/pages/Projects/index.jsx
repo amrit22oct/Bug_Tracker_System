@@ -6,40 +6,56 @@ import PrimaryButton from "../../atoms/Buttons/PrimaryButton";
 import HeaderContent from "../../templates/AppHeader/HeaderContent.jsx";
 import PrimarySearchBar from "../../atoms/Searchbar/PrimarySearchBar.jsx";
 
+import projectService from "../../../services/api/project.service.js";
+
 const ProjectsPage = ({ searchValue }) => {
+  const [projects, setProjects] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
 
-const handleViewProject = (project) => {
-  navigate(`/view-project-detail/${project.id}`);
-};
+  /* ================= VIEW ================= */
+  const handleViewProject = (project) => {
+    navigate(`/view-project-detail/${project.id}`);
+  };
 
+  /* ================= API CALL ================= */
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const res = await projectService.getAllProjects();
 
-  /* ---------------- DATA ---------------- */
-  const allProjects = Array.from({ length: 27 }, (_, i) => ({
-    id: i + 1,
-    name: `Project ${i + 1}`,
-    manager: ["Alice", "Bob", "John"][i % 3],
-    deadline: `2025-12-${(i % 28) + 1}`,
-    progress: (i * 7) % 100,
-    status: [
-      "Active",
-      "In Progress",
-      "Completed",
-      "Delayed",
-      "OnHold",
-    ][i % 5],
-  }));
+        // 🔥 LOG FULL RESPONSE
+        console.log("📦 Projects API response:", res);
 
-  /* ---------------- SEARCH ---------------- */
-  const filteredProjects = allProjects.filter(
+        const normalizedProjects = (res.data || []).map((project) => ({
+          id: project._id,
+          name: project.name,
+          manager: project.manager?.name || "N/A",
+          deadline: project.endDate || project.createdAt,
+          progress: project.progressPercentage || 0,
+          status: project.status,
+        }));
+
+        console.log("✅ Normalized Projects:", normalizedProjects);
+
+        setProjects(normalizedProjects);
+      } catch (error) {
+        console.error("❌ Failed to fetch projects:", error);
+      }
+    };
+
+    fetchProjects();
+  }, []);
+
+  /* ================= SEARCH ================= */
+  const filteredProjects = projects.filter(
     (p) =>
       p.name.toLowerCase().includes(searchValue.toLowerCase()) ||
       p.manager.toLowerCase().includes(searchValue.toLowerCase()) ||
       p.status.toLowerCase().includes(searchValue.toLowerCase())
   );
 
-  /* ---------------- PAGINATION ---------------- */
+  /* ================= PAGINATION ================= */
   const ITEMS_PER_PAGE = 10;
   const totalPages = Math.max(
     1,
@@ -47,9 +63,7 @@ const handleViewProject = (project) => {
   );
 
   useEffect(() => {
-    if (currentPage > totalPages) {
-      setCurrentPage(1);
-    }
+    if (currentPage > totalPages) setCurrentPage(1);
   }, [currentPage, totalPages]);
 
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -60,14 +74,13 @@ const handleViewProject = (project) => {
 
   return (
     <div className="w-full h-full p-4 bg-[var(--accent-light)]/60 flex flex-col gap-4 overflow-auto">
-      {/* Table */}
+      {/* TABLE */}
       <ProjectsTable
-  projects={currentProjects}
-  onView={handleViewProject}
-/>
+        projects={currentProjects}
+        onView={handleViewProject}
+      />
 
-
-      {/* Pagination */}
+      {/* PAGINATION */}
       <div className="flex justify-end">
         <div className="max-w-[420px] w-full flex justify-end items-center gap-2">
           <PrimaryButton
@@ -105,7 +118,7 @@ const handleViewProject = (project) => {
   );
 };
 
-/* ✅ HEADER */
+/* ================= HEADER ================= */
 ProjectsPage.header = ({ searchValue, setSearchValue }) => (
   <HeaderContent
     title="Projects"
