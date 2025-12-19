@@ -42,69 +42,78 @@ const BugReportTable = ({ bugs, onView }) => {
       thColor="from-[var(--primary)] to-[var(--primary-hover)]"
       trHoverColor="hover:bg-[var(--secondary)]/20"
       renderCell={(report, key) => {
-        const bug = report.bugId || report;
-
         switch (key) {
           case "title":
-            return <span>{bug.title || "N/A"}</span>;
+            return <span>{report.title}</span>;
 
-            case "project":
-               return <span>{report.projectId?.name || "N/A"}</span>;
-             
+          case "project":
+            return <span>{report.projectId?.name || "N/A"}</span>;
+
           case "reportedBy":
-            return <span>{bug.reportedBy?.name || report.reportedBy?.name || "N/A"}</span>;
+            return <span>{report.reportedBy?.name || "N/A"}</span>;
 
           case "priority": {
-            const val = report.priority || bug.priority || "N/A";
-            const style = priorityStyles[val?.toLowerCase()] || { bg: "#ccc", text: "#000" };
+            const val = report.priority;
+            const style =
+              priorityStyles[val?.toLowerCase()] || { bg: "#ccc", text: "#000" };
             return (
-              <span className="px-2 py-1 rounded-full text-xs font-semibold" style={{ backgroundColor: style.bg, color: style.text }}>
+              <span
+                className="px-2 py-1 rounded-full text-xs font-semibold"
+                style={{ backgroundColor: style.bg, color: style.text }}
+              >
                 {val}
               </span>
             );
           }
 
           case "severity": {
-            const val = bug.severity || report.severity || "N/A";
-            const style = severityStyles[val?.toLowerCase()] || { bg: "#ccc", text: "#000" };
+            const val = report.severity;
+            const style =
+              severityStyles[val?.toLowerCase()] || { bg: "#ccc", text: "#000" };
             return (
-              <span className="px-2 py-1 rounded-full text-xs font-semibold" style={{ backgroundColor: style.bg, color: style.text }}>
+              <span
+                className="px-2 py-1 rounded-full text-xs font-semibold"
+                style={{ backgroundColor: style.bg, color: style.text }}
+              >
                 {val}
               </span>
             );
           }
 
           case "status": {
-            const val = report.status || bug.status || "N/A";
-            const style = statusStyles[val?.toLowerCase()] || { bg: "#ccc", text: "#000" };
+            const val = report.status;
+            const style =
+              statusStyles[val?.toLowerCase()] || { bg: "#ccc", text: "#000" };
             return (
-              <span className="px-2 py-1 rounded-full text-xs font-semibold" style={{ backgroundColor: style.bg, color: style.text }}>
+              <span
+                className="px-2 py-1 rounded-full text-xs font-semibold"
+                style={{ backgroundColor: style.bg, color: style.text }}
+              >
                 {val}
               </span>
             );
           }
 
-          case "tags": {
-            const tags = bug.tags || [];
-            return (
+          case "tags":
+            return report.tags.length > 0 ? (
               <div className="flex gap-1 justify-center flex-wrap">
-                {tags.length > 0
-                  ? tags.map((tag, i) => (
-                      <span key={i} className="px-2 py-0.5 text-[10px] rounded bg-gray-200">
-                        #{tag}
-                      </span>
-                    ))
-                  : <span className="text-gray-400 text-xs">N/A</span>
-                }
+                {report.tags.map((tag, i) => (
+                  <span
+                    key={i}
+                    className="px-2 py-0.5 text-[10px] rounded bg-gray-200"
+                  >
+                    #{tag}
+                  </span>
+                ))}
               </div>
+            ) : (
+              <span className="text-gray-400 text-xs">N/A</span>
             );
-          }
 
-          case "attachments": {
-            const attachments = bug.attachments || [];
-            return attachments.length > 0 ? (
+          case "attachments":
+            return report.attachments.length > 0 ? (
               <div className="flex flex-col gap-1 items-center">
-                {attachments.map((att) => (
+                {report.attachments.map((att) => (
                   <a
                     key={att._id}
                     href={att.fileUrl}
@@ -119,10 +128,13 @@ const BugReportTable = ({ bugs, onView }) => {
             ) : (
               <span className="text-gray-400 text-xs">N/A</span>
             );
-          }
 
           case "createdAt":
-            return <span>{new Date(bug.createdAt || report.createdAt).toLocaleDateString()}</span>;
+            return (
+              <span>
+                {new Date(report.createdAt).toLocaleDateString()}
+              </span>
+            );
 
           case "actions":
             return (
@@ -130,7 +142,7 @@ const BugReportTable = ({ bugs, onView }) => {
                 title="View"
                 variant="outline"
                 className="px-2 py-1 text-xs h-[30px]"
-                handler={() => onView?.(report)}
+                handler={() => onView(report)}
               />
             );
 
