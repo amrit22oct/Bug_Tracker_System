@@ -12,6 +12,8 @@ import AddBug from "@/components/organisms/AddBug";
 import AddProject from "@/components/organisms/AddProject";
 import BugDetail from "@/components/organisms/BugDetail";
 import ProjectDetail from "@/components/organisms/ProjectDetails";
+import { BugReportPage } from "../../components/pages";
+import BugReportDetail from "../../components/BugReportDetail";
 
 export const routes = [
   // ---------------- DASHBOARD ----------------
@@ -45,6 +47,20 @@ export const routes = [
     id: "BugDetail",
     path: "/view-bug-detail/:id",
     component: <BugDetail />,
+    protectedRoute: true,
+    allowedRoles: ["Developer", "QA", "ProjectManager", "Admin"],
+  },
+  {
+    id: "BugReport",
+    path: "/bug-report",
+    component: <BugReportPage />,
+    protectedRoute: true,
+    allowedRoles: ["Developer", "QA", "ProjectManager", "Admin"],
+  },
+  {
+    id: "BugDetail",
+    path: "/view-report-detail/:id",
+    component: <BugReportDetail />,
     protectedRoute: true,
     allowedRoles: ["Developer", "QA", "ProjectManager", "Admin"],
   },

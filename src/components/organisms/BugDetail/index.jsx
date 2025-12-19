@@ -102,9 +102,14 @@ const BugDetail = () => {
           <FiAlertCircle /> Severity: <strong>{bug.severity}</strong>
         </span>
 
+        {/* ✅ FIXED ENVIRONMENT RENDERING */}
         <span className="flex items-center gap-1 text-sm">
-          <FiLayers /> Environment:{" "}
-          <strong>{bug.environment || "N/A"}</strong>
+          <FiLayers /> Environment:
+          <strong>
+            {bug.environment
+              ? `${bug.environment.os} / ${bug.environment.browser}`
+              : " N/A"}
+          </strong>
         </span>
       </PressedContainer>
 
