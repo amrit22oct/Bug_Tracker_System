@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, lazy, Suspense  } from "react";
 import { useNavigate } from "react-router-dom";
-import BugsTable from "../../organisms/Test/BugTable.jsx";
+
 import PrimaryButton from "../../atoms/Buttons/PrimaryButton";
 import HeaderContent from "../../templates/AppHeader/HeaderContent.jsx";
 import PrimarySearchBar from "../../atoms/Searchbar/PrimarySearchBar.jsx";
 import bugService from "../../../services/api/bug.service.js";
+import TableSkeleton from "../../Skleton/TableSkeleton.jsx";
+
+const BugsTable = lazy(() => import ("../../organisms/Test/BugTable.jsx"))
 
 const BugPage = ({ searchValue }) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -71,13 +74,14 @@ const BugPage = ({ searchValue }) => {
 
   return (
     <div className="w-full h-full p-4 bg-[var(--accent-light)]/60 flex flex-col gap-4 overflow-auto">
-      {loading ? (
-        <div className="flex justify-center items-center h-40 text-sm text-gray-500">
-          Loading bugs...
-        </div>
-      ) : (
+      {/* TABLE */}
+      <Suspense fallback={<TableSkeleton rows={ITEMS_PER_PAGE} />}>
+        {loading ? (
+          <TableSkeleton rows={ITEMS_PER_PAGE} />
+        ) : (
         <BugsTable bugs={currentBugs} onView={handleViewBug} />
       )}
+      </Suspense>
 
       {/* Pagination */}
       <div className="flex justify-end">

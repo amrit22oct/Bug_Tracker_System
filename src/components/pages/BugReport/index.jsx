@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, lazy, Suspense } from "react";
 import { useNavigate } from "react-router-dom";
-import BugReportTable from "../../organisms/Test/BugReportTable.jsx";
 import PrimaryButton from "../../atoms/Buttons/PrimaryButton";
 import HeaderContent from "../../templates/AppHeader/HeaderContent.jsx";
 import PrimarySearchBar from "../../atoms/Searchbar/PrimarySearchBar.jsx";
 import bugReportService from "../../../services/api/bugReportService.js";
+import TableSkeleton from "../../Skleton/TableSkeleton.jsx";
+
+const BugReportTable = lazy(() => import("../../organisms/Test/BugReportTable.jsx"));
 
 const BugReportPage = ({ searchValue = "", setSearchValue }) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -66,14 +68,14 @@ const BugReportPage = ({ searchValue = "", setSearchValue }) => {
 
   return (
     <div className="w-full h-full p-4 bg-[var(--accent-light)]/60 flex flex-col gap-4 overflow-auto">
-      {loading ? (
-        <div className="flex justify-center items-center h-40 text-sm text-gray-500">
-          Loading bug reports...
-        </div>
-      ) : (
+      <Suspense fallback={<TableSkeleton rows={ITEMS_PER_PAGE} />}>
+        {loading ? (
+          <TableSkeleton rows={ITEMS_PER_PAGE} />
+        )  : (
         <BugReportTable bugs={currentBugs} onView={handleViewBug} />
       )}
-
+      </Suspense>
+      
       <div className="flex justify-end">
         <div className="max-w-[400px] w-full flex justify-end items-center gap-2">
           <PrimaryButton
