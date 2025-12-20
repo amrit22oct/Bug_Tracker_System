@@ -1,11 +1,19 @@
-import React, { useState, useEffect } from "react";
-import ReportsTable from "../../organisms/Test/ReportsTable.jsx";
+import React, { useState, useEffect, lazy, Suspense } from "react";
+import { useNavigate } from "react-router-dom";
 import PrimaryButton from "../../atoms/Buttons/PrimaryButton";
 import HeaderContent from "../../templates/AppHeader/HeaderContent.jsx";
 import PrimarySearchBar from "../../atoms/Searchbar/PrimarySearchBar.jsx";
+import TableSkeleton from "../../Skleton/TableSkeleton.jsx";
+import { FaPlus, FaProjectDiagram, FaBug, FaUsers } from "react-icons/fa";
+
+const ReportsTable = lazy(() =>
+  import("../../organisms/Test/ReportsTable.jsx")
+);
 
 const ReportsPage = ({ searchValue }) => {
   const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   /* ---------------- DATA ---------------- */
   const allReports = Array.from({ length: 24 }, (_, i) => ({
@@ -45,8 +53,28 @@ const ReportsPage = ({ searchValue }) => {
 
   return (
     <div className="w-full h-full p-4 bg-[var(--accent-light)]/60 flex flex-col gap-4 overflow-auto">
-      {/* Table */}
-      <ReportsTable reports={currentReports} />
+
+       {/* Action Buttons */}
+       <div className="flex justify-end">
+        <div className="flex gap-2">
+          <PrimaryButton title="Edit" variant="outline" icon={FaPlus} className=" min-w-[120px] h-8 text-xs  hover:bg-(--primary) hover:text-(--accent-light)"  handler={() => navigate("/add-project")}  />
+         
+          <PrimaryButton
+            title="Back"
+            variant="outline"
+            className=" min-w-[120px] h-8 text-xs  hover:bg-(--primary) hover:text-(--accent-light)"
+            handler={() => navigate(-1)}
+          />
+        </div>
+      </div> 
+      {/* TABLE */}
+      <Suspense fallback={<TableSkeleton rows={ITEMS_PER_PAGE} />}>
+        {loading ? (
+          <TableSkeleton rows={ITEMS_PER_PAGE} />
+        ) : (
+          <ReportsTable reports={currentReports} />
+        )}
+      </Suspense>
 
       {/* Pagination */}
       <div className="flex justify-end">

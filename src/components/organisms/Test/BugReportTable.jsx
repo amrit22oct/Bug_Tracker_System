@@ -9,8 +9,8 @@ const columns = [
   { key: "priority", label: "Priority", align: "center" },
   { key: "severity", label: "Severity", align: "center" },
   { key: "status", label: "Status", align: "center" },
-  { key: "tags", label: "Tags", align: "center" },
-  { key: "attachments", label: "Attachments", align: "center" },
+  // { key: "tags", label: "Tags", align: "center" },
+  // { key: "attachments", label: "Attachments", align: "center" },
   { key: "createdAt", label: "Created", align: "center" },
   { key: "actions", label: "Actions", align: "center" },
 ];
@@ -141,7 +141,7 @@ const BugReportTable = ({ bugs, onView }) => {
               <PrimaryButton
                 title="View"
                 variant="outline"
-                className="px-2 py-1 text-xs h-[30px]"
+                className="px-2 py-1 text-xs h-[30px] hover:bg-(--primary) hover:text-(--accent-light)"
                 handler={() => onView(report)}
               />
             );

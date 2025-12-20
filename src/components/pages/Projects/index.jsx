@@ -7,6 +7,7 @@ import PrimarySearchBar from "../../atoms/Searchbar/PrimarySearchBar.jsx";
 
 import projectService from "../../../services/api/project.service.js";
 import TableSkeleton from "../../Skleton/TableSkeleton.jsx";
+import { FaPlus, FaProjectDiagram, FaBug, FaUsers } from "react-icons/fa";
 
 // ✅ Lazy-load table
 const ProjectsTable = lazy(() =>
@@ -82,6 +83,21 @@ const ProjectsPage = ({ searchValue }) => {
 
   return (
     <div className="w-full h-full p-4 bg-[var(--accent-light)]/60 flex flex-col gap-4 overflow-auto">
+
+        {/* Action Buttons */}
+        <div className="flex justify-end">
+        <div className="flex gap-2">
+          <PrimaryButton title="Edit" variant="outline" icon={FaPlus} className=" min-w-[120px] h-8 text-xs  hover:bg-(--primary) hover:text-(--accent-light)"  handler={() => navigate("/add-project")}  />
+         
+          <PrimaryButton
+            title="Back"
+            variant="outline"
+            className=" min-w-[120px] h-8 text-xs  hover:bg-(--primary) hover:text-(--accent-light)"
+            handler={() => navigate(-1)}
+          />
+        </div>
+      </div>
+       
       {/* TABLE */}
       <Suspense fallback={<TableSkeleton rows={ITEMS_PER_PAGE} />}>
         {loading ? (

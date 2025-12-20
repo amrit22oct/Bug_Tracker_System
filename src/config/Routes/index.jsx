@@ -104,6 +104,8 @@ export const routes = [
     allowedRoles: ["ProjectManager", "Admin"],
   },
 
+
+
   // ---------------- SETTINGS ----------------
   {
     id: "Settings",
