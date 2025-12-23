@@ -4,7 +4,7 @@ const bugService = {
   /* ================= CREATE BUG ================= */
   createBug: async (bugData) => {
     const response = await api.post(
-      "/admin/bug/create-bug", // ✅ correct
+      "/admin/bug/create-bug-report", // ✅ correct
       bugData
     );
     return response.data;

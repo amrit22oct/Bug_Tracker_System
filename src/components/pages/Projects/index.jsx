@@ -39,6 +39,7 @@ const ProjectsPage = ({ searchValue }) => {
           deadline: project.endDate || project.createdAt,
           progress: project.progressPercentage || 0,
           status: project.status || "Unknown",
+          priority: project.priority,
         }));
 
         setProjects(normalizedProjects);

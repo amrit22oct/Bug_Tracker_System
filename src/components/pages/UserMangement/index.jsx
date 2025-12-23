@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import HeaderContent from "../../templates/AppHeader/HeaderContent.jsx";
 import PrimarySearchBar from "../../atoms/Searchbar/PrimarySearchBar.jsx";
 import {
@@ -10,6 +10,9 @@ import {
   FaLayerGroup,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+
+import teamService from "../../../services/api/team.service.js";
+import projectService from "../../../services/api/project.service.js";
 
 /* 🔎 search helper */
 const matchesSearch = (value, search) =>
@@ -28,72 +31,43 @@ const Users = ({ searchValue = "" }) => {
   const [priority, setPriority] = useState("Medium");
   const [deadline, setDeadline] = useState("");
 
-  /* ---------------- DATA ---------------- */
+  const [teams, setTeams] = useState([]);
+  const [projects, setProjects] = useState([]);
+  const [users, setUsers] = useState([]); // hook for future user API
+  const [loading, setLoading] = useState(false);
+
+  const [activeTeamId, setActiveTeamId] = useState(null);
+  const [selectedProjectId, setSelectedProjectId] = useState("");
+
+  /* ---------------- STATIC ROLES ---------------- */
   const roles = ["All", "Admin", "Team Leader", "Developer"];
 
-  const teams = [
-    {
-      id: 1,
-      name: "Frontend Team",
-      leader: "Alice Johnson",
-      members: ["Bob Smith", "Sarah Lee"],
-    },
-    {
-      id: 2,
-      name: "Backend Team",
-      leader: "John Doe",
-      members: ["Bob Smith"],
-    },
-    {
-      id: 3,
-      name: "Androide Team",
-      leader: "John Doe",
-      members: ["Bob Smith"],
-    },
-    {
-      id: 4,
-      name: "Ios Team",
-      leader: "John Doe",
-      members: ["Bob Smith"],
-    },
-  ];
+  /* ---------------- FETCH DATA ---------------- */
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
 
-  const users = [
-    {
-      id: 1,
-      name: "Alice Johnson",
-      username: "alice",
-      email: "alice@example.com",
-      role: "Team Leader",
-      status: "Active",
-    },
-    {
-      id: 2,
-      name: "Bob Smith",
-      username: "bob",
-      email: "bob@example.com",
-      role: "Developer",
-      status: "Active",
-    },
-    {
-      id: 3,
-      name: "John Doe",
-      username: "john",
-      email: "john@example.com",
-      role: "Admin",
-      status: "Active",
-    },
-    {
-      id: 4,
-      name: "Sarah Lee",
-      username: "sarah",
-      email: "sarah@example.com",
-      role: "Developer",
-      status: "Inactive",
-    },
-  ];
+        const teamsRes = await teamService.getAllTeams();
+        const projectsRes = await projectService.getAllProjects();
 
-  /* ---------------- FILTERING ---------------- */
+        setTeams(teamsRes.data || teamsRes);
+        setProjects(projectsRes.data || projectsRes);
+
+        // Placeholder for future user API
+        // setUsers(usersRes.data);
+
+      } catch (error) {
+        console.error("Failed to load data", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  /* ---------------- FILTER USERS ---------------- */
   const search = searchValue.trim().toLowerCase();
 
   const filteredUsers = useMemo(() => {
@@ -113,6 +87,66 @@ const Users = ({ searchValue = "" }) => {
     );
   }, [users, selectedRole, search]);
 
+  /* ---------------- ASSIGN PROJECT TO TEAM ---------------- */
+  const handleAssignProjectToTeam = async (teamId) => {
+    if (!selectedProjectId) {
+      alert("Please select a project");
+      return;
+    }
+
+    try {
+      const res = await teamService.assignProjectToTeam(teamId, selectedProjectId);
+      alert("Project assigned successfully");
+
+      // update the teams state immediately
+      setTeams((prev) =>
+        prev.map((team) =>
+          team._id === teamId
+            ? { ...team, projects: [...(team.projects || []), res.data] }
+            : team
+        )
+      );
+
+      setActiveTeamId(null);
+      setSelectedProjectId("");
+    } catch (error) {
+      alert(error.response?.data?.message || "Assignment failed");
+    }
+  };
+
+  /* ---------------- ASSIGN PROJECT (USERS PANEL) ---------------- */
+  const handleAssignProject = async () => {
+    if (!assignTeam || !assignItem) {
+      alert("Please select both team and project");
+      return;
+    }
+
+    try {
+      const res = await teamService.assignProjectToTeam(assignTeam, assignItem);
+      alert("Project assigned successfully");
+
+      setAssignItem("");
+      setAssignTeam("");
+      setExpandedUserId(null);
+
+      // update the teams state immediately
+      setTeams((prev) =>
+        prev.map((team) =>
+          team._id === assignTeam
+            ? { ...team, projects: [...(team.projects || []), res.data] }
+            : team
+        )
+      );
+    } catch (error) {
+      alert(error.response?.data?.message || "Assignment failed");
+    }
+  };
+
+  /* ---------------- LOADING ---------------- */
+  if (loading) {
+    return <div className="p-10">Loading...</div>;
+  }
+
   /* ---------------- UI ---------------- */
   return (
     <div className="h-full w-full p-8 bg-[var(--accent-light)] space-y-10 overflow-auto">
@@ -126,7 +160,7 @@ const Users = ({ searchValue = "" }) => {
 
           <button
             onClick={() => navigate("/add-user")}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--primary)] text-(--accent-light)"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--primary)] text-white"
           >
             <FaUserPlus /> Add User
           </button>
@@ -139,7 +173,7 @@ const Users = ({ searchValue = "" }) => {
               onClick={() => setSelectedRole(role)}
               className={`px-4 py-2 rounded-2xl ${
                 selectedRole === role
-                  ? "bg-[var(--primary)] text-(--accent-light)"
+                  ? "bg-[var(--primary)] text-white"
                   : "border"
               }`}
             >
@@ -161,7 +195,7 @@ const Users = ({ searchValue = "" }) => {
 
             <tbody>
               {filteredUsers.map((user) => (
-                <React.Fragment key={user.id}>
+                <React.Fragment key={user._id}>
                   <tr className="border-t">
                     <td className="p-4">{user.name}</td>
                     <td className="p-4 flex gap-2 items-center">
@@ -174,7 +208,7 @@ const Users = ({ searchValue = "" }) => {
                       <button
                         onClick={() =>
                           setExpandedUserId(
-                            expandedUserId === user.id ? null : user.id
+                            expandedUserId === user._id ? null : user._id
                           )
                         }
                         className="text-blue-600"
@@ -184,8 +218,7 @@ const Users = ({ searchValue = "" }) => {
                     </td>
                   </tr>
 
-                  {/* ASSIGNMENT PANEL */}
-                  {expandedUserId === user.id && (
+                  {expandedUserId === user._id && (
                     <tr className="bg-gray-50">
                       <td colSpan="4" className="p-4">
                         <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
@@ -195,7 +228,6 @@ const Users = ({ searchValue = "" }) => {
                             className="border p-2 rounded"
                           >
                             <option>Project</option>
-                            <option>Bug</option>
                           </select>
 
                           <select
@@ -203,9 +235,12 @@ const Users = ({ searchValue = "" }) => {
                             onChange={(e) => setAssignItem(e.target.value)}
                             className="border p-2 rounded"
                           >
-                            <option value="">Select</option>
-                            <option>{assignType} A</option>
-                            <option>{assignType} B</option>
+                            <option value="">Select Project</option>
+                            {projects.map((p) => (
+                              <option key={p._id} value={p._id}>
+                                {p.name}
+                              </option>
+                            ))}
                           </select>
 
                           <select
@@ -215,7 +250,9 @@ const Users = ({ searchValue = "" }) => {
                           >
                             <option value="">Team</option>
                             {teams.map((t) => (
-                              <option key={t.id}>{t.name}</option>
+                              <option key={t._id} value={t._id}>
+                                {t.name}
+                              </option>
                             ))}
                           </select>
 
@@ -237,6 +274,15 @@ const Users = ({ searchValue = "" }) => {
                             className="border p-2 rounded"
                           />
                         </div>
+
+                        <div className="flex justify-end mt-4">
+                          <button
+                            onClick={handleAssignProject}
+                            className="bg-[var(--primary)] text-white px-6 py-2 rounded-xl"
+                          >
+                            Assign
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   )}
@@ -256,21 +302,78 @@ const Users = ({ searchValue = "" }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {teams.map((team) => (
             <div
-              key={team.id}
+              key={team._id}
               className="bg-white rounded-2xl shadow p-4 space-y-2"
             >
               <h3 className="font-semibold">{team.name}</h3>
+
               <p>
-                <b>Leader:</b> {team.leader}
-              </p>
-              <p>
-                <b>Members:</b> {team.members.join(", ")}
+                <b>Leader:</b> {team.lead?.name || "Not assigned"}
               </p>
 
-              <div className="flex gap-2 pt-2">
-                <button className="text-sm text-blue-600">
-                  Assign Leader
+              <p>
+                <b>Projects:</b>
+                {team.projects && team.projects.length > 0 ? (
+                  <ul className="list-disc list-inside mt-1">
+                    {team.projects.map((project) => (
+                      <li
+                        key={project._id}
+                        className="flex items-center justify-between"
+                      >
+                        <span>{project.name}</span>
+                        <button
+                          onClick={() =>
+                            window.location.href = `http://localhost:3001/view-project-detail/${project._id}`
+                          }
+                          className="text-sm text-blue-600 ml-2"
+                        >
+                          View
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <span className="ml-1">Not assigned</span>
+                )}
+              </p>
+
+              {/* ASSIGN PROJECT */}
+              <div className="pt-3 space-y-2">
+                <button
+                  onClick={() =>
+                    setActiveTeamId(activeTeamId === team._id ? null : team._id)
+                  }
+                  className="text-sm text-blue-600"
+                >
+                  Assign Project
                 </button>
+
+                {activeTeamId === team._id && (
+                  <div className="flex gap-2 mt-2">
+                    <select
+                      value={selectedProjectId}
+                      onChange={(e) => setSelectedProjectId(e.target.value)}
+                      className="border p-2 rounded w-full"
+                    >
+                      <option value="">Select Project</option>
+                      {projects.map((p) => (
+                        <option key={p._id} value={p._id}>
+                          {p.name}
+                        </option>
+                      ))}
+                    </select>
+
+                    <button
+                      onClick={() => handleAssignProjectToTeam(team._id)}
+                      className="bg-[var(--primary)] text-white px-4 rounded-xl"
+                    >
+                      Assign
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex gap-2 pt-2">
                 <button className="text-sm text-purple-600">
                   Add Member
                 </button>

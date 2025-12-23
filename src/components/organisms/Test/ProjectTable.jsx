@@ -8,6 +8,7 @@ import { FaProjectDiagram } from "react-icons/fa";
 const projectColumns = [
   { key: "name", label: "Project" },
   { key: "manager", label: "Manager", align: "center" },
+  { key: "priority", label: "Priority", align: "center" }, // ✅ NEW
   { key: "deadline", label: "Deadline", align: "center" },
   { key: "progress", label: "Progress", align: "center" },
   { key: "status", label: "Status", align: "center" },
@@ -24,6 +25,14 @@ const statusStyles = {
   "on hold": { bg: "#fbbf24", text: "var(--primary)" },
   delayed: { bg: "#f87171", text: "var(--primary)" },
   cancelled: { bg: "var(--background)", text: "var(--primary)" },
+};
+
+/* ================= PRIORITY STYLES ================= */
+const priorityStyles = {
+  low: { bg: "#d1fae5", text: "#065f46" },
+  medium: { bg: "#fef3c7", text: "#92400e" },
+  high: { bg: "#fee2e2", text: "#991b1b" },
+  critical: { bg: "#7f1d1d", text: "#ffffff" },
 };
 
 /* ================= TABLE ================= */
@@ -63,6 +72,31 @@ const ProjectsTable = ({ projects = [], onView }) => {
             <span className="text-sm text-[var(--text-primary)] font-medium">
               {managerName}
             </span>
+          );
+        }
+
+        /* ================= PRIORITY ================= */
+        if (key === "priority") {
+          const rawPriority = project.priority || "Low";
+          const priorityKey = rawPriority.toLowerCase();
+          const style =
+            priorityStyles[priorityKey] || {
+              bg: "#e5e7eb",
+              text: "#111827",
+            };
+
+          return (
+            <div className="flex items-center justify-center">
+              <span
+                className="px-2 py-1 rounded-full text-xs font-semibold shadow-sm"
+                style={{
+                  backgroundColor: style.bg,
+                  color: style.text,
+                }}
+              >
+                {rawPriority}
+              </span>
+            </div>
           );
         }
 

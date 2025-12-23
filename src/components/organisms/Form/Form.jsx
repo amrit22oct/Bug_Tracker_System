@@ -27,17 +27,14 @@ export default function Form({
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="w-full  mx-auto space-y-10 "
-    >
+    <form onSubmit={handleSubmit} className="w-full mx-auto space-y-10">
       {/* HEADER */}
-      <div className="bg-(--primary) rounded-2xl border shadow-sm p-8 text-center ">
+      <div className="bg-(--primary) rounded-2xl border shadow-sm p-8 text-center">
         <h1 className="text-3xl font-bold text-(--accent-light)">
           {title}
         </h1>
         <p className="text-(--accent-light) mt-2">
-        { ` Fill in the information below to create a new ${title}`}
+          {`Fill in the information below to create a new ${title}`}
         </p>
       </div>
 
@@ -45,7 +42,6 @@ export default function Form({
       <div className="bg-(--accent-light) rounded-2xl border shadow-lg p-8 space-y-12">
         {sections.map((section, index) => (
           <div key={section.title}>
-            {/* Section Header */}
             <div className="mb-6">
               <h2 className="text-lg font-semibold text-gray-900">
                 {section.title}
@@ -55,30 +51,27 @@ export default function Form({
               </p>
             </div>
 
-            {/* Fields */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {section.fields.map((field) => (
                 <div
                   key={field.id}
                   className={field.fullWidth ? "md:col-span-2" : ""}
                 >
-                 <InputField
-  {...field}
-  value={field.value ?? formData[field.id]}
-  onChange={(value) => {
-    if (field.onChange) {
-      field.onChange(value); // 🔥 controlled by parent
-    } else {
-      handleChange(field.id, value); // normal form field
-    }
-  }}
-/>
+                  <InputField
+                    {...field}
+                    value={field.value ?? formData[field.id]}
+                    onChange={(value) => {
+                      handleChange(field.id, value); // ✅ ALWAYS update formData
 
+                      if (field.onChange) {
+                        field.onChange(value); // ✅ ALSO notify parent
+                      }
+                    }}
+                  />
                 </div>
               ))}
             </div>
 
-            {/* Divider */}
             {index !== sections.length - 1 && (
               <div className="mt-10 border-t" />
             )}

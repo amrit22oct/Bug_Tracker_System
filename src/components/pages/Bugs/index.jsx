@@ -26,13 +26,19 @@ const BugPage = ({ searchValue }) => {
         const response = await bugService.getAllBugs();
 
         // Normalize backend data for UI
-        const normalizedBugs = (response.data || []).map((bug) => ({
+        const normalizedBugs = (response.data || [])
+        .map((bug) => ({
           ...bug,
           id: bug._id,
           created: bug.createdAt,
           status: bug.status?.toLowerCase(),
           priority: bug.priority?.toLowerCase(),
-        }));
+        }))
+        // 🔽 Sort newest first
+        .sort((a, b) => new Date(b.created) - new Date(a.created));
+      
+      setBugs(normalizedBugs);
+      
 
         // ✅ Console log backend response
         console.log("📦 Bug Detail API Response:", response);
@@ -93,7 +99,7 @@ const BugPage = ({ searchValue }) => {
             handler={() => navigate(-1)}
           />
         </div>
-      </div>  
+      </div>   
       {/* TABLE */}
       <Suspense fallback={<TableSkeleton rows={ITEMS_PER_PAGE} />}>
         {loading ? (
