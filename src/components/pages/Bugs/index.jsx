@@ -84,7 +84,7 @@ const BugPage = ({ searchValue }) => {
 
           </div>
         <div className="flex gap-2">
-          <PrimaryButton title="Edit" variant="outline" icon={FaPlus} className=" min-w-[120px] h-8 text-xs  hover:bg-(--primary) hover:text-(--accent-light)" handler={() => navigate("/add-bug")} />
+          <PrimaryButton title="Add bug" variant="outline" icon={FaPlus} className=" min-w-[120px] h-8 text-xs  hover:bg-(--primary) hover:text-(--accent-light)" handler={() => navigate("/add-bug")} />
          
           <PrimaryButton
             title="Back"

@@ -1,6 +1,8 @@
+// BugReportTable.jsx
 import React from "react";
 import { Table } from "../../molecules/Table";
 import PrimaryButton from "../../atoms/Buttons/PrimaryButton";
+import { FaBug } from "react-icons/fa";
 
 const columns = [
   { key: "title", label: "Bug" },
@@ -34,14 +36,27 @@ const severityStyles = {
   minor: { bg: "#eab308", text: "#000" },
 };
 
-const BugReportTable = ({ bugs, onView }) => {
+const BugReportTable = ({ bugs = [], onView }) => {
+  const isEmpty = bugs.length === 0;
+  const tableData = isEmpty ? [{ __empty: true }] : bugs;
+
   return (
     <Table
       columns={columns}
-      data={bugs}
+      data={tableData}
       thColor="from-[var(--primary)] to-[var(--primary-hover)]"
-      trHoverColor="hover:bg-[var(--secondary)]/20"
+      trHoverColor={isEmpty ? "" : "hover:bg-[var(--secondary)]/20"}
       renderCell={(report, key) => {
+        /* ================= EMPTY STATE ================= */
+        if (key === "__empty") {
+          return (
+            <div className="flex flex-col items-center justify-center py-8 w-full col-span-full">
+               <FaBug className="text-4xl text-gray-400" />
+              <span className="text-gray-400 text-sm">No reports found</span>
+            </div>
+          );
+        }
+
         switch (key) {
           case "title":
             return <span>{report.title}</span>;
@@ -94,47 +109,8 @@ const BugReportTable = ({ bugs, onView }) => {
             );
           }
 
-          case "tags":
-            return report.tags.length > 0 ? (
-              <div className="flex gap-1 justify-center flex-wrap">
-                {report.tags.map((tag, i) => (
-                  <span
-                    key={i}
-                    className="px-2 py-0.5 text-[10px] rounded bg-gray-200"
-                  >
-                    #{tag}
-                  </span>
-                ))}
-              </div>
-            ) : (
-              <span className="text-gray-400 text-xs">N/A</span>
-            );
-
-          case "attachments":
-            return report.attachments.length > 0 ? (
-              <div className="flex flex-col gap-1 items-center">
-                {report.attachments.map((att) => (
-                  <a
-                    key={att._id}
-                    href={att.fileUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 underline text-xs"
-                  >
-                    {att.fileName}
-                  </a>
-                ))}
-              </div>
-            ) : (
-              <span className="text-gray-400 text-xs">N/A</span>
-            );
-
           case "createdAt":
-            return (
-              <span>
-                {new Date(report.createdAt).toLocaleDateString()}
-              </span>
-            );
+            return <span>{new Date(report.createdAt).toLocaleDateString()}</span>;
 
           case "actions":
             return (

@@ -1,106 +1,111 @@
+import { useEffect, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import Form from "../../organisms/Form/Form";
 import HeaderContent from "../../templates/AppHeader/HeaderContent.jsx";
+import bugService from "../../../services/api/bug.service";
+import projectService from "../../../services/api/project.service";
+import Cookies from "js-cookie";
 
 export default function AddBug() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const preselectedProjectId = location.state?.projectId || "";
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const res = await projectService.getAllProjects();
+        setProjects(res.data || res);
+      } catch (err) {
+        console.error("Failed to fetch projects", err);
+        alert("Failed to load projects. Refresh page.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProjects();
+  }, []);
+
+  const projectOptions = projects.map(p => ({ label: p.name, value: p._id }));
+
   const sections = [
     {
       title: "Basic Information",
-      description: "Core details about the bug",
       fields: [
+        { id: "title", label: "Bug Title", type: "text", required: true, fullWidth: true },
         {
-          id: "title",
-          label: "Bug Title",
-          type: "text",
-          placeholder: "Login page crashes on submit",
-          required: true,
-          fullWidth: true,
-        },
-        {
-          id: "project",
+          id: "projectId",
           label: "Project",
-          type: "text",
-          placeholder: "Website Redesign",
-        },
-        {
-          id: "type",
-          label: "Bug Type",
           type: "select",
-          options: ["Functional", "UI", "Performance", "Security"],
+          required: true,
+          options: projectOptions,
+          defaultValue: preselectedProjectId,
         },
+        { id: "type", label: "Bug Type", type: "select", options: ["UI", "Backend", "Performance", "Security", "Crash", "Logic"] },
       ],
     },
     {
       title: "Classification",
-      description: "Impact and urgency of the bug",
       fields: [
-        {
-          id: "priority",
-          label: "Priority",
-          type: "select",
-          options: ["Low", "Medium", "High", "Critical"],
-          defaultValue: "Medium",
-        },
-        {
-          id: "severity",
-          label: "Severity",
-          type: "select",
-          options: ["Minor", "Major", "Blocker"],
-          defaultValue: "Minor",
-        },
-        {
-          id: "status",
-          label: "Status",
-          type: "select",
-          options: ["Open", "In Progress", "Resolved", "Closed"],
-          defaultValue: "Open",
-        },
+        { id: "priority", label: "Priority", type: "select", options: ["Low", "Medium", "High", "Critical"] },
+        { id: "severity", label: "Severity", type: "select", options: ["Minor", "Major", "Critical"] },
+        { id: "status", label: "Status", type: "select", options: ["Open", "In Progress", "Resolved", "Closed"], defaultValue: "Open" },
       ],
     },
     {
-      title: "Assignment",
-      description: "Ownership and accountability",
+      title: "Details",
       fields: [
-        { id: "assignedTo", label: "Assigned To", type: "text" },
-        { id: "reporter", label: "Reported By", type: "text" },
-        { id: "dueDate", label: "Due Date", type: "date" },
-      ],
-    },
-    {
-      title: "Detailed Description",
-      description: "Explain the bug clearly",
-      fields: [
-        {
-          id: "description",
-          label: "Description",
-          type: "textarea",
-          fullWidth: true,
-        },
-        {
-          id: "steps",
-          label: "Steps to Reproduce",
-          type: "textarea",
-          fullWidth: true,
-        },
+        { id: "description", label: "Description", type: "textarea", fullWidth: true },
+        { id: "steps", label: "Steps to Reproduce", type: "textarea", fullWidth: true },
+        { id: "tags", label: "Tags", type: "text", placeholder: "comma,separated,tags" },
       ],
     },
   ];
 
-  const handleSubmit = (data) => {
-   console.log("FULL BUG DATA:", data);
- };
+  const handleSubmit = async (data) => {
+    try {
+      // Use cookie `bt_userId` to get logged-in user
+      const userId = Cookies.get("bt_userId");
+      if (!userId) {
+        alert("User not logged in!");
+        return;
+      }
 
- return (
-   <div className="h-full w-full bg-[var(--accent-light)] flex justify-center overflow-auto">
-     <div className="w-full max-w-7xl h-full px-6 py-10">
-       <Form
-         title="Create New Bug"
-         sections={sections}
-         onSubmit={handleSubmit}
-         submitText="Create Bug"
-       />
-     </div>
-   </div>
- );
+      const payload = {
+        title: data.title,
+        description: data.description || "",
+        priority: data.priority || "Low",
+        severity: data.severity || "Minor",
+        type: data.type || "UI",
+        projectId: data.projectId,
+        reportedBy: userId,           // ✅ required by Bug model
+        tags: data.tags ? data.tags.split(",").map(tag => tag.trim()).filter(Boolean) : [],
+        status: data.status || "Open",
+        steps: data.steps || "",
+      };
+
+      const createdBug = await bugService.createBug(payload);
+      navigate("/add-bug-report", { state: { bugId: createdBug._id } });
+
+    } catch (err) {
+      console.error("Bug creation failed:", err);
+      alert(err.response?.data?.message || "Bug creation failed");
+    }
+  };
+
+  if (loading) return <div className="p-10">Loading projects...</div>;
+
+  return (
+    <div className="h-full w-full bg-[var(--accent-light)] flex justify-center overflow-auto">
+      <div className="w-full max-w-7xl px-6 py-10">
+        <Form title="Create New Bug" sections={sections} onSubmit={handleSubmit} submitText="Create Bug" />
+      </div>
+    </div>
+  );
 }
 
 AddBug.header = () => <HeaderContent title="Add Bug" />;

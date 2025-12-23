@@ -74,7 +74,7 @@ const BugReportPage = ({ searchValue = "", setSearchValue }) => {
         {/* Action Buttons */}
         <div className="flex justify-end">
         <div className="flex gap-2">
-          <PrimaryButton title="Edit" variant="outline" icon={FaPlus} className=" min-w-[120px] h-8 text-xs  hover:bg-(--primary) hover:text-(--accent-light)"  handler={() => navigate("/add-bug")} />
+          <PrimaryButton title="Add Bug Report" variant="outline" icon={FaPlus} className=" max-w-[160px] h-8 text-xs  hover:bg-(--primary) hover:text-(--accent-light)"  handler={() => navigate("/add-bug-report")} />
          
           <PrimaryButton
             title="Back"

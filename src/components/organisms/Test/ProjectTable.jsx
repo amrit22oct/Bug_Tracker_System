@@ -2,7 +2,9 @@
 import React from "react";
 import { Table } from "../../molecules/Table";
 import PrimaryButton from "../../atoms/Buttons/PrimaryButton";
+import { FaProjectDiagram } from "react-icons/fa";
 
+/* ================= COLUMNS ================= */
 const projectColumns = [
   { key: "name", label: "Project" },
   { key: "manager", label: "Manager", align: "center" },
@@ -12,6 +14,7 @@ const projectColumns = [
   { key: "actions", label: "Actions", align: "center" },
 ];
 
+/* ================= STATUS STYLES ================= */
 const statusStyles = {
   completed: { bg: "var(--accent)", text: "var(--primary)" },
   "in progress": { bg: "var(--secondary-hover)", text: "var(--primary)" },
@@ -23,25 +26,45 @@ const statusStyles = {
   cancelled: { bg: "var(--background)", text: "var(--primary)" },
 };
 
+/* ================= TABLE ================= */
 const ProjectsTable = ({ projects = [], onView }) => {
+  const isEmpty = projects.length === 0;
+
+  // 👇 Inject empty row when no projects
+  const tableData = isEmpty ? [{ __empty: true }] : projects;
+
   return (
     <Table
       columns={projectColumns}
-      data={projects}
+      data={tableData}
       thColor="from-[var(--primary)] to-[var(--primary-hover)]"
-      trHoverColor="hover:bg-[var(--secondary)]/20 hover:text-white"
+      trHoverColor={
+        isEmpty ? "" : "hover:bg-[var(--secondary)]/20 hover:text-white"
+      }
       renderCell={(project, key) => {
+        /* ================= EMPTY STATE ================= */
+        if (key === "__empty") {
+          return (
+            <div className="flex flex-col items-center justify-center gap-2">
+              <FaProjectDiagram className="text-4xl text-gray-400" />
+              <span className="text-sm font-medium">No projects found</span>
+            </div>
+          );
+        }
+
         /* ================= MANAGER ================= */
         if (key === "manager") {
           const managerName =
-            !project.manager || project.manager === "N/A" ? "Admin" : project.manager;
+            !project.manager || project.manager === "N/A"
+              ? "Admin"
+              : project.manager;
+
           return (
             <span className="text-sm text-[var(--text-primary)] font-medium">
               {managerName}
             </span>
           );
         }
-        
 
         /* ================= PROGRESS ================= */
         if (key === "progress") {

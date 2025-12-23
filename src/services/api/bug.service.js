@@ -3,7 +3,10 @@ import api from "./api";
 const bugService = {
   /* ================= CREATE BUG ================= */
   createBug: async (bugData) => {
-    const response = await api.post("/admin/bugs", bugData);
+    const response = await api.post(
+      "/admin/bug/create-bug", // ✅ correct
+      bugData
+    );
     return response.data;
   },
 
@@ -18,6 +21,9 @@ const bugService = {
     const response = await api.get(`/admin/bug/get-bug/${bugId}`);
     return response.data;
   },
+
+  /* ================= GET BUG BY PROJECT ID =============*/
+
 
   /* ================= UPDATE BUG ================= */
   updateBug: async (bugId, updateData) => {

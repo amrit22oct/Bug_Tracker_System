@@ -25,7 +25,9 @@ function AppSidebar({ setIsAuth, onClose }) {
   ...(role !== "Developer" && role !== "QA"
     ? [{ label: "Projects", path: "/projects", icon: <FaProjectDiagram /> },
     { label: "Bug Report", path: "/bug-report", icon: <FaBug /> },
+   
     { label: "Report", path: "/reports", icon: <FaBug /> },
+    { label: "User Mangement", path: "/user-mangement", icon: <FaBug /> },
     ]
     : []),
 

@@ -20,7 +20,7 @@ const VARIANTS = {
   outline: `
     bg-transparent
     border border-[var(--primary)]
-    text-[var(--primary)]
+    text-[var(--primary)] hover:bg-(--primary) hover:text-(--accent-light)
   `,
   flat: `
   bg-transparent

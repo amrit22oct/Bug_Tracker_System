@@ -3,7 +3,10 @@ import api from "./api";
 const projectService = {
   /* ================= CREATE PROJECT ================= */
   createProject: async (projectData) => {
-    const response = await api.post("/admin/projects", projectData);
+    const response = await api.post(
+      "/admin/project/create-project", // ✅ FIXED (singular)
+      projectData
+    );
     return response.data;
   },
 
@@ -24,8 +27,7 @@ const projectService = {
   /* ================= UPDATE PROJECT ================= */
   updateProject: async (projectId, updateData) => {
     const response = await api.put(
-      `/admin/projects/${projectId}`,
-      updateData
+      `/admin/project/update-project/${projectId}`
     );
     return response.data;
   },
@@ -33,7 +35,7 @@ const projectService = {
   /* ================= DELETE PROJECT ================= */
   deleteProject: async (projectId) => {
     const response = await api.delete(
-      `/admin/projects/${projectId}`
+      `/admin/project/delete-project/${projectId}`
     );
     return response.data;
   },

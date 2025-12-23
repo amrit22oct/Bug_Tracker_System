@@ -62,13 +62,18 @@ export default function Form({
                   key={field.id}
                   className={field.fullWidth ? "md:col-span-2" : ""}
                 >
-                  <InputField
-                    {...field}
-                    value={formData[field.id]}
-                    onChange={(value) =>
-                      handleChange(field.id, value)
-                    }
-                  />
+                 <InputField
+  {...field}
+  value={field.value ?? formData[field.id]}
+  onChange={(value) => {
+    if (field.onChange) {
+      field.onChange(value); // 🔥 controlled by parent
+    } else {
+      handleChange(field.id, value); // normal form field
+    }
+  }}
+/>
+
                 </div>
               ))}
             </div>

@@ -81,7 +81,7 @@ const ProjectDetail = () => {
       <div className="flex flex-col sm:flex-row sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-[var(--primary)]">{project.name}</h1>
-          <p className="text-sm text-gray-500">ID: {project._id}</p>
+          <p className="text-sm text-gray-500">Project ID: {project._id}</p>
         </div>
 
         <div className="flex gap-2">

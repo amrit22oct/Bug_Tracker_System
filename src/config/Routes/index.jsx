@@ -13,7 +13,9 @@ import AddProject from "@/components/organisms/AddProject";
 import BugDetail from "@/components/organisms/BugDetail";
 import ProjectDetail from "@/components/organisms/ProjectDetails";
 import { BugReportPage } from "../../components/pages";
-import BugReportDetail from "../../components/BugReportDetail";
+import BugReportDetail from "../../components/organisms/BugReportDetail";
+import Users from "../../components/pages/UserMangement";
+import AddBugReport from "../../components/organisms/AddBugReport";
 
 export const routes = [
   // ---------------- DASHBOARD ----------------
@@ -24,7 +26,6 @@ export const routes = [
     protectedRoute: true,
     allowedRoles: ["Admin", "ProjectManager", "Developer", "QA"],
   },
-  
 
   // ---------------- SIMPLE PAGE ----------------
   {
@@ -103,8 +104,22 @@ export const routes = [
     protectedRoute: true,
     allowedRoles: ["ProjectManager", "Admin"],
   },
+  {
+    id: "AddReports",
+    path: "/add-bug-report",
+    component: <AddBugReport />,
+    protectedRoute: true,
+    allowedRoles: ["ProjectManager", "Admin"],
+  },
 
-
+  // -----------------USER MANAGEMENT------------
+  {
+    id: "User Mangement",
+    path: "/user-mangement",
+    component: <Users />,
+    protectedRoute: true,
+    allowedRoles: ["ProjectManager", "Admin"],
+  },
 
   // ---------------- SETTINGS ----------------
   {
