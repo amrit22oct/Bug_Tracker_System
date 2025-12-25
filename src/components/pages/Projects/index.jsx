@@ -32,15 +32,18 @@ const ProjectsPage = ({ searchValue }) => {
       try {
         const res = await projectService.getAllProjects();
 
-        const normalizedProjects = (res.data || []).map((project) => ({
-          id: project._id,
-          name: project.name,
-          manager: project.manager?.name || "N/A",
-          deadline: project.endDate || project.createdAt,
-          progress: project.progressPercentage || 0,
-          status: project.status || "Unknown",
-          priority: project.priority,
-        }));
+        const normalizedProjects = (res.data || [])
+          .map((project) => ({
+            id: project._id,
+            name: project.name,
+            manager: project.manager?.name || "N/A",
+            deadline: project.endDate || project.createdAt,
+            progress: project.progressPercentage || 0,
+            status: project.status || "Unknown",
+            priority: project.priority,
+            createdAt: project.createdAt,
+          }))
+          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
         setProjects(normalizedProjects);
       } catch (error) {
@@ -84,12 +87,17 @@ const ProjectsPage = ({ searchValue }) => {
 
   return (
     <div className="w-full h-full p-4 bg-[var(--accent-light)]/60 flex flex-col gap-4 overflow-auto">
-
-        {/* Action Buttons */}
-        <div className="flex justify-end">
+      {/* Action Buttons */}
+      <div className="flex justify-end">
         <div className="flex gap-2">
-          <PrimaryButton title="Add Project" variant="outline" icon={FaPlus} className=" h-8 text-xs  hover:bg-(--primary) hover:text-(--accent-light)"  handler={() => navigate("/add-project")}  />
-         
+          <PrimaryButton
+            title="Add Project"
+            variant="outline"
+            icon={FaPlus}
+            className=" h-8 text-xs  hover:bg-(--primary) hover:text-(--accent-light)"
+            handler={() => navigate("/add-project")}
+          />
+
           <PrimaryButton
             title="Back"
             variant="outline"
@@ -98,7 +106,7 @@ const ProjectsPage = ({ searchValue }) => {
           />
         </div>
       </div>
-       
+
       {/* TABLE */}
       <Suspense fallback={<TableSkeleton rows={ITEMS_PER_PAGE} />}>
         {loading ? (

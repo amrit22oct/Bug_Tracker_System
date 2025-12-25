@@ -3,6 +3,7 @@ import {
   Dashboard,
   DeveloperDashboard,
   PmDashboard,
+  TLDashboard,
   QaDashboard,
 } from "@/components/pages";
 
@@ -15,6 +16,9 @@ const RoleBasedDashboard = (props) => {
 
     case "ProjectManager":
       return <PmDashboard {...props} />;
+
+    case "TeamLeader":
+      return <TLDashboard {...props} />;
 
     case "QA":
       return <QaDashboard {...props} />;
@@ -35,6 +39,9 @@ RoleBasedDashboard.header = (headerProps) => {
 
     case "ProjectManager":
       return PmDashboard.header?.(headerProps) || null;
+
+    case "TeamLeader":
+      return TLDashboard.header?.(headerProps) || null;
 
     case "QA":
       return QaDashboard.header?.(headerProps) || null;

@@ -24,7 +24,7 @@ export const routes = [
     path: "/",
     component: <RoleBasedDashboard />,
     protectedRoute: true,
-    allowedRoles: ["Admin", "ProjectManager", "Developer", "QA"],
+    allowedRoles: ["Admin", "ProjectManager", "TeamLeader", "Developer", "QA"],
   },
 
   // ---------------- SIMPLE PAGE ----------------
@@ -33,7 +33,7 @@ export const routes = [
     path: "/simple",
     component: <SimplePage />,
     protectedRoute: true,
-    allowedRoles: ["Admin", "ProjectManager"],
+    allowedRoles: ["Admin", "ProjectManager", "TeamLeader"],
   },
 
   // ---------------- BUGS ----------------
@@ -42,35 +42,35 @@ export const routes = [
     path: "/bugs",
     component: <BugPage />,
     protectedRoute: true,
-    allowedRoles: ["Developer", "QA", "ProjectManager", "Admin"],
+    allowedRoles: ["Developer", "QA", "TeamLeader", "ProjectManager", "Admin"],
   },
   {
     id: "BugDetail",
     path: "/view-bug-detail/:id",
     component: <BugDetail />,
     protectedRoute: true,
-    allowedRoles: ["Developer", "QA", "ProjectManager", "Admin"],
+    allowedRoles: ["Developer", "QA", "TeamLeader", "ProjectManager", "Admin"],
   },
   {
     id: "BugReport",
     path: "/bug-report",
     component: <BugReportPage />,
     protectedRoute: true,
-    allowedRoles: ["Developer", "QA", "ProjectManager", "Admin"],
+    allowedRoles: ["Developer", "QA", "TeamLeader", "ProjectManager", "Admin"],
   },
   {
-    id: "BugDetail",
+    id: "BugReportDetail",
     path: "/view-report-detail/:id",
     component: <BugReportDetail />,
     protectedRoute: true,
-    allowedRoles: ["Developer", "QA", "ProjectManager", "Admin"],
+    allowedRoles: ["Developer", "QA", "TeamLeader", "ProjectManager", "Admin"],
   },
   {
     id: "AddBug",
     path: "/add-bug",
     component: <AddBug />,
     protectedRoute: true,
-    allowedRoles: ["QA", "ProjectManager", "Admin"],
+    allowedRoles: ["QA", "TeamLeader", "ProjectManager", "Admin"],
   },
 
   // ---------------- PROJECTS ----------------
@@ -79,14 +79,14 @@ export const routes = [
     path: "/projects",
     component: <ProjectsPage />,
     protectedRoute: true,
-    allowedRoles: ["ProjectManager", "Admin"],
+    allowedRoles: ["TeamLeader", "ProjectManager", "Admin"],
   },
   {
     id: "ProjectDetail",
     path: "/view-project-detail/:id",
     component: <ProjectDetail />,
     protectedRoute: true,
-    allowedRoles: ["ProjectManager", "Admin"],
+    allowedRoles: ["TeamLeader", "ProjectManager", "Admin"],
   },
   {
     id: "AddProject",
@@ -102,19 +102,19 @@ export const routes = [
     path: "/reports",
     component: <ReportsPage />,
     protectedRoute: true,
-    allowedRoles: ["ProjectManager", "Admin"],
+    allowedRoles: ["TeamLeader", "ProjectManager", "Admin"],
   },
   {
     id: "AddReports",
     path: "/add-bug-report",
     component: <AddBugReport />,
     protectedRoute: true,
-    allowedRoles: ["ProjectManager", "Admin"],
+    allowedRoles: ["TeamLeader", "ProjectManager", "Admin"],
   },
 
-  // -----------------USER MANAGEMENT------------
+  // ---------------- USER MANAGEMENT ----------------
   {
-    id: "User Mangement",
+    id: "UserManagement",
     path: "/user-mangement",
     component: <Users />,
     protectedRoute: true,
@@ -139,3 +139,4 @@ export const routes = [
     hideSidebar: true,
   },
 ];
+

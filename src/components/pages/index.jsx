@@ -14,4 +14,5 @@ export {
   DeveloperDashboard,
   PmDashboard,
   QaDashboard,
+  TLDashboard,
 } from "@/components/pages/Dashboard";
