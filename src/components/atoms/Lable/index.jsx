@@ -1,8 +1,8 @@
-export default function Label({ htmlFor, children }) {
+export default function Label({ htmlFor, children, className = "" }) {
   return (
     <label
       htmlFor={htmlFor}
-      className="text-sm font-semibold text-[var(--primary)] mb-1"
+      className={`text-sm font-semibold mb-1 ${className}`}
     >
       {children}
     </label>

@@ -10,7 +10,11 @@ export default function Form({
 }) {
   const initialState = sections.reduce((acc, section) => {
     section.fields.forEach((f) => {
-      acc[f.id] = f.defaultValue || "";
+      if (f.type === "multiselect" || f.type === "array") {
+        acc[f.id] = f.defaultValue || [];
+      } else {
+        acc[f.id] = f.defaultValue ?? "";
+      }
     });
     return acc;
   }, {});
@@ -28,19 +32,17 @@ export default function Form({
 
   return (
     <form onSubmit={handleSubmit} className="w-full mx-auto space-y-10">
-      {/* HEADER */}
-     {title && (
-       <div className="bg-(--primary) rounded-2xl border shadow-sm p-8 text-center">
-       <h1 className="text-3xl font-bold text-(--accent-light)">
-         {title}
-       </h1>
-       <p className="text-(--accent-light) mt-2">
-         {`Fill in the information below to create a new ${title}`}
-       </p>
-     </div>
-     )}
+      {title && (
+        <div className="bg-(--primary) rounded-2xl border shadow-sm p-8 text-center">
+          <h1 className="text-3xl font-bold text-(--accent-light)">
+            {title}
+          </h1>
+          <p className="text-(--accent-light) mt-2">
+            {`Fill in the information below to create a new ${title}`}
+          </p>
+        </div>
+      )}
 
-      {/* FORM CONTENT */}
       <div className="bg-(--accent-light) rounded-2xl border shadow-lg p-8 space-y-12">
         {sections.map((section, index) => (
           <div key={section.title}>
@@ -63,11 +65,8 @@ export default function Form({
                     {...field}
                     value={field.value ?? formData[field.id]}
                     onChange={(value) => {
-                      handleChange(field.id, value); // ✅ ALWAYS update formData
-
-                      if (field.onChange) {
-                        field.onChange(value); // ✅ ALSO notify parent
-                      }
+                      handleChange(field.id, value);
+                      field.onChange?.(value);
                     }}
                   />
                 </div>
@@ -81,7 +80,6 @@ export default function Form({
         ))}
       </div>
 
-      {/* SUBMIT */}
       <div className="flex justify-end pb-6">
         <PrimaryButton
           type="submit"
