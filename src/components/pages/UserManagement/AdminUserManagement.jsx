@@ -10,7 +10,7 @@ import {
   FaLayerGroup,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-
+import PrimaryButton from "../../atoms/Buttons/PrimaryButton/index.jsx";
 import teamService from "../../../services/api/team.service.js";
 import projectService from "../../../services/api/project.service.js";
 import userService from "../../../services/api/user.service.js"; // ✅ ADDED
@@ -19,7 +19,7 @@ import userService from "../../../services/api/user.service.js"; // ✅ ADDED
 const matchesSearch = (value, search) =>
   value?.toString().toLowerCase().includes(search.toLowerCase());
 
-const Users = ({ searchValue = "" }) => {
+const AdminUserManagement = ({ searchValue = "" }) => {
   const navigate = useNavigate();
 
   /* ---------------- STATES ---------------- */
@@ -150,7 +150,6 @@ const Users = ({ searchValue = "" }) => {
   /* ---------------- UI ---------------- */
   return (
     <div className="h-full w-full p-8 bg-[var(--accent-light)] space-y-10 overflow-auto">
-
       {/* ================= USERS ================= */}
       <section className="space-y-4">
         <div className="flex justify-between items-center">
@@ -158,12 +157,15 @@ const Users = ({ searchValue = "" }) => {
             <FaUsers /> Users
           </h2>
 
-          <button
-            onClick={() => navigate("/add-user")}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--primary)] text-white"
-          >
-            <FaUserPlus /> Add User
-          </button>
+          <div className="flex gap-2 items-center justify-center">
+            <PrimaryButton
+              title="Add User"
+              icon={FaUserPlus}
+              handler={() => navigate("/add-user")}
+              className="px-4 py-2 rounded-xl"
+              variant="outline"
+            />
+          </div>
         </div>
 
         <div className="flex gap-2">
@@ -199,7 +201,7 @@ const Users = ({ searchValue = "" }) => {
                   <tr className="border-t">
                     <td className="p-4">{user.name}</td>
 
-                    <td className="p-4 flex gap-2 items-center">
+                    <td className="p-4 flex gap-2 items-center ">
                       {user.role === "Admin" && <FaUserTie />}
                       {user.role === "Developer" && <FaCode />}
                       {user.role === "TeamLeader" && <FaUsers />}
@@ -243,9 +245,21 @@ const Users = ({ searchValue = "" }) => {
 
       {/* ================= TEAMS ================= */}
       <section className="space-y-4">
-        <h2 className="text-xl font-semibold flex items-center gap-2">
-          <FaLayerGroup /> Teams
-        </h2>
+        <div className="flex justify-between items-center">
+          <h2 className="text-xl font-semibold flex items-center gap-2">
+            <FaLayerGroup /> Teams
+          </h2>
+
+          <div className="flex gap-2 items-center justify-center">
+            <PrimaryButton
+              title="Add Team"
+              icon={FaUserPlus}
+              handler={() => navigate("/add-team")}
+              className="px-4 py-2 rounded-xl"
+              variant="outline"
+            />
+          </div>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {teams.map((team) => (
@@ -271,7 +285,7 @@ const Users = ({ searchValue = "" }) => {
                         <span>{project.name}</span>
                         <button
                           onClick={() =>
-                            window.location.href = `http://localhost:3001/view-project-detail/${project._id}`
+                            (window.location.href = `http://localhost:3001/view-project-detail/${project._id}`)
                           }
                           className="text-sm text-blue-600 ml-2"
                         >
@@ -312,9 +326,7 @@ const Users = ({ searchValue = "" }) => {
                     </select>
 
                     <button
-                      onClick={() =>
-                        handleAssignProjectToTeam(team._id)
-                      }
+                      onClick={() => handleAssignProjectToTeam(team._id)}
                       className="bg-[var(--primary)] text-white px-4 rounded-xl"
                     >
                       Assign
@@ -324,9 +336,7 @@ const Users = ({ searchValue = "" }) => {
               </div>
 
               <div className="flex gap-2 pt-2">
-                <button className="text-sm text-purple-600">
-                  Add Member
-                </button>
+                <button className="text-sm text-purple-600">Add Member</button>
               </div>
             </div>
           ))}
@@ -337,7 +347,7 @@ const Users = ({ searchValue = "" }) => {
 };
 
 /* HEADER */
-Users.header = ({ searchValue, setSearchValue }) => (
+AdminUserManagement.header = ({ searchValue, setSearchValue }) => (
   <HeaderContent
     title="User & Team Management"
     searchComponent={
@@ -350,4 +360,4 @@ Users.header = ({ searchValue, setSearchValue }) => (
   />
 );
 
-export default Users;
+export default AdminUserManagement;

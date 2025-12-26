@@ -23,6 +23,12 @@ const bugService = {
   },
 
   /* ================= GET BUG BY PROJECT ID =============*/
+  /* ================= GET BUGS BY PROJECT ID ================= */
+getBugsByProjectId: async (projectId) => {
+  const response = await api.get(`/admin/bug/get-project-bug/${projectId}`);
+  return response.data;
+},
+
 
 
   /* ================= UPDATE BUG ================= */
@@ -43,7 +49,7 @@ const bugService = {
   /* ================= ASSIGN BUG ================= */
   assignBug: async (bugId, userId) => {
     const response = await api.patch(
-      `/admin/bugs/${bugId}/assign`,
+      `/admin/bug/assign/${bugId}`,
       { userId }
     );
     return response.data;

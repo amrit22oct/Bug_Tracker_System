@@ -1,21 +1,24 @@
 import {
   SimplePage,
   Login,
+  Register,
   BugPage,
+  BugReportPage,
   ProjectsPage,
   ReportsPage,
   Settings,
   RoleBasedDashboard,
+  AddTeam,
 } from "@/components/pages";
 
 import AddBug from "@/components/organisms/AddBug";
 import AddProject from "@/components/organisms/AddProject";
 import BugDetail from "@/components/organisms/BugDetail";
 import ProjectDetail from "@/components/organisms/ProjectDetails";
-import { BugReportPage } from "../../components/pages";
-import BugReportDetail from "../../components/organisms/BugReportDetail";
-import Users from "../../components/pages/UserMangement";
-import AddBugReport from "../../components/organisms/AddBugReport";
+import BugReportDetail from "@/components/organisms/BugReportDetail";
+import AddBugReport from "@/components/organisms/AddBugReport";
+
+import { RoleBasedUserManagement } from "../../components/pages";
 
 export const routes = [
   // ---------------- DASHBOARD ----------------
@@ -115,8 +118,16 @@ export const routes = [
   // ---------------- USER MANAGEMENT ----------------
   {
     id: "UserManagement",
-    path: "/user-mangement",
-    component: <Users />,
+    path: "/user-management",
+    component: <RoleBasedUserManagement />,
+    protectedRoute: true,
+    allowedRoles: ["ProjectManager", "Admin","TeamLeader"],
+  },
+
+  {
+    id: "AddTeam",
+    path: "/add-team",
+    component: <AddTeam />,
     protectedRoute: true,
     allowedRoles: ["ProjectManager", "Admin"],
   },
@@ -138,5 +149,11 @@ export const routes = [
     protectedRoute: false,
     hideSidebar: true,
   },
+  {
+    id: "Register",
+    path: "/add-user",
+    component: <Register />,
+    protectedRoute: true,
+    allowedRoles: ["Admin"],
+  },
 ];
-

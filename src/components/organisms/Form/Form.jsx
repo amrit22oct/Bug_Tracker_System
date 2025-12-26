@@ -29,14 +29,16 @@ export default function Form({
   return (
     <form onSubmit={handleSubmit} className="w-full mx-auto space-y-10">
       {/* HEADER */}
-      <div className="bg-(--primary) rounded-2xl border shadow-sm p-8 text-center">
-        <h1 className="text-3xl font-bold text-(--accent-light)">
-          {title}
-        </h1>
-        <p className="text-(--accent-light) mt-2">
-          {`Fill in the information below to create a new ${title}`}
-        </p>
-      </div>
+     {title && (
+       <div className="bg-(--primary) rounded-2xl border shadow-sm p-8 text-center">
+       <h1 className="text-3xl font-bold text-(--accent-light)">
+         {title}
+       </h1>
+       <p className="text-(--accent-light) mt-2">
+         {`Fill in the information below to create a new ${title}`}
+       </p>
+     </div>
+     )}
 
       {/* FORM CONTENT */}
       <div className="bg-(--accent-light) rounded-2xl border shadow-lg p-8 space-y-12">

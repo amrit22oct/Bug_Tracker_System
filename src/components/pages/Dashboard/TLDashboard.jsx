@@ -272,7 +272,7 @@ const TLDashboard = ({ searchValue = "" }) => {
 /* HEADER */
 TLDashboard.header = ({ searchValue, setSearchValue }) => (
   <HeaderContent
-    title="PmDashboard"
+    title="Team Leader Dashboard"
     searchComponent={
       <PrimarySearchBar
         value={searchValue}

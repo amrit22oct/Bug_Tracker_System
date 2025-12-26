@@ -1,15 +1,15 @@
-import React, { useState, useEffect, lazy, Suspense  } from "react";
+import React, { useState, useEffect, lazy, Suspense } from "react";
 import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
 import PrimaryButton from "../../atoms/Buttons/PrimaryButton";
 import HeaderContent from "../../templates/AppHeader/HeaderContent.jsx";
 import PrimarySearchBar from "../../atoms/Searchbar/PrimarySearchBar.jsx";
 import bugService from "../../../services/api/bug.service.js";
 import TableSkeleton from "../../Skleton/TableSkeleton.jsx";
-import { FaPlus, FaProjectDiagram, FaBug, FaUsers } from "react-icons/fa";
+import { FaPlus } from "react-icons/fa";
 
-
-// Lazy Loding 
-const BugsTable = lazy(() => import ("../../organisms/Test/BugTable.jsx"))
+// Lazy Loading
+const BugsTable = lazy(() => import("../../organisms/Test/BugTable.jsx"));
 
 const BugPage = ({ searchValue }) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -17,6 +17,8 @@ const BugPage = ({ searchValue }) => {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
+  const loggedInUserId = Cookies.get("bt_userId"); // Logged-in user
+  const loggedInUserRole = Cookies.get("bt_role"); // Get role from cookie
 
   /* ================= GET ALL BUGS ================= */
   useEffect(() => {
@@ -25,25 +27,30 @@ const BugPage = ({ searchValue }) => {
         setLoading(true);
         const response = await bugService.getAllBugs();
 
-        // Normalize backend data for UI
         const normalizedBugs = (response.data || [])
-        .map((bug) => ({
-          ...bug,
-          id: bug._id,
-          created: bug.createdAt,
-          status: bug.status?.toLowerCase(),
-          priority: bug.priority?.toLowerCase(),
-        }))
-        // 🔽 Sort newest first
-        .sort((a, b) => new Date(b.created) - new Date(a.created));
-      
-      setBugs(normalizedBugs);
-      
+          .map((bug) => ({
+            ...bug,
+            id: bug._id,
+            created: bug.createdAt,
+            status: bug.status?.toLowerCase(),
+            priority: bug.priority?.toLowerCase(),
+          }))
+          .sort((a, b) => new Date(b.created) - new Date(a.created));
 
-        // ✅ Console log backend response
-        console.log("📦 Bug Detail API Response:", response);
+        let visibleBugs;
 
-        setBugs(normalizedBugs);
+        // 🔹 Filter only for developers
+        if (loggedInUserRole === "Developer") {
+          visibleBugs = normalizedBugs.filter(
+            (bug) => bug.assignedTo?._id === loggedInUserId
+          );
+        } else {
+          visibleBugs = normalizedBugs; // Show all for other roles
+        }
+
+        console.log("Visible bugs:", visibleBugs);
+
+        setBugs(visibleBugs);
       } catch (error) {
         console.error("Failed to fetch bugs:", error);
       } finally {
@@ -52,7 +59,7 @@ const BugPage = ({ searchValue }) => {
     };
 
     fetchBugs();
-  }, []);
+  }, [loggedInUserId, loggedInUserRole]);
 
   const handleViewBug = (bug) => {
     navigate(`/view-bug-detail/${bug.id}`);
@@ -82,31 +89,32 @@ const BugPage = ({ searchValue }) => {
 
   return (
     <div className="w-full h-full p-4 bg-[var(--accent-light)]/60 flex flex-col gap-4 overflow-auto">
-
-       
-        <div className="flex justify-between items-center">
-          <div className="">
-            {/* <h2>Bugs</h2> */}
-
-          </div>
+      <div className="flex justify-between items-center">
+        <div></div>
         <div className="flex gap-2">
-          <PrimaryButton title="Add bug" variant="outline" icon={FaPlus} className=" min-w-[120px] h-8 text-xs  hover:bg-(--primary) hover:text-(--accent-light)" handler={() => navigate("/add-bug")} />
-         
+          <PrimaryButton
+            title="Add bug"
+            variant="outline"
+            icon={FaPlus}
+            className=" min-w-[120px] h-8 text-xs hover:bg-(--primary) hover:text-(--accent-light)"
+            handler={() => navigate("/add-bug")}
+          />
           <PrimaryButton
             title="Back"
             variant="outline"
-            className=" min-w-[120px] h-8 text-xs  hover:bg-(--primary) hover:text-(--accent-light)"
+            className=" min-w-[120px] h-8 text-xs hover:bg-(--primary) hover:text-(--accent-light)"
             handler={() => navigate(-1)}
           />
         </div>
-      </div>   
+      </div>
+
       {/* TABLE */}
       <Suspense fallback={<TableSkeleton rows={ITEMS_PER_PAGE} />}>
         {loading ? (
           <TableSkeleton rows={ITEMS_PER_PAGE} />
         ) : (
-        <BugsTable bugs={currentBugs} onView={handleViewBug} />
-      )}
+          <BugsTable bugs={currentBugs} onView={handleViewBug} />
+        )}
       </Suspense>
 
       {/* Pagination */}
@@ -119,11 +127,9 @@ const BugPage = ({ searchValue }) => {
             handler={() => setCurrentPage((p) => Math.max(p - 1, 1))}
             className="w-auto min-w-[120px] px-3 py-1 h-8 text-xs"
           />
-
           <div className="flex items-center justify-center h-8 px-3 min-w-[60px] text-sm font-medium text-(--accent-light) bg-(--primary) border border-(--accent-light) rounded-md shadow-sm">
             {currentPage} / {totalPages}
           </div>
-
           <PrimaryButton
             title="Next"
             variant={currentPage === totalPages ? "disabled" : "outline"}

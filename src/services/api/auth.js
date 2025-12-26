@@ -24,6 +24,23 @@ const authService = {
     }
   },
 
+  register:async ({ name, email, password, role = "Developer" }) => {
+    try {
+      const response = await api.post("/admin/auth/register", {
+        name, 
+        email,
+        password,
+        role,
+      });
+      
+      return response.data;
+      
+    } catch (error) {
+      throw error;
+      
+    }
+  },
+
   logout: () => {
     Cookies.remove(`${appPrefix}userId`);
     Cookies.remove(`${appPrefix}username`);

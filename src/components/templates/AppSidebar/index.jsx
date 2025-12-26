@@ -2,6 +2,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import {
   FaHome,
   FaBug,
+  FaUsers,
   FaProjectDiagram,
   FaChartBar,
   FaCog,
@@ -19,22 +20,23 @@ function AppSidebar({ setIsAuth, onClose }) {
   const role = Cookies.get("bt_role");
 
   const menu = [
-  { label: "Dashboard", path: "/", icon: <FaHome /> },
-  { label: "Bugs", path: "/bugs", icon: <FaBug /> },
-
-  ...(role !== "Developer" && role !== "QA"
-    ? [{ label: "Projects", path: "/projects", icon: <FaProjectDiagram /> },
-    { label: "Bug Report", path: "/bug-report", icon: <FaBug /> },
-   
-    { label: "Report", path: "/reports", icon: <FaBug /> },
-    { label: "User Mangement", path: "/user-mangement", icon: <FaBug /> },
-    ]
-    : []),
-
-  ...(role === "Admin"
-    ? [{ label: "Settings", path: "/settings", icon: <FaCog /> }]
-    : []),
-];
+    { label: "Dashboard", path: "/", icon: <FaHome /> },
+    { label: "Bugs", path: "/bugs", icon: <FaBug /> },
+  
+    ...(role === "Admin" || role === "ProjectManager" || role === "TeamLeader"
+      ? [
+          { label: "Projects", path: "/projects", icon: <FaProjectDiagram /> },
+          { label: "Bug Report", path: "/bug-report", icon: <FaBug /> },
+          { label: "Report", path: "/reports", icon: <FaBug /> },
+          { label: "User Management", path: "/user-management", icon: <FaBug /> },
+        ]
+      : []),
+  
+    ...(role === "Admin"
+      ? [{ label: "Settings", path: "/settings", icon: <FaCog /> }]
+      : []),
+  ];
+  
 
   const handleLogout = () => {
     const appPrefix = "bt_";
