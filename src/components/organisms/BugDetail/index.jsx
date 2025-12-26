@@ -13,6 +13,7 @@ import {
   FiLayers,
 } from "react-icons/fi";
 import bugService from "../../../services/api/bug.service.js";
+import authService from "../../../services/api/auth.js";
 
 const statusStyles = {
   open: { bg: "var(--secondary)", text: "var(--primary)" },
@@ -24,9 +25,11 @@ const statusStyles = {
 const BugDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const user = authService.getCurrentUser();
 
   const [bug, setBug] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [updating, setUpdating] = useState(false);
 
   /* ================= FETCH BUG ================= */
   useEffect(() => {
@@ -41,7 +44,6 @@ const BugDetail = () => {
         setLoading(false);
       }
     };
-
     fetchBug();
   }, [id]);
 
@@ -58,14 +60,33 @@ const BugDetail = () => {
   const statusKey = bug.status?.toLowerCase();
   const statusStyle = statusStyles[statusKey] || statusStyles.open;
 
+  /* ================= ACCEPT BUTTON ================= */
+  const canAcceptBug =
+    bug.status?.toLowerCase() === "open" &&
+    user?.role === "Developer" &&
+    bug.assignedTo?._id === user.userId;
+
+  const handleAccept = async () => {
+    if (!canAcceptBug) return;
+
+    try {
+      setUpdating(true);
+      const updatedBug = await bugService.updateBugStatus(bug._id, "In Progress");
+      setBug(updatedBug.data); // update local state
+    } catch (err) {
+      console.error("Failed to accept bug:", err);
+      alert("Failed to accept bug. Please try again.");
+    } finally {
+      setUpdating(false);
+    }
+  };
+
   return (
     <div className="w-full h-full bg-[var(--accent-light)] p-6 overflow-auto space-y-6">
       {/* HEADER */}
       <div className="flex flex-col sm:flex-row sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-[var(--primary)]">
-            {bug.title}
-          </h1>
+          <h1 className="text-2xl font-bold text-[var(--primary)]">{bug.title}</h1>
           <p className="text-sm text-gray-500">BUG-{bug._id}</p>
         </div>
 
@@ -82,6 +103,14 @@ const BugDetail = () => {
             variant="outline"
             onClick={() => navigate(-1)}
           />
+          {canAcceptBug && (
+            <PrimaryButton
+              title={updating ? "Accepting..." : "Accept"}
+              variant="solid"
+              onClick={handleAccept}
+              className="bg-green-500 hover:bg-green-600 text-white"
+            />
+          )}
         </div>
       </div>
 
@@ -102,7 +131,6 @@ const BugDetail = () => {
           <FiAlertCircle /> Severity: <strong>{bug.severity}</strong>
         </span>
 
-        {/* ✅ FIXED ENVIRONMENT RENDERING */}
         <span className="flex items-center gap-1 text-sm">
           <FiLayers /> Environment:
           <strong>
@@ -118,7 +146,6 @@ const BugDetail = () => {
         {/* BUG INFO */}
         <PressedContainer className="p-6 bg-white rounded-xl border space-y-3">
           <h2 className="font-semibold text-lg">Bug Info</h2>
-
           <p>
             <strong>Project:</strong> {bug.projectId?.name}
           </p>
@@ -130,20 +157,17 @@ const BugDetail = () => {
 
           <p className="flex items-center gap-1">
             <FiUser />
-            <strong>Assigned To:</strong>{" "}
-            {bug.assignedTo?.name || "Unassigned"}
+            <strong>Assigned To:</strong> {bug.assignedTo?.name || "Unassigned"}
           </p>
 
           <p>
             <FiClock className="inline mr-1" />
-            <strong>Created:</strong>{" "}
-            {new Date(bug.createdAt).toLocaleDateString()}
+            <strong>Created:</strong> {new Date(bug.createdAt).toLocaleDateString()}
           </p>
 
           {bug.dueDate && (
             <p>
-              <strong>Due:</strong>{" "}
-              {new Date(bug.dueDate).toLocaleDateString()}
+              <strong>Due:</strong> {new Date(bug.dueDate).toLocaleDateString()}
             </p>
           )}
 
@@ -162,10 +186,7 @@ const BugDetail = () => {
           {bug.tags?.length > 0 && (
             <div className="flex gap-2 flex-wrap">
               {bug.tags.map((tag, i) => (
-                <span
-                  key={i}
-                  className="px-2 py-1 text-xs rounded bg-gray-200"
-                >
+                <span key={i} className="px-2 py-1 text-xs rounded bg-gray-200">
                   #{tag}
                 </span>
               ))}
@@ -183,10 +204,7 @@ const BugDetail = () => {
         )}
 
         {bug.comments?.map((comment) => (
-          <div
-            key={comment._id}
-            className="flex gap-3 border-b pb-3 last:border-none"
-          >
+          <div key={comment._id} className="flex gap-3 border-b pb-3 last:border-none">
             <div className="w-8 h-8 rounded-full bg-[var(--primary)] text-white flex items-center justify-center text-sm">
               {comment.user?.name?.[0] || "U"}
             </div>
