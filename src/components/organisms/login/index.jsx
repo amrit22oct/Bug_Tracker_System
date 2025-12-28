@@ -8,6 +8,7 @@ import { showSuccess, showError } from "@/utils/Toast";
 export default function LoginForm({ setIsAuth, onSuccess }) {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false); 
 
   const loginFields = [
     {
@@ -31,24 +32,19 @@ export default function LoginForm({ setIsAuth, onSuccess }) {
   ];
 
   const handleLogin = async ({ loginId, password }) => {
+    if (loading) return; 
+    setLoading(true);
+
     try {
-      // Call API login
       const response = await authService.login({ loginId, password });
-      console.log("Full API response:", response);
+      const { user } = response;
 
-      const { user, token } = response;
-
-      // 🔐 LOCAL STATE
       localStorage.setItem("isLoggedIn", "true");
       setIsAuth(true);
 
-      // Optional callback for toast
       if (onSuccess) onSuccess();
-
-      // Show success toast
       showSuccess("Login successful 🎉");
 
-      // 🚀 Redirect based on role
       switch (user.role) {
         case "Admin":
           navigate("/admin/dashboard", { replace: true });
@@ -56,23 +52,28 @@ export default function LoginForm({ setIsAuth, onSuccess }) {
         case "ProjectManager":
           navigate("/projects", { replace: true });
           break;
-        case "QA":
-        case "Developer":
         default:
           navigate("/bugs", { replace: true });
-          break;
       }
     } catch (error) {
-      console.error("Login error:", error);
-
-      // ✅ Show error toast instead of alert
       const message =
         error.response?.data?.message ||
         error.message ||
         "Login failed!";
       showError(message);
+    } finally {
+      setLoading(false); 
     }
   };
 
-  return <Form title="Login" fields={loginFields} onSubmit={handleLogin} />;
+  return (
+    <Form
+      title="Login"
+      fields={loginFields}
+      onSubmit={handleLogin}
+      loading={loading}    
+      loadingtext="Logging in..."
+      submitText="Login"    
+    />
+  );
 }

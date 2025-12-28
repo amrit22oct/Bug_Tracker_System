@@ -58,7 +58,7 @@ getBugsByProjectId: async (projectId) => {
   /* ================= UPDATE BUG STATUS ================= */
   updateBugStatus: async (bugId, status) => {
     const response = await api.patch(
-      `/admin/bugs/${bugId}/status`,
+      `/admin/bug/${bugId}/status`,
       { status }
     );
     return response.data;

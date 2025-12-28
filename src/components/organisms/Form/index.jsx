@@ -6,6 +6,9 @@ export default function Form({
   title = "Form",
   fields = [],
   onSubmit = () => {},
+  loading = false,        
+  submitText = "Submit",  
+  loadingtext = "Submiting",
 }) {
   const initialState = fields.reduce(
     (acc, f) => ({ ...acc, [f.id]: "" }),
@@ -15,16 +18,18 @@ export default function Form({
   const [formData, setFormData] = useState(initialState);
 
   const handleChange = (id, value) => {
+    if (loading) return; 
     setFormData((prev) => ({ ...prev, [id]: value }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (loading) return; 
     onSubmit(formData);
   };
 
   return (
-    <div className="w-full rounded-xl p-6 bg-(var(--accent)">
+    <div className="w-full rounded-xl p-6 ">
       <form onSubmit={handleSubmit} className="flex flex-col gap-5">
         <h2 className="text-xl font-semibold text-center text-[var(--primary)]">
           {title}
@@ -35,15 +40,17 @@ export default function Form({
             key={field.id}
             {...field}
             value={formData[field.id]}
+            disabled={loading}              
             onChange={(val) => handleChange(field.id, val)}
           />
         ))}
 
         <PrimaryButton
-          title="Submit"
+          title={loading ? loadingtext : submitText}
           type="submit"
           variant="outline"
-          className="w-full hover:bg-(--primary) hover:text-(--accent-light)"
+          disabled={loading}               
+          className="w-full hover:bg-[var(--primary)] hover:text-[var(--accent-light)]"
         />
       </form>
     </div>

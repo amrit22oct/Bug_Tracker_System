@@ -66,20 +66,59 @@ const BugDetail = () => {
     user?.role === "Developer" &&
     bug.assignedTo?._id === user.userId;
 
-  const handleAccept = async () => {
-    if (!canAcceptBug) return;
+    const handleAccept = async () => {
+      console.log("Accept clicked"); // 👈 DEBUG
+    
+      if (!canAcceptBug) {
+        console.log("Cannot accept bug", {
+          status: bug.status,
+          role: user?.role,
+          assignedTo: bug.assignedTo?._id,
+          userId: user?.userId,
+        });
+        return;
+      }
+    
+      try {
+        setUpdating(true);
+        const res = await bugService.updateBugStatus(
+          bug._id,
+          "In Progress"
+        );
+        setBug(res.data);
+      } catch (err) {
+        console.error("Failed to accept bug:", err);
+      } finally {
+        setUpdating(false);
+      }
+    };
 
+    /* ============Can Complete ===========*/
+    const canCompleteBug =
+  bug.status?.toLowerCase() === "in progress" &&
+  user?.role === "Developer" &&
+  bug.assignedTo?._id === user.userId;
+
+
+  const handleComplete = async () => {
+    if (!canCompleteBug) return;
+  
     try {
       setUpdating(true);
-      const updatedBug = await bugService.updateBugStatus(bug._id, "In Progress");
-      setBug(updatedBug.data); // update local state
+      const res = await bugService.updateBugStatus(
+        bug._id,
+        "Resolved" // or "Closed" if preferred
+      );
+      setBug(res.data);
     } catch (err) {
-      console.error("Failed to accept bug:", err);
-      alert("Failed to accept bug. Please try again.");
+      console.error("Failed to complete bug:", err);
     } finally {
       setUpdating(false);
     }
   };
+  
+    
+    
 
   return (
     <div className="w-full h-full bg-[var(--accent-light)] p-6 overflow-auto space-y-6">
@@ -103,14 +142,24 @@ const BugDetail = () => {
             variant="outline"
             onClick={() => navigate(-1)}
           />
-          {canAcceptBug && (
-            <PrimaryButton
-              title={updating ? "Accepting..." : "Accept"}
-              variant="solid"
-              onClick={handleAccept}
-              className="bg-green-500 hover:bg-green-600 text-white"
-            />
-          )}
+         {canAcceptBug && (
+  <PrimaryButton
+    title={updating ? "Accepting..." : "Accept"}
+    variant="solid"
+    handler={handleAccept}
+    className="bg-green-500 hover:bg-green-600 text-white"
+  />
+)}
+
+{canCompleteBug && (
+  <PrimaryButton
+    title={updating ? "Completing..." : "Complete"}
+    variant="solid"
+    handler={handleComplete}
+    className="bg-blue-500 hover:bg-blue-600 text-white"
+  />
+)}
+
         </div>
       </div>
 
