@@ -7,6 +7,7 @@ const RoleBasedUserManagement = (props) => {
   switch (role) {
     case "Admin":
     case "ProjectManager":
+      case "QA":
       return <AdminUserManagement {...props} />;
 
     case "TeamLeader":

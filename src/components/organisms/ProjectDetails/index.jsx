@@ -104,7 +104,7 @@ const ProjectDetail = () => {
         </span>
 
         <span className="flex items-center gap-1 text-sm">
-          <FiUser /> Manager: <strong>{project.createdBy?.name || "N/A"}</strong>
+          <FiUser /> Manager: <strong>{project.manager?.name || "N/A"}</strong>
         </span>
 
         <span className="flex items-center gap-1 text-sm">
@@ -126,6 +126,10 @@ const ProjectDetail = () => {
           <p>
             <FiAlertTriangle className="inline mr-1" />
             <strong>Deadline:</strong> {new Date(project.endDate).toLocaleDateString()}
+          </p>
+          <p>
+            <FiClock className="inline mr-1" />
+            <strong>tester:</strong>  <strong>{project.tester?.name || "N/A"}</strong>
           </p>
 
           <p>

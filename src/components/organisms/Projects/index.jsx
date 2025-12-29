@@ -6,12 +6,13 @@ import HeaderContent from "../../templates/AppHeader/HeaderContent.jsx";
 import PrimarySearchBar from "../../atoms/Searchbar/PrimarySearchBar.jsx";
 
 import projectService from "../../../services/api/project.service.js";
+import authService from "../../../services/api/auth.js";
 import TableSkeleton from "../../Skleton/TableSkeleton.jsx";
-import { FaPlus, FaProjectDiagram, FaBug, FaUsers } from "react-icons/fa";
+import { FaPlus } from "react-icons/fa";
 
-// ✅ Lazy-load table
+// Lazy-load table
 const ProjectsTable = lazy(() =>
-  import("../../organisms/Test/ProjectTable.jsx")
+  import("../Test/ProjectTable.jsx")
 );
 
 const ProjectsPage = ({ searchValue }) => {
@@ -19,6 +20,11 @@ const ProjectsPage = ({ searchValue }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  /* ================= AUTH ================= */
+  const currentUser = authService.getCurrentUser();
+  const loggedInUserId = currentUser?.userId;
+  const role = currentUser?.role;
 
   /* ================= VIEW ================= */
   const handleViewProject = (project) => {
@@ -30,13 +36,30 @@ const ProjectsPage = ({ searchValue }) => {
     const fetchProjects = async () => {
       setLoading(true);
       try {
-        const res = await projectService.getAllProjects();
+        let response;
 
-        const normalizedProjects = (res.data || [])
+        // 🔒 ROLE-BASED API CALL
+        if (role === "ProjectManager") {
+          response = await projectService.getProjectByManagerId(
+            loggedInUserId
+          );
+        } else if (role === "QA") {
+          response = await projectService.getProjectByTesterId(
+            loggedInUserId
+          );
+        } else {
+          response = await projectService.getAllProjects();
+        }
+
+        const projectsData = response?.data || [];
+
+        /* ================= NORMALIZE ================= */
+        const normalizedProjects = projectsData
           .map((project) => ({
             id: project._id,
             name: project.name,
-            manager: project.manager?.name || "N/A",
+            managerName: project.manager?.name || "N/A",
+            testerName: project.tester?.name || "N/A",
             deadline: project.endDate || project.createdAt,
             progress: project.progressPercentage || 0,
             status: project.status || "Unknown",
@@ -54,7 +77,7 @@ const ProjectsPage = ({ searchValue }) => {
     };
 
     fetchProjects();
-  }, []);
+  }, [loggedInUserId, role]);
 
   /* ================= SEARCH ================= */
   const safeSearch = searchValue?.toLowerCase() || "";
@@ -62,7 +85,8 @@ const ProjectsPage = ({ searchValue }) => {
   const filteredProjects = projects.filter(
     (p) =>
       p.name.toLowerCase().includes(safeSearch) ||
-      p.manager.toLowerCase().includes(safeSearch) ||
+      p.managerName.toLowerCase().includes(safeSearch) ||
+      p.testerName.toLowerCase().includes(safeSearch) ||
       p.status.toLowerCase().includes(safeSearch)
   );
 
@@ -87,21 +111,24 @@ const ProjectsPage = ({ searchValue }) => {
 
   return (
     <div className="w-full h-full p-4 bg-[var(--accent-light)]/60 flex flex-col gap-4 overflow-auto">
-      {/* Action Buttons */}
+      {/* ACTION BUTTONS */}
       <div className="flex justify-end">
         <div className="flex gap-2">
-          <PrimaryButton
-            title="Add Project"
-            variant="outline"
-            icon={FaPlus}
-            className=" h-8 text-xs  hover:bg-(--primary) hover:text-(--accent-light)"
-            handler={() => navigate("/add-project")}
-          />
+          {/* Only Admin / Super roles can add project */}
+          {role !== "ProjectManager" && role !== "QA" && (
+            <PrimaryButton
+              title="Add Project"
+              variant="outline"
+              icon={FaPlus}
+              className="h-8 text-xs hover:bg-(--primary) hover:text-(--accent-light)"
+              handler={() => navigate("/add-project")}
+            />
+          )}
 
           <PrimaryButton
             title="Back"
             variant="outline"
-            className=" min-w-[120px] h-8 text-xs  hover:bg-(--primary) hover:text-(--accent-light)"
+            className="min-w-[120px] h-8 text-xs hover:bg-(--primary) hover:text-(--accent-light)"
             handler={() => navigate(-1)}
           />
         </div>
@@ -142,7 +169,9 @@ const ProjectsPage = ({ searchValue }) => {
             title="Next"
             variant={currentPage === totalPages ? "disabled" : "outline"}
             disabled={currentPage === totalPages}
-            handler={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+            handler={() =>
+              setCurrentPage((p) => Math.min(p + 1, totalPages))
+            }
             className={`min-w-[120px] h-8 text-xs ${
               currentPage !== totalPages
                 ? "hover:bg-(--primary) hover:text-(--accent-light)"

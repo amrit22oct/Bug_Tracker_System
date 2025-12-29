@@ -4,7 +4,7 @@ import {
   Register,
   BugPage,
   BugReportPage,
-  ProjectsPage,
+  // ProjectsPage,
   ReportsPage,
   Settings,
   RoleBasedDashboard,
@@ -19,6 +19,7 @@ import BugReportDetail from "@/components/organisms/BugReportDetail";
 import AddBugReport from "@/components/organisms/AddBugReport";
 
 import { RoleBasedUserManagement } from "../../components/pages";
+import ProjectsPage from "../../components/organisms/Projects";
 
 export const routes = [
   // ---------------- DASHBOARD ----------------
@@ -82,14 +83,14 @@ export const routes = [
     path: "/projects",
     component: <ProjectsPage />,
     protectedRoute: true,
-    allowedRoles: ["TeamLeader", "ProjectManager", "Admin"],
+    allowedRoles: ["TeamLeader","QA", "ProjectManager", "Admin"],
   },
   {
     id: "ProjectDetail",
     path: "/view-project-detail/:id",
     component: <ProjectDetail />,
     protectedRoute: true,
-    allowedRoles: ["TeamLeader", "ProjectManager", "Admin"],
+    allowedRoles: ["TeamLeader","QA", "ProjectManager", "Admin"],
   },
   {
     id: "AddProject",
@@ -121,7 +122,7 @@ export const routes = [
     path: "/user-management",
     component: <RoleBasedUserManagement />,
     protectedRoute: true,
-    allowedRoles: ["ProjectManager", "Admin","TeamLeader"],
+    allowedRoles: ["ProjectManager", "Admin","TeamLeader" ,"QA"],
   },
 
   {

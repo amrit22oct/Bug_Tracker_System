@@ -23,7 +23,7 @@ function AppSidebar({ setIsAuth, onClose }) {
     { label: "Dashboard", path: "/", icon: <FaHome /> },
     { label: "Bugs", path: "/bugs", icon: <FaBug /> },
   
-    ...(role === "Admin" || role === "ProjectManager" || role === "TeamLeader"
+    ...(role === "Admin" || role === "ProjectManager" || role === "TeamLeader" 
       ? [
           { label: "Projects", path: "/projects", icon: <FaProjectDiagram /> },
           { label: "Bug Report", path: "/bug-report", icon: <FaBug /> },
@@ -31,6 +31,16 @@ function AppSidebar({ setIsAuth, onClose }) {
           { label: "User Management", path: "/user-management", icon: <FaBug /> },
         ]
       : []),
+      ...(role === "QA"
+      ? [ { label: "My Projects", path: "/projects", icon: <FaProjectDiagram /> },
+      { label: "User Management", path: "/user-management", icon: <FaBug /> } ]
+      : []),
+      // ...(role === "ProjectManager"
+      // ? [ { label: "My Projects", path: "/projects", icon: <FaProjectDiagram /> } ]
+      // : []),
+      // ...(role === "TeamLeader"
+      // ? [ { label: "My Projects", path: "/projects", icon: <FaProjectDiagram /> } ]
+      // : []),
   
     ...(role === "Admin"
       ? [{ label: "Settings", path: "/settings", icon: <FaCog /> }]

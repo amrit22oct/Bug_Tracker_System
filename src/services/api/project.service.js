@@ -24,6 +24,24 @@ const projectService = {
     return response.data;
   },
 
+  /* ================= GET PROJECT BY  MANAGER ID ================= */
+  getProjectByManagerId: async (managerId) => {
+    const response = await api.get(
+      `/admin/project/get-manager-project/${managerId}`
+    );
+    return response.data;
+  },
+
+  /* ================= GET PROJECT BY  TESTER ID ================= */
+  getProjectByTesterId: async (testerId) => {
+    const response = await api.get(
+      `/admin/project/get-tester-project/${testerId}`
+    );
+    return response.data;
+  },
+  
+
+
   /* ================= UPDATE PROJECT ================= */
   updateProject: async (projectId, updateData) => {
     const response = await api.put(
