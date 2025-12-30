@@ -19,7 +19,8 @@ import BugReportDetail from "@/components/organisms/BugReportDetail";
 import AddBugReport from "@/components/organisms/AddBugReport";
 
 import { RoleBasedUserManagement } from "../../components/pages";
-import ProjectsPage from "../../components/organisms/Projects";
+import ProjectsPage from "../../components/pages/ProjectPage";
+// import ProjectsPage from "../../components/organisms/Projects";
 
 export const routes = [
   // ---------------- DASHBOARD ----------------

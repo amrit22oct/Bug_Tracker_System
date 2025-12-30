@@ -17,6 +17,15 @@ const teamService = {
     );
     return response.data;
   },
+  // team-leader/team/get-details
+
+   /* ================= GET ALL DETAILS BY TEAMLEADER  ================= */
+   getTeamLeadersTeamDetails: async () => {
+    const response = await api.get(
+      "/team-leader/team/get-details"
+    );
+    return response.data;
+  },
 
   /* ================= GET TEAM BY ID ================= */
   getTeamById: async (teamId) => {
