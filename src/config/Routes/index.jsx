@@ -2,9 +2,9 @@ import {
   SimplePage,
   Login,
   Register,
-  BugPage,
+  // BugPage,
   BugReportPage,
-  // ProjectsPage,
+  
   ReportsPage,
   Settings,
   RoleBasedDashboard,
@@ -20,6 +20,8 @@ import AddBugReport from "@/components/organisms/AddBugReport";
 
 import { RoleBasedUserManagement } from "../../components/pages";
 import ProjectsPage from "../../components/pages/ProjectPage";
+import BugPage from "../../components/pages/Bugs";
+// import { AdminBugPage } from "../../components/organisms/Bugs";
 // import ProjectsPage from "../../components/organisms/Projects";
 
 export const routes = [

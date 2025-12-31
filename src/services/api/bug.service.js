@@ -16,6 +16,30 @@ const bugService = {
     return response.data;
   },
 
+  /* ================= GET ALL Developer bug================= */
+  getDeveloperBugs: async (developerId) => {
+    const response = await api.get(
+      `/developer/bug/get-developer-bug/${developerId}`
+    );
+    return response.data;
+  },
+  // /get-bug-project-manager/:projectManagerId
+  getProjectManagerBugs: async (projectManagerId) => {
+    const response = await api.get(
+      `/admin/bug/get-bug-project-manager/${projectManagerId}`
+    );
+    return response.data;
+  },
+
+
+   /* ================= GET ALL Developer bug================= */
+   getTeamLeaderBugs: async (teamLeaderId) => {
+    const response = await api.get(
+      `/team-leader/bug/get-team-leader-bug/${teamLeaderId}`
+    );
+    return response.data;
+  },
+
   /* ================= GET BUG BY ID ================= */
   getBugById: async (bugId) => {
     const response = await api.get(`/admin/bug/get-bug/${bugId}`);
@@ -24,19 +48,14 @@ const bugService = {
 
   /* ================= GET BUG BY PROJECT ID =============*/
   /* ================= GET BUGS BY PROJECT ID ================= */
-getBugsByProjectId: async (projectId) => {
-  const response = await api.get(`/admin/bug/get-project-bug/${projectId}`);
-  return response.data;
-},
-
-
+  getBugsByProjectId: async (projectId) => {
+    const response = await api.get(`/admin/bug/get-project-bug/${projectId}`);
+    return response.data;
+  },
 
   /* ================= UPDATE BUG ================= */
   updateBug: async (bugId, updateData) => {
-    const response = await api.put(
-      `/admin/bugs/${bugId}`,
-      updateData
-    );
+    const response = await api.put(`/admin/bugs/${bugId}`, updateData);
     return response.data;
   },
 
@@ -48,28 +67,21 @@ getBugsByProjectId: async (projectId) => {
 
   /* ================= ASSIGN BUG ================= */
   assignBug: async (bugId, userId) => {
-    const response = await api.patch(
-      `/admin/bug/assign/${bugId}`,
-      { userId }
-    );
+    const response = await api.patch(`/admin/bug/assign/${bugId}`, { userId });
     return response.data;
   },
 
   /* ================= UPDATE BUG STATUS ================= */
   updateBugStatus: async (bugId, status) => {
-    const response = await api.patch(
-      `/admin/bug/${bugId}/status`,
-      { status }
-    );
+    const response = await api.patch(`/admin/bug/${bugId}/status`, { status });
     return response.data;
   },
 
   /* ================= LINK RELATED BUGS ================= */
   linkRelatedBugs: async (bugId, relatedBugId) => {
-    const response = await api.patch(
-      `/admin/bugs/${bugId}/link`,
-      { relatedBugId }
-    );
+    const response = await api.patch(`/admin/bugs/${bugId}/link`, {
+      relatedBugId,
+    });
     return response.data;
   },
 
@@ -93,10 +105,9 @@ getBugsByProjectId: async (projectId) => {
 
   /* ================= GET BUG STATS ================= */
   getBugStats: async (projectId) => {
-    const response = await api.get(
-      `/admin/bugs/stats`,
-      { params: { projectId } }
-    );
+    const response = await api.get(`/admin/bugs/stats`, {
+      params: { projectId },
+    });
     return response.data;
   },
 };
