@@ -76,19 +76,31 @@ const TeamList = ({ team }) => {
               </p>
 
               {/* Progress Bar */}
-              <div className="relative w-full h-3 bg-[var(--primary)]/20 rounded-full mt-2">
-                <div
-                  className="h-full rounded-full transition-all duration-700"
-                  style={{
-                    width: `${m.teamProgress}%`,
-                    background:
-                      "linear-gradient(90deg, var(--secondary), var(--secondary-hover))",
-                  }}
-                />
-                <span className="absolute right-2 top-0 text-[10px] font-medium">
-                  {m.teamProgress}%
-                </span>
-              </div>
+              <div className="w-full mt-2">
+  {/* Progress Bar */}
+  <div className="relative w-full h-3 bg-[var(--primary)]/20 rounded-full overflow-hidden">
+    <div
+      className="h-full rounded-full transition-all duration-700 ease-out"
+      style={{
+        width: `${Math.min(m.teamProgress, 100)}%`,
+        background:
+          m.teamProgress === 100
+            ? "linear-gradient(90deg, #22c55e, #16a34a)" // ✅ Completed (Green)
+            : m.teamProgress > 0
+            ? "linear-gradient(90deg, #facc15, #f59e0b)" // 🟡 In Progress (Yellow)
+            : "linear-gradient(90deg, #94a3b8, #64748b)", // ⚪ Planned (Gray)
+      }}
+    />
+  </div>
+
+  {/* Percentage Text */}
+  <div className="flex justify-end mt-1">
+    <span className="text-[11px] font-medium text-muted-foreground">
+      {m.teamProgress}%
+    </span>
+  </div>
+</div>
+
             </div>
           );
         })}
