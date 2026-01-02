@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import ProfileHeader from "../../organisms/Test/ProfileHeader.jsx";
 import StatsCards from "../../organisms/Test/StatsCard.jsx";
@@ -12,19 +12,20 @@ import HeaderContent from "../../templates/AppHeader/HeaderContent.jsx";
 import PrimarySearchBar from "../../atoms/Searchbar/PrimarySearchBar.jsx";
 import { FaPlus, FaProjectDiagram, FaBug, FaUsers } from "react-icons/fa";
 import authService from "@/services/api/auth.js";
+import dashboardService from "../../../services/api/dashboard.service.js";
+import PrimaryButton from "../../atoms/Buttons/PrimaryButton/index.jsx";
 
-/* 🔎 Generic search helper */
+/* ---------------- Generic search helper ---------------- */
 const matchesSearch = (value, search) =>
   value?.toString().toLowerCase().includes(search.toLowerCase());
 
 const Dashboard = ({ searchValue = "" }) => {
   const navigate = useNavigate();
   const [selectedStatus, setSelectedStatus] = useState("All");
-
+  const [showAll, setShowAll] = useState(false);
   const currentUser = authService.getCurrentUser();
-  const { name, username, role, email } = currentUser; // get name and email too
+  const { name, username, role, email } = currentUser;
 
-  /* ---------------- DATA ---------------- */
   const statuses = [
     "All",
     "Recent",
@@ -36,125 +37,122 @@ const Dashboard = ({ searchValue = "" }) => {
     "Cancelled",
   ];
 
-  const projects = [
-    {
-      id: 201,
-      name: "Website Redesign",
-      manager: "Alice",
-      status: "Active",
-      progress: 65,
-    },
-    {
-      id: 202,
-      name: "Mobile App",
-      manager: "Bob",
-      status: "Completed",
-      progress: 100,
-    },
-    {
-      id: 203,
-      name: "API Development",
-      manager: "John",
-      status: "In Progress",
-      progress: 40,
-    },
-    {
-      id: 204,
-      name: "CRM Integration",
-      manager: "Alice",
-      status: "On Hold",
-      progress: 20,
-    },
-    {
-      id: 205,
-      name: "Analytics Dashboard",
-      manager: "Bob",
-      status: "Delayed",
-      progress: 50,
-    },
-    {
-      id: 206,
-      name: "Marketing Website",
-      manager: "John",
-      status: "Cancelled",
-      progress: 0,
-    },
-    {
-      id: 207,
-      name: "Support Portal",
-      manager: "Alice",
-      status: "Recent",
-      progress: 10,
-    },
-  ];
+  /* ---------------- Dashboard State ---------------- */
+  const [dashboardData, setDashboardData] = useState({
+    totals: {},
+    bugStatus: {},
+    projectStatus: {},
+    recentProjects: [],
+    recentBugs: [],
+    teams: [],
+    recentActivities: [],
+    notifications: [],
+  });
 
-  const bugs = [
-    { id: 101, title: "Login page error", priority: "High", status: "Open" },
-    {
-      id: 102,
-      title: "Signup validation",
-      priority: "Medium",
-      status: "In Progress",
-    },
-    { id: 103, title: "Dashboard slow", priority: "Low", status: "Closed" },
-  ];
+  /* ---------------- Fetch dashboard from API ---------------- */
+  useEffect(() => {
+    const fetchDashboard = async () => {
+      try {
+        const data = await dashboardService.getAdminDashboard();
 
-  const activities = [
-    "Alice created a new bug",
-    "Bob completed Mobile App",
-    "John updated API progress",
-    "CRM Integration put on hold",
-  ];
+        /* ---------------- Safe Projects ---------------- */
+        const safeProjects = (data.recentProjects || []).map((p) => ({
+          ...p,
+          managerName: p.manager?.name || "N/A",
+          testerName: p.tester?.name || "N/A",
+          progress: p.progressPercentage ?? 0,
+          deadline: p.endDate ? new Date(p.endDate).toISOString() : "N/A",
+          status: p.status || "Active",
+          priority: p.priority || "Low",
+          manager: undefined,
+          tester: undefined,
+        }));
 
-  const team = [
-    {
-      name: "Alice",
-      role: "Frontend Developer",
-      progress: 78,
-      projectsAssigned: 3,
-      bugsAssigned: 5,
-      completedTasks: 18,
-      pendingTasks: 4,
-      deadline: "2025-01-20",
-    },
-    {
-      name: "Bob",
-      role: "Backend Developer",
-      progress: 62,
-      projectsAssigned: 4,
-      bugsAssigned: 2,
-      completedTasks: 14,
-      pendingTasks: 6,
-      deadline: "2025-01-25",
-    },
-    {
-      name: "John",
-      role: "API Engineer",
-      progress: 55,
-      projectsAssigned: 2,
-      bugsAssigned: 7,
-      completedTasks: 10,
-      pendingTasks: 5,
-      deadline: "2025-01-18",
-    },
-    {
-      name: "Sarah",
-      role: "QA Engineer",
-      progress: 88,
-      projectsAssigned: 3,
-      bugsAssigned: 9,
-      completedTasks: 22,
-      pendingTasks: 2,
-      deadline: "2025-01-15",
-    },
-  ];
+        /* ---------------- Safe Bugs ---------------- */
+        const safeBugs = (data.recentBugs || []).map((b) => ({
+          ...b,
+          reportedByName: b.reportedBy?.name || "N/A",
+          assignedToName: b.assignedTo?.name || "Unassigned",
+          projectName: b.projectId?.name || "N/A",
+          created: b.createdAt ? new Date(b.createdAt).toISOString() : "N/A",
+          status: b.status || "Open",
+          priority: b.priority || "Low",
+        }));
 
-  const notifications = [
-    "New bug assigned to you",
-    "API Development deadline approaching",
-    "Alice commented on Website Redesign",
-    "Mobile App marked completed",
-  ];
+        /* ---------------- Safe Teams ---------------- */
+        const safeTeams = (data.teams || []).map((t) => {
+          const deadlines = (t.projects || [])
+            .map((p) => p.deadline)
+            .filter(Boolean)
+            .map((d) => new Date(d));
+
+          const nearestDeadline =
+            deadlines.length > 0
+              ? new Date(Math.min(...deadlines)).toLocaleDateString()
+              : "-";
+
+          return {
+            ...t,
+            leadName: t.lead?.name || "N/A",
+            membersList: t.members?.map((m) => m.name || "N/A") || [],
+            projectsList: t.projects?.map((p) => p.name || "N/A") || [],
+
+            totalProjects: t.totalProjects || 0,
+            completedProjects: t.completedProjects || 0,
+            teamProgress: t.teamProgress || 0,
+
+            totalBugs: t.totalBugs || 0,
+            openBugs: t.openBugs || 0,
+            teamBugsInProgress: t.teamBugsInProgress || 0,
+            closedBugs: t.closedBugs || 0,
+
+            nearestDeadline,
+          };
+        });
+
+        /* ---------------- Safe Activities ---------------- */
+        const safeActivities = (data.recentActivities || []).map((a) => ({
+          id: a.bugId || a.projectId,
+          type: a.type,
+          action: a.action,
+          byName: a.by || "System",
+          updatedAt: a.updatedAt ? new Date(a.updatedAt).toISOString() : null,
+        }));
+
+        /* ---------------- Notifications FROM Activities ---------------- */
+        const safeNotifications = safeActivities.map(
+          (a) => `${a.action} • by ${a.byName}`
+        );
+
+        /* ---------------- Set Dashboard Data ---------------- */
+        setDashboardData({
+          totals: data.totals || {},
+          bugStatus: data.bugStatus || {},
+          projectStatus: data.projectStatus || {},
+          recentProjects: safeProjects,
+          recentBugs: safeBugs,
+          teams: safeTeams,
+          recentActivities: safeActivities,
+          notifications: safeNotifications,
+        });
+      } catch (error) {
+        console.error("Failed to fetch dashboard data:", error);
+      }
+    };
+
+    fetchDashboard();
+  }, []);
+
+  const {
+    totals,
+    bugStatus,
+    projectStatus,
+    recentProjects,
+    recentBugs,
+    teams,
+    recentActivities,
+    notifications,
+  } = dashboardData;
 
   const profileActions = [
     {
@@ -168,108 +166,213 @@ const Dashboard = ({ searchValue = "" }) => {
       icon: <FaProjectDiagram />,
       variant: "outline",
       onClick: () => navigate("/add-project"),
-      className: "hover:bg-(--primary) hover:text-(--accent-light)",
     },
   ];
 
-  /* ---------------- FILTERING ---------------- */
+  /* ---------------- Filtering ---------------- */
   const search = searchValue.trim().toLowerCase();
 
   const filteredProjects = useMemo(() => {
     const statusFiltered =
       selectedStatus === "All"
-        ? projects
-        : projects.filter((p) => p.status === selectedStatus);
+        ? recentProjects
+        : recentProjects.filter((p) => p.status === selectedStatus);
 
     if (!search) return statusFiltered;
 
     return statusFiltered.filter(
       (p) =>
         matchesSearch(p.name, search) ||
-        matchesSearch(p.manager, search) ||
+        matchesSearch(p.managerName, search) ||
         matchesSearch(p.status, search)
     );
-  }, [projects, selectedStatus, search]);
+  }, [recentProjects, selectedStatus, search]);
 
   const filteredBugs = useMemo(() => {
-    if (!search) return bugs;
-    return bugs.filter(
+    if (!search) return recentBugs;
+    return recentBugs.filter(
       (b) =>
         matchesSearch(b.title, search) ||
         matchesSearch(b.status, search) ||
-        matchesSearch(b.priority, search)
+        matchesSearch(b.priority, search) ||
+        matchesSearch(b.projectName, search) ||
+        matchesSearch(b.reportedByName, search) ||
+        matchesSearch(b.assignedToName, search)
     );
-  }, [bugs, search]);
+  }, [recentBugs, search]);
 
-  const filteredTeam = useMemo(() => {
-    if (!search) return team;
-    return team.filter(
-      (m) => matchesSearch(m.name, search) || matchesSearch(m.role, search)
+  const filteredTeams = useMemo(() => {
+    if (!search) return teams;
+    return teams.filter(
+      (t) =>
+        matchesSearch(t.name, search) ||
+        matchesSearch(t.leadName, search) ||
+        t.membersList.some((m) => matchesSearch(m, search)) ||
+        t.projectsList.some((p) => matchesSearch(p, search))
     );
-  }, [team, search]);
+  }, [teams, search]);
 
   const filteredActivities = useMemo(() => {
-    if (!search) return activities;
-    return activities.filter((a) => matchesSearch(a, search));
-  }, [activities, search]);
+    if (!search) return recentActivities;
+    return recentActivities.filter(
+      (a) =>
+        matchesSearch(a.action || a.type, search) ||
+        matchesSearch(a.byName, search)
+    );
+  }, [recentActivities, search]);
 
   const filteredNotifications = useMemo(() => {
     if (!search) return notifications;
-    return notifications.filter((n) => matchesSearch(n, search));
+
+    return notifications.filter(
+      (n) => typeof n === "string" && matchesSearch(n, search)
+    );
   }, [notifications, search]);
+
+  const displayedBugs = showAll ? filteredBugs : filteredBugs.slice(0, 5);
+
+  const displayedProjects = showAll
+    ? filteredProjects
+    : filteredProjects.slice(0, 5);
+
+  /* ================= VIEW ================= */
+  const handleViewProject = (project) => {
+    navigate(`/view-project-detail/${project._id}`);
+  };
+
+  const handleViewBug = (bug) => {
+    navigate(`/view-bug-detail/${bug._id}`);
+  };
+  const handleViewallBug = (bug) => {
+    navigate(`/bugs`);
+  };
+
+  const handleViewallProject = (bug) => {
+    navigate(`/projects`);
+  };
 
   /* ---------------- UI ---------------- */
   return (
     <div className="h-full w-full p-8 bg-[var(--accent-light)] overflow-auto space-y-10">
       <ProfileHeader
-        name={name || username} // fallback to username if name is not stored
+        name={name || username}
         role={role}
-        location="New York" // static for now
-        email={email || `${username}@example.com`} // fallback if email not stored
+        location="New York"
+        email={email || `${username}@example.com`}
         stats={[
-          { label: "Projects", value: 12, icon: <FaProjectDiagram /> },
-          { label: "Open Bugs", value: 7, icon: <FaBug /> },
-          { label: "Team Members", value: 4, icon: <FaUsers /> },
+          {
+            label: "Projects",
+            value: totals.totalProjects || 0,
+            icon: <FaProjectDiagram />,
+          },
+          {
+            label: "Completed Projects",
+            value: projectStatus.completed || 0,
+            icon: <FaProjectDiagram />,
+          },
+          {
+            label: "In Progress Projects",
+            value: projectStatus.inprogress || 0,
+            icon: <FaProjectDiagram />,
+          },
+          {
+            label: "Total Bugs",
+            value: totals.totalBugs || 0,
+            icon: <FaBug />,
+          },
+          { label: "Open Bugs", value: bugStatus.open || 0, icon: <FaBug /> },
+          {
+            label: "Resolved Bugs",
+            value: bugStatus.resolved || 0,
+            icon: <FaBug />,
+          },
+          { label: "Team ", value: totals.totalTeams || 0, icon: <FaUsers /> },
+          { label: "Users", value: totals.totalUsers || 0, icon: <FaUsers /> },
+          // { label: "Users", value: totals.totalUsers || 0, icon: <FaUsers /> },
         ]}
         actions={profileActions}
       />
 
-      <StatsCards />
-      <BugsTable bugs={filteredBugs} />
+      <StatsCards
+        projectStatus={projectStatus}
+        bugStatus={bugStatus}
+        totals={totals}
+      />
 
       <div className="space-y-4">
-        <div className="flex flex-wrap gap-2 mb-2">
-          {statuses.map((status) => (
-            <button
-              key={status}
-              onClick={() => setSelectedStatus(status)}
-              className={`px-4 py-2 rounded-2xl cursor-pointer hover:bg-[var(--primary)] hover:text-(--accent-light) ${
-                selectedStatus === status
-                  ? "bg-[var(--primary)] text-(--accent-light)"
-                  : "border"
-              }`}
+        <div className="flex justify-between items-center gap-2 mb-2">
+          <h1 className="text-xl md:text-3xl font-bold text-(--primary) mb-5">
+            Bugs
+          </h1>
+          {filteredBugs.length > 5 && (
+            <PrimaryButton
+              title="View All"
+              variant="outline"
+              className="max-w-[180px]"
+              handler={handleViewallBug}
             >
-              {status}
-            </button>
-          ))}
+              {showAll ? "Show Less" : "View All"}
+            </PrimaryButton>
+          )}
         </div>
-        <ProjectsTable projects={filteredProjects} />
+
+        <BugsTable bugs={displayedBugs} onView={handleViewBug} />
       </div>
 
-      <TeamList team={filteredTeam} />
+      <div className="space-y-4">
+        <div className="flex justify-between items-center gap-2 mb-2">
+          <h1 className="text-xl md:text-3xl font-bold text-(--primary) mb-5">
+            Projects
+          </h1>
+        </div>
+        <div className="flex justify-between items-center">
+          <div className="flex flex-wrap gap-2 mb-2 items-center">
+            {statuses.map((status) => (
+              <button
+                key={status}
+                onClick={() => setSelectedStatus(status)}
+                className={`px-4 py-2 rounded-2xl cursor-pointer hover:bg-[var(--primary)] hover:text-(--accent-light) ${
+                  selectedStatus === status
+                    ? "bg-[var(--primary)] text-(--accent-light)"
+                    : "border"
+                }`}
+              >
+                {status}
+              </button>
+            ))}
+          </div>
+
+          {filteredProjects.length > 5 && (
+            <PrimaryButton
+              title="View All"
+              variant="outline"
+              className="max-w-[180px]"
+              handler={handleViewallProject}
+            >
+              {showAll ? "Show Less" : "View All"}
+            </PrimaryButton>
+          )}
+        </div>
+        <ProjectsTable
+          projects={displayedProjects}
+          onView={handleViewProject}
+        />
+      </div>
+
+      <TeamList team={filteredTeams} />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 grid grid-cols-1 lg:grid-cols-2 gap-6">
           <CalendarWidget />
           <Notifications notifications={filteredNotifications} />
         </div>
-        <ActivityList activities={filteredActivities} />
+        <ActivityList activities={filteredNotifications} />
       </div>
     </div>
   );
 };
 
-/* HEADER */
+/* ---------------- Header ---------------- */
 Dashboard.header = ({ searchValue, setSearchValue }) => (
   <HeaderContent
     title="Dashboard"

@@ -26,87 +26,67 @@ const TeamList = ({ team }) => {
   return (
     <PressedContainer className="w-full p-3 sm:p-6 bg-[var(--accent-light)] border-[var(--primary)]">
       <h2 className="text-[var(--primary)] font-semibold text-lg mb-4 sm:mb-6">
-        My Team
+        Teams Overview
       </h2>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {team.map((m) => {
-          const performance = getPerformanceStatus(m.progress);
+          const performance = getPerformanceStatus(m.teamProgress);
 
           return (
             <div
-              key={m.name}
-              className="border rounded-xl bg-white/50 hover:bg-[var(--secondary)]/20 transition-all p-3 sm:p-4"
+              key={m._id}
+              className="border rounded-xl bg-white/50 hover:bg-[var(--secondary)]/20 transition-all p-4"
             >
-              {/* Top Row (Mobile Clean Header) */}
-              <div className="flex items-center justify-between gap-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-[var(--primary)]/80 text-(--accent-light) flex items-center justify-center font-bold text-sm">
-                    {m.name
-                      .split(" ")
-                      .map((n) => n[0])
-                      .join("")}
-                  </div>
-
-                  <div>
-                    <p className="font-medium text-[var(--primary)] text-sm">
-                      {m.name}
-                    </p>
-                    {m.role && (
-                      <span
-                        className={`text-[10px] px-2 py-0.5 rounded-full shadow-sm ${roleColors[m.role]}`}
-                      >
-                        {m.role}
-                      </span>
-                    )}
-                  </div>
+              {/* Header */}
+              <div className="flex items-center justify-between mb-2">
+                <div>
+                  <p className="font-semibold text-[var(--primary)]">
+                    {m.name}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    Lead: {m.leadName}
+                  </p>
                 </div>
 
-                <span
-                  className={`text-xs font-semibold ${performanceColors[performance]}`}
-                >
+                <span className={`text-xs font-semibold ${performanceColors[performance]}`}>
                   {performance}
                 </span>
               </div>
 
-              {/* Stats (Compact Mobile Grid) */}
-              <div className="grid grid-cols-2 gap-2 mt-3 text-xs">
+              {/* Metrics */}
+              <div className="grid grid-cols-2 gap-2 text-xs mt-2">
                 <div>
-                  <span className="font-semibold">{m.projectsAssigned || 0}</span>{" "}
-                  Projects
+                  <strong>{m.totalProjects}</strong> Projects
                 </div>
                 <div>
-                  <span className="font-semibold">{m.bugsAssigned || 0}</span>{" "}
-                  Bugs
+                  <strong>{m.completedProjects}</strong> Completed
                 </div>
                 <div>
-                  <span className="font-semibold">{m.completedTasks || 0}</span>{" "}
-                  Done
+                  <strong>{m.totalBugs}</strong> Bugs
                 </div>
                 <div>
-                  <span className="font-semibold">{m.pendingTasks || 0}</span>{" "}
-                  Pending
+                  <strong>{m.teamBugsInProgress}</strong> In Progress
                 </div>
               </div>
 
               {/* Deadline */}
               <p className="text-xs mt-2">
-                <span className="font-semibold">{m.deadline || "-"}</span>{" "}
-                Deadline
+                <strong>{m.nearestDeadline}</strong> Nearest Deadline
               </p>
 
-              {/* Progress */}
-              <div className="relative w-full h-3 bg-[var(--primary)]/20 rounded-full shadow-inner mt-2">
+              {/* Progress Bar */}
+              <div className="relative w-full h-3 bg-[var(--primary)]/20 rounded-full mt-2">
                 <div
                   className="h-full rounded-full transition-all duration-700"
                   style={{
-                    width: `${m.progress}%`,
+                    width: `${m.teamProgress}%`,
                     background:
                       "linear-gradient(90deg, var(--secondary), var(--secondary-hover))",
                   }}
                 />
-                <span className="absolute right-2 top-0 text-[10px] font-medium text-[var(--primary)]">
-                  {m.progress}%
+                <span className="absolute right-2 top-0 text-[10px] font-medium">
+                  {m.teamProgress}%
                 </span>
               </div>
             </div>
@@ -116,5 +96,6 @@ const TeamList = ({ team }) => {
     </PressedContainer>
   );
 };
+
 
 export default TeamList;

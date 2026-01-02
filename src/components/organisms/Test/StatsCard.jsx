@@ -6,35 +6,36 @@ import {
 } from "react-icons/fa";
 import PressedContainer from "../../atoms/PressedContainer";
 
-const cards = [
-  {
-    label: "Total Projects",
-    value: 12,
-    icon: FaProjectDiagram,
-    color: "var(--secondary)",
-  },
-  {
-    label: "Open Bugs",
-    value: 7,
-    icon: FaBug,
-    color: "#e5533d",
-  },
-  {
-    label: "In Progress",
-    value: 5,
-    icon: FaSpinner,
-    color: "#f4b400",
-    spin: true,
-  },
-  {
-    label: "Completed",
-    value: 18,
-    icon: FaCheckCircle,
-    color: "var(--accent)",
-  },
-];
+export default function StatsCards({ totals = {}, projectStatus = {}, bugStatus = {} }) {
+  // Build cards dynamically
+  const cards = [
+    {
+      label: "Total Projects",
+      value: totals.totalProjects || 0,
+      icon: FaProjectDiagram,
+      color: "var(--secondary)",
+    },
+    {
+      label: "Open Bugs",
+      value: bugStatus.open || 0,
+      icon: FaBug,
+      color: "#e5533d",
+    },
+    {
+      label: "In Progress Project",
+      value: (projectStatus.inprogress || 0) + (projectStatus.planned || 0),
+      icon: FaSpinner,
+      color: "#f4b400",
+      spin: true,
+    },    
+    {
+      label: "Completed",
+      value: projectStatus.completed || 0,
+      icon: FaCheckCircle,
+      color: "var(--accent)",
+    },
+  ];
 
-export default function StatsCards() {
   return (
     <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
       {cards.map(({ label, value, icon: Icon, color, spin }) => (
