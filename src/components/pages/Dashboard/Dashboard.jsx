@@ -23,6 +23,7 @@ const Dashboard = ({ searchValue = "" }) => {
   const navigate = useNavigate();
   const [selectedStatus, setSelectedStatus] = useState("All");
   const [showAll, setShowAll] = useState(false);
+  const [loading, setLoading] = useState(true);
   const currentUser = authService.getCurrentUser();
   const { name, username, role, email } = currentUser;
 
@@ -53,8 +54,10 @@ const Dashboard = ({ searchValue = "" }) => {
   useEffect(() => {
     const fetchDashboard = async () => {
       try {
+        setLoading(true);
+  
         const data = await dashboardService.getAdminDashboard();
-
+  
         /* ---------------- Safe Projects ---------------- */
         const safeProjects = (data.recentProjects || []).map((p) => ({
           ...p,
@@ -67,7 +70,7 @@ const Dashboard = ({ searchValue = "" }) => {
           manager: undefined,
           tester: undefined,
         }));
-
+  
         /* ---------------- Safe Bugs ---------------- */
         const safeBugs = (data.recentBugs || []).map((b) => ({
           ...b,
@@ -78,38 +81,35 @@ const Dashboard = ({ searchValue = "" }) => {
           status: b.status || "Open",
           priority: b.priority || "Low",
         }));
-
+  
         /* ---------------- Safe Teams ---------------- */
         const safeTeams = (data.teams || []).map((t) => {
           const deadlines = (t.projects || [])
             .map((p) => p.deadline)
             .filter(Boolean)
             .map((d) => new Date(d));
-
+  
           const nearestDeadline =
             deadlines.length > 0
               ? new Date(Math.min(...deadlines)).toLocaleDateString()
               : "-";
-
+  
           return {
             ...t,
             leadName: t.lead?.name || "N/A",
             membersList: t.members?.map((m) => m.name || "N/A") || [],
             projectsList: t.projects?.map((p) => p.name || "N/A") || [],
-
             totalProjects: t.totalProjects || 0,
             completedProjects: t.completedProjects || 0,
             teamProgress: t.teamProgress || 0,
-
             totalBugs: t.totalBugs || 0,
             openBugs: t.openBugs || 0,
             teamBugsInProgress: t.teamBugsInProgress || 0,
             closedBugs: t.closedBugs || 0,
-
             nearestDeadline,
           };
         });
-
+  
         /* ---------------- Safe Activities ---------------- */
         const safeActivities = (data.recentActivities || []).map((a) => ({
           id: a.bugId || a.projectId,
@@ -118,13 +118,11 @@ const Dashboard = ({ searchValue = "" }) => {
           byName: a.by || "System",
           updatedAt: a.updatedAt ? new Date(a.updatedAt).toISOString() : null,
         }));
-
-        /* ---------------- Notifications FROM Activities ---------------- */
+  
         const safeNotifications = safeActivities.map(
           (a) => `${a.action} • by ${a.byName}`
         );
-
-        /* ---------------- Set Dashboard Data ---------------- */
+  
         setDashboardData({
           totals: data.totals || {},
           bugStatus: data.bugStatus || {},
@@ -137,11 +135,14 @@ const Dashboard = ({ searchValue = "" }) => {
         });
       } catch (error) {
         console.error("Failed to fetch dashboard data:", error);
+      } finally {
+        setLoading(false);
       }
     };
-
+  
     fetchDashboard();
   }, []);
+  
 
   const {
     totals,
@@ -251,8 +252,22 @@ const Dashboard = ({ searchValue = "" }) => {
     navigate(`/projects`);
   };
 
+  if (loading) {
+    return (
+      <div className="h-full w-full flex items-center justify-center bg-[var(--accent-light)]">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-10 h-10 border-4 border-[var(--primary)] border-t-transparent rounded-full animate-spin" />
+          <p className="text-sm text-gray-500">Loading dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
   /* ---------------- UI ---------------- */
   return (
+   
+    
+    
     <div className="h-full w-full p-8 bg-[var(--accent-light)] overflow-auto space-y-10">
       <ProfileHeader
         name={name || username}
