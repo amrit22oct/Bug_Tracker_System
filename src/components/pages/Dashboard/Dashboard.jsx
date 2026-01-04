@@ -1,19 +1,47 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, lazy, Suspense } from "react";
+
 import { useNavigate } from "react-router-dom";
-import ProfileHeader from "../../organisms/Test/ProfileHeader.jsx";
-import StatsCards from "../../organisms/Test/StatsCard.jsx";
-import ProjectsTable from "../../organisms/Test/ProjectTable.jsx";
-import BugsTable from "../../organisms/Test/BugTable.jsx";
-import ActivityList from "../../organisms/Test/Activity.jsx";
-import CalendarWidget from "../../organisms/Test/CalendarWidget.jsx";
-import Notifications from "../../organisms/Test/Notificatioin.jsx";
-import TeamList from "../../organisms/Test/TeamList.jsx";
+// import ProfileHeader from "../../organisms/Test/ProfileHeader.jsx";
+// import StatsCards from "../../organisms/Test/StatsCard.jsx";
+// import ProjectsTable from "../../organisms/Test/ProjectTable.jsx";
+// import BugsTable from "../../organisms/Test/BugTable.jsx";
+// import ActivityList from "../../organisms/Test/Activity.jsx";
+// import CalendarWidget from "../../organisms/Test/CalendarWidget.jsx";
+// import Notifications from "../../organisms/Test/Notificatioin.jsx";
+// import TeamList from "../../organisms/Test/TeamList.jsx";
+
+const ProfileHeader = lazy(() =>
+  import("../../organisms/Test/ProfileHeader.jsx")
+);
+const StatsCards = lazy(() =>
+  import("../../organisms/Test/StatsCard.jsx")
+);
+const ProjectsTable = lazy(() =>
+  import("../../organisms/Test/ProjectTable.jsx")
+);
+const BugsTable = lazy(() =>
+  import("../../organisms/Test/BugTable.jsx")
+);
+const ActivityList = lazy(() =>
+  import("../../organisms/Test/Activity.jsx")
+);
+const CalendarWidget = lazy(() =>
+  import("../../organisms/Test/CalendarWidget.jsx")
+);
+const Notifications = lazy(() =>
+  import("../../organisms/Test/Notificatioin.jsx")
+);
+const TeamList = lazy(() =>
+  import("../../organisms/Test/TeamList.jsx")
+);
+ 
 import HeaderContent from "../../templates/AppHeader/HeaderContent.jsx";
 import PrimarySearchBar from "../../atoms/Searchbar/PrimarySearchBar.jsx";
 import { FaPlus, FaProjectDiagram, FaBug, FaUsers } from "react-icons/fa";
 import authService from "@/services/api/auth.js";
 import dashboardService from "../../../services/api/dashboard.service.js";
 import PrimaryButton from "../../atoms/Buttons/PrimaryButton/index.jsx";
+import DashboardSkeleton from "../../Skleton/dashboardSkeleton.jsx";
 
 /* ---------------- Generic search helper ---------------- */
 const matchesSearch = (value, search) =>
@@ -251,19 +279,16 @@ const Dashboard = ({ searchValue = "" }) => {
     navigate(`/projects`);
   };
 
+ 
+
   if (loading) {
-    return (
-      <div className="h-full w-full flex items-center justify-center bg-[var(--accent-light)]">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-10 h-10 border-4 border-[var(--primary)] border-t-transparent rounded-full animate-spin" />
-          <p className="text-sm text-gray-500">Loading dashboard...</p>
-        </div>
-      </div>
-    );
+    return <DashboardSkeleton />;
   }
+  
 
   /* ---------------- UI ---------------- */
   return (
+    <Suspense fallback={<DashboardSkeleton />}>
     <div className="h-full w-full p-8 bg-[var(--accent-light)] overflow-auto space-y-10">
       <ProfileHeader
         name={name || username}
@@ -380,6 +405,7 @@ const Dashboard = ({ searchValue = "" }) => {
         <ActivityList activities={filteredNotifications} />
       </div>
     </div>
+    </Suspense>
   );
 };
 
