@@ -7,7 +7,6 @@ import StatsCardsSkeleton from "./StatsCardsSkeleton";
 import TableSkeleton from "./TableSkeleton";
 import TeamListSkeleton from "./TeamListSkeleton";
 
-
 const DashboardSkeleton = () => {
   return (
     <div className="h-full w-full p-8 bg-[var(--accent-light)] overflow-auto space-y-10">
@@ -37,8 +36,8 @@ const DashboardSkeleton = () => {
         <div className="lg:col-span-2 grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* <PressedContainer className="h-[260px] animate-pulse bg-gray-200" />
           <PressedContainer className="h-[260px] animate-pulse bg-gray-200" /> */}
-           <CalendarWidgetSkeleton />
-           <NotificationsSkeleton />
+          <CalendarWidgetSkeleton />
+          <NotificationsSkeleton />
         </div>
         <ActivitySkeleton />
       </div>

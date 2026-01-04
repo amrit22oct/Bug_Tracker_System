@@ -41,7 +41,7 @@ import { FaPlus, FaProjectDiagram, FaBug, FaUsers } from "react-icons/fa";
 import authService from "@/services/api/auth.js";
 import dashboardService from "../../../services/api/dashboard.service.js";
 import PrimaryButton from "../../atoms/Buttons/PrimaryButton/index.jsx";
-import DashboardSkeleton from "../../Skleton/dashboardSkeleton.jsx";
+import DashboardSkeleton from "../../Skleton/DashboardSkeleton.jsx";
 
 /* ---------------- Generic search helper ---------------- */
 const matchesSearch = (value, search) =>
