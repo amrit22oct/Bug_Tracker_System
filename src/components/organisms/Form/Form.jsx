@@ -4,6 +4,8 @@ import PrimaryButton from "../../atoms/Buttons/PrimaryButton";
 
 export default function Form({
   title,
+  loading,
+  loadingtext="",
   sections = [],
   onSubmit,
   submitText = "Submit",
@@ -83,7 +85,7 @@ export default function Form({
       <div className="flex justify-end pb-6">
         <PrimaryButton
           type="submit"
-          title={submitText}
+          title={loading ? loadingtext : submitText}
           variant="outline"
           className="w-full md:w-1/4 hover:bg-(--primary) hover:text-(--accent-light)"
         />

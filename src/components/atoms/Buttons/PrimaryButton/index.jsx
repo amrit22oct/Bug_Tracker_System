@@ -37,6 +37,8 @@ const VARIANTS = {
 const PrimaryButton = ({
   title = "Submit",
   handler,
+  loading,
+  loadingtext = "",
   disabled = false,
   type = "button",
   className = "",
@@ -53,6 +55,7 @@ const PrimaryButton = ({
   return (
     <button
       type={type}
+      
       disabled={disabled}
       onClick={disabled ? undefined : handler}
       className={`
@@ -92,7 +95,7 @@ const PrimaryButton = ({
         />
       )}
 
-      <span className="relative z-10 select-none truncate">{title}</span>
+      <span className="relative z-10 select-none truncate">{loading ? loadingtext : title}</span>
 
       {Icon && iconPosition === "right" && (
         <Icon

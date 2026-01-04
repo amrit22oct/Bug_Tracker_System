@@ -10,6 +10,7 @@ import {
 } from "react-icons/fa";
 import teamService from "../../../services/api/team.service.js";
 import bugService from "../../../services/api/bug.service.js";
+import PrimaryButton from "../../atoms/Buttons/PrimaryButton/index.jsx";
 
 /* 🔎 search helper */
 const matchesSearch = (value, search) =>
@@ -22,6 +23,7 @@ const TLUserManagement = ({ searchValue = "" }) => {
   const [users, setUsers] = useState([]);
   const [selectedRole, setSelectedRole] = useState("All");
   const [loading, setLoading] = useState(false);
+  const [assigningBugId, setAssigningBugId] = useState(false);
 
   // Assign Bug
   const [showAssignModal, setShowAssignModal] = useState(false);
@@ -82,10 +84,13 @@ const TLUserManagement = ({ searchValue = "" }) => {
 
   /* ---------------- ASSIGN BUG ---------------- */
   const handleAssignBug = async () => {
+    if (assigningBugId) return;
+
     if (!selectedBug || !selectedDeveloper) {
       alert("Select bug & developer");
       return;
     }
+    setAssigningBugId(true);
 
     try {
       await bugService.assignBug(selectedBug, selectedDeveloper);
@@ -97,6 +102,8 @@ const TLUserManagement = ({ searchValue = "" }) => {
       setSelectedProject("");
     } catch (error) {
       alert(error.response?.data?.message || "Failed to assign bug");
+    } finally {
+      setAssigningBugId(false);
     }
   };
 
@@ -248,19 +255,34 @@ const TLUserManagement = ({ searchValue = "" }) => {
                 ))}
             </select>
 
-            <div className="flex justify-end gap-2">
-              <button
+            <div className="flex justify-around items-center gap-2">
+              {/* <button
                 onClick={() => setShowAssignModal(false)}
                 className="border px-4 py-2 rounded-xl"
               >
                 Cancel
-              </button>
-              <button
+              </button> */}
+              <PrimaryButton
+                      
+                      handler={() => setShowAssignModal(false)}
+                      title="Cancel"
+                      variant="outline"
+                      className="w-full min-w-[150px] md:w-1/4 hover:bg-(--primary) hover:text-(--accent-light)"
+                    />
+              {/* <button
                 onClick={handleAssignBug}
                 className="bg-[var(--primary)] text-white px-4 py-2 rounded-xl"
               >
-                Assign
-              </button>
+                Assign Bug
+              </button> */}
+              <PrimaryButton
+                      loading={assigningBugId}
+                      loadingtext="Assigning..."
+                      handler={handleAssignBug}
+                      title="Assign Bug"
+                      variant="outline"
+                      className="w-full min-w-[150px] md:w-1/4 hover:bg-(--primary) hover:text-(--accent-light)"
+                    />
             </div>
           </div>
         </div>

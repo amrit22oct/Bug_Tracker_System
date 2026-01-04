@@ -10,6 +10,7 @@ export default function AddTeamForm() {
 
   const [teamLeaders, setTeamLeaders] = useState([]);
   const [developers, setDevelopers] = useState([]);
+  const [loading, setloading] = useState(false);
 
   /* ================= FETCH USERS ================= */
   useEffect(() => {
@@ -88,6 +89,8 @@ export default function AddTeamForm() {
       lead: data.lead,
       members: Array.from(new Set([data.lead, ...data.members])),
     };
+    if (loading) return;
+    setloading(true);
 
     try {
       await teamService.createTeam(payload);
@@ -95,12 +98,16 @@ export default function AddTeamForm() {
       navigate("/teams");
     } catch (err) {
       showError("Failed to create team");
+    } finally {
+      setloading(false);
     }
   };
 
   return (
     <Form
       title="Add Team"
+      loading={loading}
+      loadingtext="Creating Team.."
       subtitle="Create a team and assign members"
       sections={sections}
       submitText="Create Team"

@@ -36,6 +36,8 @@ const AdminUserManagement = ({ searchValue = "" }) => {
   const [projects, setProjects] = useState([]);
   const [users, setUsers] = useState([]); // ✅ NOW USED
   const [loading, setLoading] = useState(false);
+  // const [assignProject, setAssignProject] = useState(false);
+  const [assigningTeamId, setAssigningTeamId] = useState(null);
 
   const [activeTeamId, setActiveTeamId] = useState(null);
   const [selectedProjectId, setSelectedProjectId] = useState("");
@@ -88,16 +90,21 @@ const AdminUserManagement = ({ searchValue = "" }) => {
 
   /* ---------------- ASSIGN PROJECT TO TEAM ---------------- */
   const handleAssignProjectToTeam = async (teamId) => {
+    if (assigningTeamId) return;
+
     if (!selectedProjectId) {
       alert("Please select a project");
       return;
     }
+
+    setAssigningTeamId(teamId);
 
     try {
       const res = await teamService.assignProjectToTeam(
         teamId,
         selectedProjectId
       );
+
       alert("Project assigned successfully");
 
       setTeams((prev) =>
@@ -112,6 +119,8 @@ const AdminUserManagement = ({ searchValue = "" }) => {
       setSelectedProjectId("");
     } catch (error) {
       alert(error.response?.data?.message || "Assignment failed");
+    } finally {
+      setAssigningTeamId(null);
     }
   };
 
@@ -325,12 +334,20 @@ const AdminUserManagement = ({ searchValue = "" }) => {
                       ))}
                     </select>
 
-                    <button
+                    {/* <button
                       onClick={() => handleAssignProjectToTeam(team._id)}
                       className="bg-[var(--primary)] text-white px-4 rounded-xl"
                     >
-                      Assign
-                    </button>
+                      Assign 
+                    </button> */}
+                    <PrimaryButton
+                      loading={assigningTeamId === team._id}
+                      loadingtext="Assigning..."
+                      handler={() => handleAssignProjectToTeam(team._id)}
+                      title="Assign"
+                      variant="outline"
+                      className="w-full md:w-1/4 hover:bg-(--primary) hover:text-(--accent-light)"
+                    />
                   </div>
                 )}
               </div>

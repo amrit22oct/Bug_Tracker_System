@@ -11,7 +11,10 @@ export default function AddBug() {
   const location = useLocation();
 
   const [projects, setProjects] = useState([]);
-  const [loading, setLoading] = useState(true);
+
+  // ✅ SEPARATE LOADING STATES
+  const [projectsLoading, setProjectsLoading] = useState(true);
+  const [submitLoading, setSubmitLoading] = useState(false);
 
   // ✅ CONTROLLED STATES
   const [selectedProjectId, setSelectedProjectId] = useState(
@@ -19,7 +22,7 @@ export default function AddBug() {
   );
   const [selectedProjectPriority, setSelectedProjectPriority] = useState("Low");
 
-  /* ================= FETCH PROJECTS ================= */
+  /* ================= FETCH PROJECTS (ONCE) ================= */
   useEffect(() => {
     const fetchProjects = async () => {
       try {
@@ -40,12 +43,12 @@ export default function AddBug() {
         console.error("Failed to fetch projects", err);
         alert("Failed to load projects. Refresh page.");
       } finally {
-        setLoading(false);
+        setProjectsLoading(false);
       }
     };
 
     fetchProjects();
-  }, [selectedProjectId]);
+  }, []); // ✅ FIXED
 
   /* ================= HANDLERS ================= */
   const handleProjectChange = (projectId) => {
@@ -78,7 +81,7 @@ export default function AddBug() {
           type: "select",
           required: true,
           options: projectOptions,
-          value: selectedProjectId, // ✅ CONTROLLED
+          value: selectedProjectId,
           onChange: handleProjectChange,
         },
         {
@@ -97,7 +100,8 @@ export default function AddBug() {
           label: "Priority",
           type: "select",
           options: ["Low", "Medium", "High", "Critical"],
-          value: selectedProjectPriority, // ✅ AUTO-UPDATES
+          value: selectedProjectPriority,
+          onChange: setSelectedProjectPriority, // ✅ ALLOW OVERRIDE
         },
         {
           id: "severity",
@@ -141,6 +145,9 @@ export default function AddBug() {
 
   /* ================= SUBMIT ================= */
   const handleSubmit = async (data) => {
+    if (submitLoading) return;
+    setSubmitLoading(true);
+
     try {
       const userId = Cookies.get("bt_userId");
       if (!userId) {
@@ -151,7 +158,7 @@ export default function AddBug() {
       const payload = {
         title: data.title,
         description: data.description || "",
-        priority: selectedProjectPriority, // ✅ ALWAYS CORRECT
+        priority: selectedProjectPriority,
         severity: data.severity || "Minor",
         type: data.type || "UI",
         projectId: selectedProjectId,
@@ -168,16 +175,23 @@ export default function AddBug() {
     } catch (err) {
       console.error("Bug creation failed:", err);
       alert(err.response?.data?.message || "Bug creation failed");
+    } finally {
+      setSubmitLoading(false);
     }
   };
 
-  if (loading) return <div className="p-10">Loading projects...</div>;
+  /* ================= LOADING ================= */
+  if (projectsLoading) {
+    return <div className="p-10">Loading projects...</div>;
+  }
 
   return (
     <div className="h-full w-full bg-[var(--accent-light)] flex justify-center overflow-auto">
       <div className="w-full max-w-7xl px-6 py-10">
         <Form
           title="Create New Bug"
+          loading={submitLoading}
+          loadingtext="Creating Bug..."
           sections={sections}
           onSubmit={handleSubmit}
           submitText="Create Bug"

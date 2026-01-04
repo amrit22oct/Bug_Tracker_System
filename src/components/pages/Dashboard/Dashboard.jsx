@@ -14,27 +14,27 @@ const ProfileHeader = lazy(() =>
   import("../../organisms/Test/ProfileHeader.jsx")
 );
 const StatsCards = lazy(() =>
-  import("../../organisms/Test/StatsCard.jsx")
-);
+ import("../../organisms/Test/StatsCard.jsx")
+ );
 const ProjectsTable = lazy(() =>
   import("../../organisms/Test/ProjectTable.jsx")
 );
-const BugsTable = lazy(() =>
-  import("../../organisms/Test/BugTable.jsx")
+const BugsTable = lazy(() => 
+import("../../organisms/Test/BugTable.jsx")
 );
 const ActivityList = lazy(() =>
-  import("../../organisms/Test/Activity.jsx")
-);
+ import("../../organisms/Test/Activity.jsx")
+ );
 const CalendarWidget = lazy(() =>
   import("../../organisms/Test/CalendarWidget.jsx")
 );
 const Notifications = lazy(() =>
   import("../../organisms/Test/Notificatioin.jsx")
 );
-const TeamList = lazy(() =>
-  import("../../organisms/Test/TeamList.jsx")
+const TeamList = lazy(() => 
+import("../../organisms/Test/TeamList.jsx")
 );
- 
+
 import HeaderContent from "../../templates/AppHeader/HeaderContent.jsx";
 import PrimarySearchBar from "../../atoms/Searchbar/PrimarySearchBar.jsx";
 import { FaPlus, FaProjectDiagram, FaBug, FaUsers } from "react-icons/fa";
@@ -279,132 +279,138 @@ const Dashboard = ({ searchValue = "" }) => {
     navigate(`/projects`);
   };
 
- 
-
   if (loading) {
     return <DashboardSkeleton />;
   }
-  
 
   /* ---------------- UI ---------------- */
   return (
     <Suspense fallback={<DashboardSkeleton />}>
-    <div className="h-full w-full p-8 bg-[var(--accent-light)] overflow-auto space-y-10">
-      <ProfileHeader
-        name={name || username}
-        role={role}
-        location="New York"
-        email={email || `${username}@example.com`}
-        stats={[
-          {
-            label: "Projects",
-            value: totals.totalProjects || 0,
-            icon: <FaProjectDiagram />,
-          },
-          {
-            label: "Completed Projects",
-            value: projectStatus.completed || 0,
-            icon: <FaProjectDiagram />,
-          },
-          {
-            label: "In Progress Projects",
-            value: projectStatus.inprogress || 0,
-            icon: <FaProjectDiagram />,
-          },
-          {
-            label: "Total Bugs",
-            value: totals.totalBugs || 0,
-            icon: <FaBug />,
-          },
-          { label: "Open Bugs", value: bugStatus.open || 0, icon: <FaBug /> },
-          {
-            label: "Resolved Bugs",
-            value: bugStatus.resolved || 0,
-            icon: <FaBug />,
-          },
-          { label: "Team ", value: totals.totalTeams || 0, icon: <FaUsers /> },
-          { label: "Users", value: totals.totalUsers || 0, icon: <FaUsers /> },
-          // { label: "Users", value: totals.totalUsers || 0, icon: <FaUsers /> },
-        ]}
-        actions={profileActions}
-      />
+      <div className="h-full w-full p-8 bg-[var(--accent-light)] overflow-auto space-y-10">
+        <ProfileHeader
+          name={name || username}
+          role={role}
+          location="New York"
+          email={email || `${username}@example.com`}
+          stats={[
+            {
+              label: "Projects",
+              value: totals.totalProjects || 0,
+              icon: <FaProjectDiagram />,
+            },
+            {
+              label: "Completed Projects",
+              value: projectStatus.completed || 0,
+              icon: <FaProjectDiagram />,
+            },
+            {
+              label: "In Progress Projects",
+              value: projectStatus.inprogress || 0,
+              icon: <FaProjectDiagram />,
+            },
+            {
+              label: "Total Bugs",
+              value: totals.totalBugs || 0,
+              icon: <FaBug />,
+            },
+            { label: "Open Bugs", value: bugStatus.open || 0, icon: <FaBug /> },
+            {
+              label: "Resolved Bugs",
+              value: bugStatus.resolved || 0,
+              icon: <FaBug />,
+            },
+            {
+              label: "Team ",
+              value: totals.totalTeams || 0,
+              icon: <FaUsers />,
+            },
+            {
+              label: "Users",
+              value: totals.totalUsers || 0,
+              icon: <FaUsers />,
+            },
+            // { label: "Users", value: totals.totalUsers || 0, icon: <FaUsers /> },
+          ]}
+          actions={profileActions}
+        />
 
-      <StatsCards
-        projectStatus={projectStatus}
-        bugStatus={bugStatus}
-        totals={totals}
-      />
+        <StatsCards
+          projectStatus={projectStatus}
+          bugStatus={bugStatus}
+          totals={totals}
+        />
 
-      <div className="space-y-4">
-        <div className="flex justify-between items-center gap-2 mb-2">
-          <h1 className="text-xl md:text-3xl font-bold text-(--primary) mb-5">
-            Bugs
-          </h1>
-          {filteredBugs.length > 5 && (
-            <PrimaryButton
-              title="View All"
-              variant="outline"
-              className="max-w-[180px]"
-              handler={handleViewallBug}
-            >
-              {showAll ? "Show Less" : "View All"}
-            </PrimaryButton>
-          )}
-        </div>
-
-        <BugsTable bugs={displayedBugs} onView={handleViewBug} />
-      </div>
-
-      <div className="space-y-4">
-        <div className="flex justify-between items-center gap-2 mb-2">
-          <h1 className="text-xl md:text-3xl font-bold text-(--primary) mb-5">
-            Projects
-          </h1>
-        </div>
-        <div className="flex justify-between items-center">
-          <div className="flex flex-wrap gap-2 mb-2 items-center">
-            {statuses.map((status) => (
-              <button
-                key={status}
-                onClick={() => setSelectedStatus(status)}
-                className={`px-4 py-2 rounded-2xl cursor-pointer hover:bg-[var(--primary)] hover:text-(--accent-light) ${
-                  selectedStatus === status
-                    ? "bg-[var(--primary)] text-(--accent-light)"
-                    : "border"
-                }`}
+        <div className="space-y-4">
+          <div className="flex justify-between items-center gap-2 mb-2">
+            <h1 className="text-xl md:text-3xl font-bold text-(--primary) mb-5">
+              Bugs
+            </h1>
+            {filteredBugs.length > 5 && (
+              <PrimaryButton
+                title="View All"
+                variant="outline"
+                className="max-w-[180px]"
+                handler={handleViewallBug}
               >
-                {status}
-              </button>
-            ))}
+                {showAll ? "Show Less" : "View All"}
+              </PrimaryButton>
+            )}
           </div>
 
-          {filteredProjects.length > 5 && (
-            <PrimaryButton
-              title="View All"
-              variant="outline"
-              className="max-w-[180px]"
-              handler={handleViewallProject}
-            >
-              {showAll ? "Show Less" : "View All"}
-            </PrimaryButton>
-          )}
+          <BugsTable bugs={displayedBugs} onView={handleViewBug} />
         </div>
-        <ProjectsTable
-          projects={displayedProjects}
-          onView={handleViewProject}
-        />
-      </div>
 
-      <TeamList team={filteredTeams} />
+        <div className="space-y-4">
+          <div className="flex justify-between items-center gap-2 mb-2">
+            <h1 className="text-xl md:text-3xl font-bold text-(--primary) mb-5">
+              Projects
+            </h1>
+          </div>
+          <div className="flex justify-between items-center">
+            <div className="flex flex-wrap gap-2 mb-2 items-center">
+              {statuses.map((status) => (
+                <button
+                  key={status}
+                  onClick={() => setSelectedStatus(status)}
+                  className={`px-4 py-2 rounded-2xl cursor-pointer hover:bg-[var(--primary)] hover:text-(--accent-light) ${
+                    selectedStatus === status
+                      ? "bg-[var(--primary)] text-(--accent-light)"
+                      : "border"
+                  }`}
+                >
+                  {status}
+                </button>
+              ))}
+            </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <CalendarWidget />
-          <Notifications notifications={filteredNotifications} />
+            {filteredProjects.length > 5 && (
+              <PrimaryButton
+                title="View All"
+                variant="outline"
+                className="max-w-[180px]"
+                handler={handleViewallProject}
+              >
+                {showAll ? "Show Less" : "View All"}
+              </PrimaryButton>
+            )}
+          </div>
+          <ProjectsTable
+            projects={displayedProjects}
+            // projects={filteredProjects}
+            onView={handleViewProject}
+          />
         </div>
-        <ActivityList activities={filteredNotifications} />
+
+        <TeamList team={filteredTeams} />
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2 grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <CalendarWidget />
+            <Notifications notifications={filteredNotifications} />
+          </div>
+          <ActivityList activities={filteredNotifications} />
+        </div>
       </div>
-    </div>
     </Suspense>
   );
 };

@@ -9,6 +9,7 @@ export default function RegisterForm({ onSuccess }) {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const sections = [
     {
@@ -72,8 +73,7 @@ export default function RegisterForm({ onSuccess }) {
           rightAction: {
             show: true,
             icon: showConfirmPassword ? EyeOff : Eye,
-            onClick: () =>
-              setShowConfirmPassword((p) => !p),
+            onClick: () => setShowConfirmPassword((p) => !p),
             ariaLabel: "Toggle confirm password visibility",
           },
         },
@@ -82,19 +82,15 @@ export default function RegisterForm({ onSuccess }) {
   ];
 
   const handleRegister = async (formData) => {
-    const {
-      name,
-      email,
-      username,
-      role,
-      password,
-      confirmPassword,
-    } = formData;
+    const { name, email, username, role, password, confirmPassword } = formData;
 
     if (password !== confirmPassword) {
       showError("Passwords do not match");
       return;
     }
+
+    if (loading) return;
+    setLoading(true);
 
     try {
       await authService.register({
@@ -118,12 +114,16 @@ export default function RegisterForm({ onSuccess }) {
         error.message ||
         "Registration failed!";
       showError(message);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <Form
       // title="Register"
+      loading={loading}
+      loadingtext="Creating Account..."
       sections={sections}
       submitText="Create Account"
       onSubmit={handleRegister}

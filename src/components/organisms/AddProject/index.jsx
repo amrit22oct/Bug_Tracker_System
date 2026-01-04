@@ -7,6 +7,7 @@ import userService from "../../../services/api/user.service.js";
 
 export default function AddProject() {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   const [projectManagers, setProjectManagers] = useState([]);
   const [qaUsers, setQaUsers] = useState([]);
@@ -119,6 +120,8 @@ export default function AddProject() {
   ];
 
   const handleSubmit = async (data) => {
+    if (loading) return;
+    setLoading(true);
     try {
       console.log("Raw Form Data:", data);
 
@@ -173,6 +176,8 @@ export default function AddProject() {
         err.response?.data?.message ||
         "Failed to create project. Please try again."
       );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -181,6 +186,8 @@ export default function AddProject() {
       <div className="w-full max-w-7xl h-full px-6 py-10">
         <Form
           title="Create New Project"
+          loading={loading}
+          loadingtext="Creating Project..."
           sections={sections}
           onSubmit={handleSubmit}
           submitText="Create Project"

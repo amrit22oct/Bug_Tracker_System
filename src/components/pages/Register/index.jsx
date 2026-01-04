@@ -1,6 +1,7 @@
 import { Bug, Github, Mail, UserPlus } from "lucide-react";
 import RegisterForm from "../../organisms/Register";
 import PrimaryButton from "../../atoms/Buttons/PrimaryButton";
+import HeaderContent from "../../templates/AppHeader/HeaderContent";
 
 export default function Register() {
   const handleRegisterSuccess = () => {
@@ -43,3 +44,5 @@ export default function Register() {
     </div>
   );
 }
+
+Register.header = () => <HeaderContent title="Add User" />;
