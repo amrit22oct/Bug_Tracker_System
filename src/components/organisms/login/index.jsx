@@ -1,14 +1,22 @@
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+
+import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
+import { login } from "../../../redux/slices/authSlice.js";
+
 import Form from "../../organisms/Form";
-import authService from "@/services/api/auth.js";
+
 import { showSuccess, showError } from "@/utils/Toast";
 
 export default function LoginForm({ setIsAuth, onSuccess }) {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const { loading, error, isAuthenticated, user } = useAppSelector(
+    (state) => state.auth
+  );
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false); 
+  // const [loading, setLoading] = useState(false); 
 
   const loginFields = [
     {
@@ -31,21 +39,54 @@ export default function LoginForm({ setIsAuth, onSuccess }) {
     },
   ];
 
-  const handleLogin = async ({ loginId, password }) => {
-    if (loading) return; 
-    setLoading(true);
+  // const handleLogin = async ({ loginId, password }) => {
+  //   if (loading) return; 
+  //   setLoading(true);
 
-    try {
-      const response = await authService.login({ loginId, password });
-      const { user } = response;
+  //   try {
+  //     const response = await authService.login({ loginId, password });
+  //     const { user } = response;
+
+  //     localStorage.setItem("isLoggedIn", "true");
+  //     setIsAuth(true);
+
+  //     if (onSuccess) onSuccess();
+  //     showSuccess("Login successful 🎉");
+
+  //     switch (user.role) {
+  //       case "Admin":
+  //         navigate("/admin/dashboard", { replace: true });
+  //         break;
+  //       case "ProjectManager":
+  //         navigate("/projects", { replace: true });
+  //         break;
+  //       default:
+  //         navigate("/bugs", { replace: true });
+  //     }
+  //   } catch (error) {
+  //     const message =
+  //       error.response?.data?.message ||
+  //       error.message ||
+  //       "Login failed!";
+  //     showError(message);
+  //   } finally {
+  //     setLoading(false); 
+  //   }
+  // };
+
+  /* =============== login ===================*/
+  const handleLogin = async (FormData) => {
+    const resultAction = await dispatch(login(FormData));
+
+    if (login.fulfilled.match(resultAction)) {
+      const loggedInUser = resultAction.payload.user;
 
       localStorage.setItem("isLoggedIn", "true");
       setIsAuth(true);
-
       if (onSuccess) onSuccess();
-      showSuccess("Login successful 🎉");
+      showSuccess("Login Successful🎉");
 
-      switch (user.role) {
+      switch (loggedInUser.role) {
         case "Admin":
           navigate("/admin/dashboard", { replace: true });
           break;
@@ -55,15 +96,15 @@ export default function LoginForm({ setIsAuth, onSuccess }) {
         default:
           navigate("/bugs", { replace: true });
       }
-    } catch (error) {
+      
+    } else {
       const message =
-        error.response?.data?.message ||
-        error.message ||
+        resultAction.payload?.message ||
+        error ||
         "Login failed!";
       showError(message);
-    } finally {
-      setLoading(false); 
     }
+
   };
 
   return (

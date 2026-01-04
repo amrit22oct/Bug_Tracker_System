@@ -1,74 +1,60 @@
-import React, { useState, useEffect, lazy, Suspense } from "react";
+import React, { useState, useEffect, lazy, Suspense, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
+import { FaPlus } from "react-icons/fa";
+
+import { useAppDispatch, useAppSelector } from "../../../redux/hooks.js";
+import { fetchAllBugs } from "../../../redux/slices/bugSlice.js";
+
 import PrimaryButton from "../../atoms/Buttons/PrimaryButton";
 import HeaderContent from "../../templates/AppHeader/HeaderContent.jsx";
 import PrimarySearchBar from "../../atoms/Searchbar/PrimarySearchBar.jsx";
-import bugService from "../../../services/api/bug.service.js";
 import TableSkeleton from "../../Skleton/TableSkeleton.jsx";
-import { FaPlus } from "react-icons/fa";
 
 // Lazy Loading
 const BugsTable = lazy(() => import("../../organisms/Test/BugTable.jsx"));
 
 const AdminBugPage = ({ searchValue }) => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [bugs, setBugs] = useState([]);
-  const [loading, setLoading] = useState(false);
-
   const navigate = useNavigate();
-  const loggedInUserId = Cookies.get("bt_userId"); // Logged-in user
-  const loggedInUserRole = Cookies.get("bt_role"); // Get role from cookie
+  const dispatch = useAppDispatch();
 
-  /* ================= GET ALL BUGS ================= */
+  const { list: bugs, loading } = useAppSelector((state) => state.bugs);
+
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const loggedInUserId = Cookies.get("bt_userId");
+  const loggedInUserRole = Cookies.get("bt_role");
+
+  /* ================= FETCH BUGS ================= */
   useEffect(() => {
-    const fetchBugs = async () => {
-      try {
-        setLoading(true);
-        const response = await bugService.getAllBugs();
+    dispatch(fetchAllBugs());
+  }, [dispatch]);
 
-        const normalizedBugs = (response.data || [])
-          .map((bug) => ({
-            ...bug,
-            id: bug._id,
-            created: bug.createdAt,
-            status: bug.status?.toLowerCase(),
-            priority: bug.priority?.toLowerCase(),
-          }))
-          .sort((a, b) => new Date(b.created) - new Date(a.created));
+  /* ================= NORMALIZE + ROLE FILTER ================= */
+  const visibleBugs = useMemo(() => {
+    const normalized = (bugs || [])
+      .map((bug) => ({
+        ...bug,
+        id: bug._id,
+        created: bug.createdAt,
+        status: bug.status?.toLowerCase(),
+        priority: bug.priority?.toLowerCase(),
+      }))
+      .sort((a, b) => new Date(b.created) - new Date(a.created));
 
-        let visibleBugs;
+    if (loggedInUserRole === "Developer") {
+      return normalized.filter((bug) => bug.assignedTo?._id === loggedInUserId);
+    }
 
-        // 🔹 Filter only for developers
-        if (loggedInUserRole === "Developer") {
-          visibleBugs = normalizedBugs.filter(
-            (bug) => bug.assignedTo?._id === loggedInUserId
-          );
-        } else {
-          visibleBugs = normalizedBugs; // Show all for other roles
-        }
-
-        console.log("Visible bugs:", visibleBugs);
-
-        setBugs(visibleBugs);
-      } catch (error) {
-        console.error("Failed to fetch bugs:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchBugs();
-  }, [loggedInUserId, loggedInUserRole]);
-
-  const handleViewBug = (bug) => {
-    navigate(`/view-bug-detail/${bug.id}`);
-  };
+    return normalized;
+  }, [bugs, loggedInUserId, loggedInUserRole]);
 
   /* ================= SEARCH FILTER ================= */
-  const filteredBugs = bugs.filter((bug) =>
-    bug.title?.toLowerCase().includes(searchValue.toLowerCase())
-  );
+  const filteredBugs = useMemo(() => {
+    return visibleBugs.filter((bug) =>
+      bug.title?.toLowerCase().includes(searchValue.toLowerCase())
+    );
+  }, [visibleBugs, searchValue]);
 
   /* ================= PAGINATION ================= */
   const ITEMS_PER_PAGE = 10;
@@ -87,22 +73,27 @@ const AdminBugPage = ({ searchValue }) => {
     startIndex + ITEMS_PER_PAGE
   );
 
+  /* ================= ACTIONS ================= */
+  const handleViewBug = (bug) => {
+    navigate(`/view-bug-detail/${bug.id}`);
+  };
+
   return (
     <div className="w-full h-full p-4 bg-[var(--accent-light)]/60 flex flex-col gap-4 overflow-auto">
       <div className="flex justify-between items-center">
-        <div></div>
+        <div />
         <div className="flex gap-2">
           <PrimaryButton
             title="Add bug"
             variant="outline"
             icon={FaPlus}
-            className=" min-w-[120px] h-8 text-xs hover:bg-(--primary) hover:text-(--accent-light)"
+            className="min-w-[120px] h-8 text-xs"
             handler={() => navigate("/add-bug")}
           />
           <PrimaryButton
             title="Back"
             variant="outline"
-            className=" min-w-[120px] h-8 text-xs hover:bg-(--primary) hover:text-(--accent-light)"
+            className="min-w-[120px] h-8 text-xs"
             handler={() => navigate(-1)}
           />
         </div>
@@ -117,7 +108,7 @@ const AdminBugPage = ({ searchValue }) => {
         )}
       </Suspense>
 
-      {/* Pagination */}
+      {/* PAGINATION */}
       <div className="flex justify-end">
         <div className="max-w-[400px] w-full flex justify-end items-center gap-2">
           <PrimaryButton
@@ -125,17 +116,19 @@ const AdminBugPage = ({ searchValue }) => {
             variant={currentPage === 1 ? "disabled" : "outline"}
             disabled={currentPage === 1}
             handler={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-            className="w-auto min-w-[120px] px-3 py-1 h-8 text-xs"
+            className="min-w-[120px] h-8 text-xs"
           />
-          <div className="flex items-center justify-center h-8 px-3 min-w-[60px] text-sm font-medium text-(--accent-light) bg-(--primary) border border-(--accent-light) rounded-md shadow-sm">
+
+          <div className="flex items-center justify-center h-8 px-3 min-w-[60px] text-sm font-medium bg-(--primary) text-(--accent-light) rounded-md">
             {currentPage} / {totalPages}
           </div>
+
           <PrimaryButton
             title="Next"
             variant={currentPage === totalPages ? "disabled" : "outline"}
             disabled={currentPage === totalPages}
             handler={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
-            className="w-auto min-w-[120px] px-3 py-1 h-8 text-xs"
+            className="min-w-[120px] h-8 text-xs"
           />
         </div>
       </div>

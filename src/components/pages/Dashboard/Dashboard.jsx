@@ -55,9 +55,9 @@ const Dashboard = ({ searchValue = "" }) => {
     const fetchDashboard = async () => {
       try {
         setLoading(true);
-  
+
         const data = await dashboardService.getAdminDashboard();
-  
+
         /* ---------------- Safe Projects ---------------- */
         const safeProjects = (data.recentProjects || []).map((p) => ({
           ...p,
@@ -70,7 +70,7 @@ const Dashboard = ({ searchValue = "" }) => {
           manager: undefined,
           tester: undefined,
         }));
-  
+
         /* ---------------- Safe Bugs ---------------- */
         const safeBugs = (data.recentBugs || []).map((b) => ({
           ...b,
@@ -81,19 +81,19 @@ const Dashboard = ({ searchValue = "" }) => {
           status: b.status || "Open",
           priority: b.priority || "Low",
         }));
-  
+
         /* ---------------- Safe Teams ---------------- */
         const safeTeams = (data.teams || []).map((t) => {
           const deadlines = (t.projects || [])
             .map((p) => p.deadline)
             .filter(Boolean)
             .map((d) => new Date(d));
-  
+
           const nearestDeadline =
             deadlines.length > 0
               ? new Date(Math.min(...deadlines)).toLocaleDateString()
               : "-";
-  
+
           return {
             ...t,
             leadName: t.lead?.name || "N/A",
@@ -109,7 +109,7 @@ const Dashboard = ({ searchValue = "" }) => {
             nearestDeadline,
           };
         });
-  
+
         /* ---------------- Safe Activities ---------------- */
         const safeActivities = (data.recentActivities || []).map((a) => ({
           id: a.bugId || a.projectId,
@@ -118,11 +118,11 @@ const Dashboard = ({ searchValue = "" }) => {
           byName: a.by || "System",
           updatedAt: a.updatedAt ? new Date(a.updatedAt).toISOString() : null,
         }));
-  
+
         const safeNotifications = safeActivities.map(
           (a) => `${a.action} • by ${a.byName}`
         );
-  
+
         setDashboardData({
           totals: data.totals || {},
           bugStatus: data.bugStatus || {},
@@ -139,10 +139,9 @@ const Dashboard = ({ searchValue = "" }) => {
         setLoading(false);
       }
     };
-  
+
     fetchDashboard();
   }, []);
-  
 
   const {
     totals,
@@ -265,9 +264,6 @@ const Dashboard = ({ searchValue = "" }) => {
 
   /* ---------------- UI ---------------- */
   return (
-   
-    
-    
     <div className="h-full w-full p-8 bg-[var(--accent-light)] overflow-auto space-y-10">
       <ProfileHeader
         name={name || username}

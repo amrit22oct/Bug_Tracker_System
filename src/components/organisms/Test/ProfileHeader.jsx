@@ -25,12 +25,17 @@ const ProfileHeader = ({
           className="flex-shrink-0"
         />
         <div className="flex-1 flex flex-col gap-1 md:gap-2 text-center md:text-left">
-          <h1 className="text-xl md:text-3xl font-bold text-(--primary)">{name}</h1>
+          <h1 className="text-xl md:text-3xl font-bold text-(--primary)">
+            {name}
+          </h1>
           <p className="text-(--primary)/90 text-sm md:text-base">{role}</p>
           <p className="text-(--primary)/90 text-xs md:text-sm">
-            Managing {stats[0]?.value || 0} active projects | Based in {location}
+            Managing {stats[0]?.value || 0} active projects | Based in{" "}
+            {location}
           </p>
-          <p className="text-(--primary)/90 text-xs md:text-sm break-all">Email: {email}</p>
+          <p className="text-(--primary)/90 text-xs md:text-sm break-all">
+            Email: {email}
+          </p>
         </div>
       </div>
 
@@ -47,7 +52,9 @@ const ProfileHeader = ({
             }
             variant={btn.variant}
             handler={btn.onClick}
-            className={`h-8 md:h-10 px-2 md:px-4 text-xs md:text-sm ${btn.className || ""}`}
+            className={`h-8 md:h-10 px-2 md:px-4 text-xs md:text-sm ${
+              btn.className || ""
+            }`}
           />
         ))}
       </div>
@@ -59,16 +66,20 @@ const ProfileHeader = ({
             key={idx}
             className="
               flex flex-col items-center p-3 sm:p-4
-              bg-(--secondary)/40 rounded-2xl
-              border border-var(--primary-hover)
+               rounded-2xl
+               hover:border-t
               transition-all
               hover:-translate-y-1
               hover:shadow-lg
             "
           >
-            <div className="text-(--primary) text-xl sm:text-2xl mb-1 sm:mb-2">{s.icon}</div>
+            <div className="text-(--primary) text-xl sm:text-2xl mb-1 sm:mb-2">
+              {s.icon}
+            </div>
             <p className="text-(--primary)/90 text-xs sm:text-sm">{s.label}</p>
-            <p className="text-(--primary)/90 font-semibold text-lg sm:text-xl">{s.value}</p>
+            <p className="text-(--primary)/90 font-semibold text-lg sm:text-xl">
+              {s.value}
+            </p>
           </PressedContainer>
         ))}
       </div>
