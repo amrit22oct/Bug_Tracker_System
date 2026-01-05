@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
-import Form from "../../organisms/Form/Form";
+import Form from "../../organisms/Form/Form.jsx";
 import HeaderContent from "../../templates/AppHeader/HeaderContent.jsx";
 import projectService from "../../../services/api/project.service.js";
 import userService from "../../../services/api/user.service.js";
@@ -17,14 +17,14 @@ export default function AddProject() {
       try {
         const pmResponse = await userService.getUsersByRole("ProjectManager");
         const qaResponse = await userService.getUsersByRole("QA");
-  
+
         setProjectManagers(
           (pmResponse.data || []).map((user) => ({
             label: user.name,
             value: user._id,
           }))
         );
-  
+
         setQaUsers(
           (qaResponse.data || []).map((user) => ({
             label: user.name,
@@ -35,10 +35,9 @@ export default function AddProject() {
         console.error("Failed to fetch users by role:", error);
       }
     };
-  
+
     fetchUsersByRole();
   }, []);
-  
 
   const sections = [
     {
@@ -47,29 +46,11 @@ export default function AddProject() {
       fields: [
         { id: "name", label: "Project Name", type: "text", required: true, fullWidth: true },
         { id: "description", label: "Project Description", type: "textarea", fullWidth: true },
-        // { id: "owner", label: "Project Owner", type: "text" },
-
-        {
-          id: "manager",
-          label: "Project Manager",
-          type: "select",
-          options: projectManagers,
-        },
-
-        {
-          id: "tester",
-          label: "Tester",
-          type: "select",
-          options: qaUsers,
-        },
-
+        { id: "manager", label: "Project Manager", type: "select", options: projectManagers },
+        { id: "tester", label: "Tester", type: "select", options: qaUsers },
         { id: "type", label: "Project Type", type: "select", options: ["Internal", "Client", "Research", "Open Source"] },
-        // { id: "client", label: "Client", type: "text" },
-        // { id: "category", label: "Category", type: "text" },
-
         { id: "priority", label: "Priority", type: "select", options: ["High", "Medium", "Low"], defaultValue: "Medium" },
         { id: "tags", label: "Tags", type: "text", placeholder: "comma,separated,tags", fullWidth: true },
-        // { id: "archived", label: "Archived", type: "checkbox" },
       ],
     },
     {
@@ -78,18 +59,7 @@ export default function AddProject() {
       fields: [
         { id: "startDate", label: "Start Date", type: "date" },
         { id: "endDate", label: "End Date", type: "date" },
-        // { id: "estimatedStartDate", label: "Estimated Start Date", type: "date" },
-        // { id: "estimatedEndDate", label: "Estimated End Date", type: "date" },
-        // { id: "actualStartDate", label: "Actual Start Date", type: "date" },
-        // { id: "actualEndDate", label: "Actual End Date", type: "date" },
-
-        {
-          id: "status",
-          label: "Status",
-          type: "select",
-          options: ["Planned", "In Progress", "On Hold", "Completed", "Archived", "Cancelled"],
-          defaultValue: "Planned",
-        },
+        { id: "status", label: "Status", type: "select", options: ["Planned", "In Progress", "On Hold", "Completed", "Archived", "Cancelled"], defaultValue: "Planned" },
       ],
     },
     {
@@ -125,15 +95,7 @@ export default function AddProject() {
     try {
       console.log("Raw Form Data:", data);
 
-      // ✅ CLEAN DATA BEFORE SENDING
       const cleanedData = { ...data };
-
-      // Remove empty strings
-      Object.keys(cleanedData).forEach((key) => {
-        if (cleanedData[key] === "" || cleanedData[key] === null) {
-          delete cleanedData[key];
-        }
-      });
 
       // Convert tags string → array
       if (cleanedData.tags) {
@@ -146,8 +108,12 @@ export default function AddProject() {
       // Ensure archived is boolean
       cleanedData.archived = Boolean(cleanedData.archived);
 
-      // Remove empty files
-      if (!cleanedData.files || cleanedData.files.length === 0) {
+      // ✅ Only send file paths returned by the uploader
+      if (cleanedData.files && cleanedData.files.length > 0) {
+        cleanedData.files = cleanedData.files.map((f) => ({
+          fileUrl: f.fileUrl, // only send the path returned by your upload API
+        }));
+      } else {
         delete cleanedData.files;
       }
 
@@ -158,12 +124,11 @@ export default function AddProject() {
 
       console.log("Sanitized Project Data:", cleanedData);
 
-      // ✅ Call API
+      // API call
       const createdProject = await projectService.createProject(cleanedData);
 
       console.log("Project Created:", createdProject);
 
-      // ✅ Redirect to Projects
       navigate("/projects", {
         state: {
           projectId: createdProject._id,

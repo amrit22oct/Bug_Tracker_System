@@ -1,6 +1,7 @@
 import { X } from "lucide-react";
 import Label from "../../atoms/Lable";
 import Input from "../../atoms/Input";
+import FileUploader from "../singleUploader";
 import { useState } from "react";
 
 export default function InputField({
@@ -11,6 +12,7 @@ export default function InputField({
   value,
   onChange,
   placeholder = "",
+  multiple = false,
   rightAction = null,
   ...rest
 }) {
@@ -75,6 +77,33 @@ export default function InputField({
               </div>
             ))}
           </div>
+        )}
+      </div>
+    );
+  }
+
+  /* ================= FILE UPLOADER ================= */
+  if (type === "file") {
+    return (
+      <div className="flex flex-col gap-2 w-full">
+        {label && <Label htmlFor={id}>{label}</Label>}
+        <FileUploader
+          multiple={multiple}
+          onUploadComplete={(uploadedFiles) => {
+            const formattedFiles = uploadedFiles.map((f) => ({
+              name: f.name,
+              fileType: f.mimeType,
+              fullPath: f.fullPath,
+              fileUrl: f.fileUrl,
+              uploadedAt: new Date(),
+            }));
+            onChange(formattedFiles);
+          }}
+        />
+        {value && value.length > 0 && (
+          <p className="text-sm text-gray-500 mt-1">
+            {value.length} file(s) uploaded
+          </p>
         )}
       </div>
     );

@@ -1,15 +1,16 @@
 import { useState } from "react";
-import InputField from "../../molecules/InputField/InputField";
+import InputField from "../../molecules/InputField/InputField.jsx";
 import PrimaryButton from "../../atoms/Buttons/PrimaryButton";
 
 export default function Form({
   title,
   loading,
-  loadingtext="",
+  loadingtext = "",
   sections = [],
   onSubmit,
   submitText = "Submit",
 }) {
+  // Initialize form state
   const initialState = sections.reduce((acc, section) => {
     section.fields.forEach((f) => {
       if (f.type === "multiselect" || f.type === "array") {
@@ -23,10 +24,12 @@ export default function Form({
 
   const [formData, setFormData] = useState(initialState);
 
+  // Update form data
   const handleChange = (id, value) => {
     setFormData((prev) => ({ ...prev, [id]: value }));
   };
 
+  // Submit form
   const handleSubmit = (e) => {
     e.preventDefault();
     onSubmit(formData);
@@ -34,35 +37,30 @@ export default function Form({
 
   return (
     <form onSubmit={handleSubmit} className="w-full mx-auto space-y-10">
+      {/* Form Title */}
       {title && (
         <div className="bg-(--primary) rounded-2xl border shadow-sm p-8 text-center">
-          <h1 className="text-3xl font-bold text-(--accent-light)">
-            {title}
-          </h1>
+          <h1 className="text-3xl font-bold text-(--accent-light)">{title}</h1>
           <p className="text-(--accent-light) mt-2">
             {`Fill in the information below to create a new ${title}`}
           </p>
         </div>
       )}
 
+      {/* Form Sections */}
       <div className="bg-(--accent-light) rounded-2xl border shadow-lg p-8 space-y-12">
         {sections.map((section, index) => (
           <div key={section.title}>
+            {/* Section Header */}
             <div className="mb-6">
-              <h2 className="text-lg font-semibold text-gray-900">
-                {section.title}
-              </h2>
-              <p className="text-sm text-gray-500">
-                {section.description}
-              </p>
+              <h2 className="text-lg font-semibold text-gray-900">{section.title}</h2>
+              <p className="text-sm text-gray-500">{section.description}</p>
             </div>
 
+            {/* Fields */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {section.fields.map((field) => (
-                <div
-                  key={field.id}
-                  className={field.fullWidth ? "md:col-span-2" : ""}
-                >
+                <div key={field.id} className={field.fullWidth ? "md:col-span-2" : ""}>
                   <InputField
                     {...field}
                     value={field.value ?? formData[field.id]}
@@ -75,13 +73,12 @@ export default function Form({
               ))}
             </div>
 
-            {index !== sections.length - 1 && (
-              <div className="mt-10 border-t" />
-            )}
+            {index !== sections.length - 1 && <div className="mt-10 border-t" />}
           </div>
         ))}
       </div>
 
+      {/* Submit Button */}
       <div className="flex justify-end pb-6">
         <PrimaryButton
           type="submit"
