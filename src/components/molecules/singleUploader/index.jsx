@@ -7,9 +7,97 @@ const FileUploader = ({ multiple = true, onUploadComplete }) => {
   const [files, setFiles] = useState([]);
   const [preview, setPreview] = useState(null); // { url, type }
 
+  // const handleFileChange = (e) => {
+  //   const selectedFiles = Array.from(e.target.files);
+
+  //   const newFiles = selectedFiles.map((file) => ({
+  //     file,
+  //     progress: 0,
+  //     uploading: true,
+  //     response: null,
+  //     error: null,
+  //   }));
+
+  //   setFiles((prev) => [...prev, ...newFiles]);
+
+  //   newFiles.forEach(async (fileObj) => {
+  //     const formData = new FormData();
+  //     formData.append("file", fileObj.file);
+
+  //     try {
+  //       const res = await uploadService.uploadDocument(formData, {
+  //         onUploadProgress: (event) => {
+  //           const percent = Math.round((event.loaded * 100) / event.total);
+  //           setFiles((prev) =>
+  //             prev.map((f) =>
+  //               f.file === fileObj.file ? { ...f, progress: percent } : f
+  //             )
+  //           );
+  //         },
+  //       });
+
+  //       // Build fullPath for preview
+  //       let fullPath = null;
+  //       const originalPath = res?.data?.path || null; // <-- store original API path
+  //       if (originalPath) {
+  //         let path = originalPath;
+  //         if (path.startsWith("/v1")) path = path.replace("/v1", "");
+  //         const baseUrl = import.meta.env.VITE_API_URL.replace(/\/v1$/, "");
+  //         fullPath = `${baseUrl}${path.startsWith("/") ? "" : "/"}${path}`;
+  //       }
+  //       console.log("full path", fullPath);
+  //       setFiles((prev) => {
+  //         const updated = prev.map((f) =>
+  //           f.file === fileObj.file
+  //             ? {
+  //                 ...f,
+  //                 response: {
+  //                   ...res,
+  //                   data: {
+  //                     ...res.data,
+  //                     fullPath, // add for preview
+  //                     fileUrl: originalPath, // keep original API path
+  //                   },
+  //                 },
+  //                 uploading: false,
+  //                 progress: 100,
+  //               }
+  //             : f
+  //         );
+
+  //         if (onUploadComplete) {
+  //           onUploadComplete(
+  //             updated
+  //               .filter((f) => f.response)
+  //               .map((f) => ({
+  //                 ...f.response.data, // now contains both fullPath & fileUrl
+  //               }))
+  //           );
+  //         }
+
+  //         return updated;
+  //       });
+  //     } catch (err) {
+  //       setFiles((prev) =>
+  //         prev.map((f) =>
+  //           f.file === fileObj.file
+  //             ? {
+  //                 ...f,
+  //                 error: err.response?.data?.message || "Upload failed",
+  //                 uploading: false,
+  //               }
+  //             : f
+  //         )
+  //       );
+  //     }
+  //   });
+  // };
+
+
+
   const handleFileChange = (e) => {
     const selectedFiles = Array.from(e.target.files);
-
+  
     const newFiles = selectedFiles.map((file) => ({
       file,
       progress: 0,
@@ -17,13 +105,13 @@ const FileUploader = ({ multiple = true, onUploadComplete }) => {
       response: null,
       error: null,
     }));
-
+  
     setFiles((prev) => [...prev, ...newFiles]);
-
+  
     newFiles.forEach(async (fileObj) => {
       const formData = new FormData();
       formData.append("file", fileObj.file);
-
+  
       try {
         const res = await uploadService.uploadDocument(formData, {
           onUploadProgress: (event) => {
@@ -35,17 +123,9 @@ const FileUploader = ({ multiple = true, onUploadComplete }) => {
             );
           },
         });
-
-        // Build fullPath for preview
-        let fullPath = null;
-        const originalPath = res?.data?.path || null; // <-- store original API path
-        if (originalPath) {
-          let path = originalPath;
-          if (path.startsWith("/v1")) path = path.replace("/v1", "");
-          const baseUrl = import.meta.env.VITE_API_URL.replace(/\/v1$/, "");
-          fullPath = `${baseUrl}${path.startsWith("/") ? "" : "/"}${path}`;
-        }
-        console.log("full path", fullPath);
+  
+        const uploadedData = res?.data || {};
+  
         setFiles((prev) => {
           const updated = prev.map((f) =>
             f.file === fileObj.file
@@ -53,28 +133,28 @@ const FileUploader = ({ multiple = true, onUploadComplete }) => {
                   ...f,
                   response: {
                     ...res,
-                    data: {
-                      ...res.data,
-                      fullPath, // add for preview
-                      fileUrl: originalPath, // keep original API path
-                    },
+                    data: uploadedData, // directly use API path
                   },
                   uploading: false,
                   progress: 100,
                 }
               : f
           );
-
+  
           if (onUploadComplete) {
             onUploadComplete(
               updated
                 .filter((f) => f.response)
                 .map((f) => ({
-                  ...f.response.data, // now contains both fullPath & fileUrl
+                  name: f.response.data.originalName,
+                  fileType: f.response.data.mimeType,
+                  fileUrl: f.response.data.path, // use path from API
+                  uploadedAt: new Date(),
                 }))
             );
           }
 
+          console.log("data", updated)
           return updated;
         });
       } catch (err) {
@@ -92,6 +172,9 @@ const FileUploader = ({ multiple = true, onUploadComplete }) => {
       }
     });
   };
+
+  
+
 
   //     newFiles.forEach(async (fileObj) => {
   //       const formData = new FormData();
@@ -323,12 +406,12 @@ const FileUploader = ({ multiple = true, onUploadComplete }) => {
                   {isUploaded ? (
                     mimeType.startsWith("image/") ? (
                       <img
-                        src={f.response.data.fullPath}
+                        src={f.response.data.path}
                         alt={f.file.name}
                         className="w-full h-full object-cover group-hover:scale-105 transition"
                       />
                     ) : mimeType === "application/pdf" ? (
-                      <PdfThumbnail url={f.response.data.fullPath} />
+                      <PdfThumbnail url={f.response.data.path} />
                     ) : (
                       <div className="flex items-center justify-center h-full text-gray-400 text-sm">
                         Unsupported File

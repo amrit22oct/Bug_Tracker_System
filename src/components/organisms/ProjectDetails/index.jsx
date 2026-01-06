@@ -155,7 +155,7 @@ const ProjectDetail = () => {
       </PressedContainer>
 
       {/* ATTACHMENTS */}
-<PressedContainer className="p-6 bg-white rounded-xl border space-y-4">
+{/* <PressedContainer className="p-6 bg-white rounded-xl border space-y-4">
   <h2 className="font-semibold text-lg text-[var(--primary)]">Attachments</h2>
 
   {project.files?.length > 0 ? (
@@ -207,7 +207,63 @@ const ProjectDetail = () => {
   ) : (
     <p className="text-sm text-gray-500">No attachments uploaded.</p>
   )}
+</PressedContainer> */}
+
+{/* ATTACHMENTS */}
+<PressedContainer className="p-6 bg-white rounded-xl border space-y-4">
+  <h2 className="font-semibold text-lg text-[var(--primary)]">Attachments</h2>
+
+  {project.files?.length > 0 ? (
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+      {project.files.map((file, idx) => {
+        const fileUrl = file.fileUrl;
+
+        // Determine file type from URL extension
+        const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(fileUrl);
+        const isPDF = /\.pdf$/i.test(fileUrl);
+
+        return (
+          <div key={idx} className="border rounded-xl p-4 flex flex-col items-center gap-2 bg-gray-50">
+            <div className="w-full h-40 bg-gray-100 rounded-xl overflow-hidden flex items-center justify-center">
+              {isImage ? (
+                <img
+                  src={fileUrl}
+                  alt={`Attachment ${idx + 1}`}
+                  className="w-full h-full object-contain"
+                />
+              ) : isPDF ? (
+                <iframe
+                  src={fileUrl}
+                  title={`Attachment ${idx + 1}`}
+                  className="w-full h-full border-none"
+                />
+              ) : (
+                <div className="text-gray-600 font-medium">FILE</div>
+              )}
+            </div>
+
+            <p className="text-sm truncate w-full text-center">
+              {fileUrl.split("/").pop()}
+            </p>
+            <p className="text-xs text-gray-400">
+              Uploaded: {new Date(file.uploadedAt).toLocaleString()}
+            </p>
+
+            <PrimaryButton
+              title="View"
+              variant="outline"
+              className="max-w-40"
+              handler={() => window.open(fileUrl, "_blank")}
+            />
+          </div>
+        );
+      })}
+    </div>
+  ) : (
+    <p className="text-sm text-gray-500">No attachments uploaded.</p>
+  )}
 </PressedContainer>
+
 
 
       {/* MILESTONES */}
