@@ -439,7 +439,7 @@ const FileUploader = ({ multiple = true, onUploadComplete }) => {
                         title="view"
                         handler={() =>
                           setPreview({
-                            url: f.response.data.fullPath,
+                            url: f.response.data.path,
                             type: mimeType,
                           })
                         }
