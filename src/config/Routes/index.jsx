@@ -23,6 +23,7 @@ import ProjectsPage from "../../components/pages/ProjectPage";
 import BugPage from "../../components/pages/Bugs";
 // import SingleUploader from "../../components/molecules/singleUploader";
 import FileUploader from "../../components/molecules/singleUploader";
+import SubBugDetail from "../../components/organisms/BugDetail/SubBugDetail.jsx";
 // import { AdminBugPage } from "../../components/organisms/Bugs";
 // import ProjectsPage from "../../components/organisms/Projects";
 
@@ -57,6 +58,13 @@ export const routes = [
     id: "BugDetail",
     path: "/view-bug-detail/:id",
     component: <BugDetail />,
+    protectedRoute: true,
+    allowedRoles: ["Developer", "QA", "TeamLeader", "ProjectManager", "Admin"],
+  },
+  {
+    id: "SubBugDetail",
+    path: "/view-sub-bug-detail/:id",
+    component: <SubBugDetail />,
     protectedRoute: true,
     allowedRoles: ["Developer", "QA", "TeamLeader", "ProjectManager", "Admin"],
   },

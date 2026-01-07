@@ -23,7 +23,7 @@ const statusStyles = {
   closed: { bg: "#9ca3af", text: "white" },
 };
 
-const BugDetail = () => {
+const SubBugDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const user = authService.getCurrentUser();
@@ -61,21 +61,18 @@ const BugDetail = () => {
   const statusKey = bug.status?.toLowerCase();
   const statusStyle = statusStyles[statusKey] || statusStyles.open;
 
-  // const mappedSubBugs =
-  // bug?.linkedBugs?.map((subBug) => ({
-  //   _id: subBug._id,
-  //   title: subBug.title,
-  //   status: subBug.status,
-  //   priority: subBug.priority,
-  //   severity: subBug.severity,
-  //   project: subBug.projectId?.name,
-  //   reportedBy: subBug.reportedBy?.name,
-  //   assignedTo: subBug.assignedTo?.name || "Unassigned",
-  //   createdAt: subBug.createdAt,
-  // })) || [];
-
-  const subBugs = bug?.linkedBugs || [];
-
+  const mappedSubBugs =
+  bug?.linkedBugs?.map((subBug) => ({
+    _id: subBug._id,
+    title: subBug.title,
+    status: subBug.status,
+    priority: subBug.priority,
+    severity: subBug.severity,
+    project: subBug.projectId?.name,
+    reportedBy: subBug.reportedBy?.name,
+    assignedTo: subBug.assignedTo?.name || "Unassigned",
+    createdAt: subBug.createdAt,
+  })) || [];
 
 
   /* ================= ACCEPT BUTTON ================= */
@@ -111,14 +108,9 @@ const BugDetail = () => {
       }
     };
 
-    // const handleViewSubBug = (subBug) => {
-    //   navigate(`/view-sub-bug-detail/${subBug._id}`);
-    // };
-
-    const handleViewSubBug = (subBugId) => {
-      navigate(`/view-sub-bug-detail/${subBugId}`);
+    const handleViewSubBug = (subBug) => {
+      navigate(`/view-bug-detail/${subBug._id}`);
     };
-    
     
 
     /* ============Can Complete ===========*/
@@ -221,8 +213,8 @@ const BugDetail = () => {
       {/* DETAILS */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* BUG INFO */}
-        <PressedContainer className="p-6 pt-0! bg-white rounded-xl border space-y-3">
-        <h2 className="font-semibold bg-black/10 w-40 p-1 shadow-2xl text-lg text-[var(--primary)] border-b border-gray-500 w-30 text-center rounded-b-2xl hover:bg-black/60 hover:text-white">Bug Info</h2>
+        <PressedContainer className="p-6 bg-white rounded-xl border space-y-3">
+          <h2 className="font-semibold text-lg">Bug Info</h2>
           <p>
             <strong>Project:</strong> {bug.projectId?.name}
           </p>
@@ -256,8 +248,8 @@ const BugDetail = () => {
         </PressedContainer>
 
         {/* DESCRIPTION */}
-        <PressedContainer className="p-6 pt-0! bg-white rounded-xl border space-y-4">
-        <h2 className="font-semibold bg-black/10 w-40 p-1 shadow-2xl text-lg text-[var(--primary)] border-b border-gray-500 w-30 text-center rounded-b-2xl hover:bg-black/60 hover:text-white ">Description</h2>
+        <PressedContainer className="p-6 bg-white rounded-xl border space-y-4">
+          <h2 className="font-semibold text-lg">Description</h2>
           <p className="text-sm">{bug.description || "No description"}</p>
 
           {bug.tags?.length > 0 && (
@@ -272,18 +264,11 @@ const BugDetail = () => {
         </PressedContainer>
       </div>
 
-      <PressedContainer className="p-6 pt-0! bg-white rounded-xl border space-y-4">
-        <h2 className="font-semibold bg-black/10 shadow-2xl w-40 p-1 text-lg text-[var(--primary)] border-b border-gray-500 w-30 text-center rounded-b-2xl hover:bg-black/60 hover:text-white ">Sub Bugs</h2>
-        {subBugs?.length > 0 ? (
-          <SubBugsTable bugs={subBugs} onView={handleViewSubBug} />
-        ) : (
-          <p className="text-sm text-gray-500">No bugs reported yet.</p>
-        )}
-      </PressedContainer>
+    
 
       {/* COMMENTS / ACTIVITY */}
-      <PressedContainer className="p-6 pt-0! bg-white rounded-xl border space-y-4">
-      <h2 className="font-semibold bg-black/10 shadow-2xl text-lg text-[var(--primary)] border-b border-gray-500 w-40 p-1 text-center rounded-b-2xl hover:bg-black/60 hover:text-white ">Activity</h2>
+      <PressedContainer className="p-6 bg-white rounded-xl border space-y-4">
+        <h2 className="font-semibold text-lg">Activity</h2>
 
         {bug.comments?.length === 0 && (
           <p className="text-sm text-gray-500">No activity yet</p>
@@ -309,6 +294,6 @@ const BugDetail = () => {
   );
 };
 
-BugDetail.header = () => <HeaderContent title="Bug Details" />;
+SubBugDetail.header = () => <HeaderContent title="Bug Details" />;
 
-export default BugDetail;
+export default SubBugDetail;

@@ -67,22 +67,23 @@ const ProjectDetail = () => {
 
   // Map bugs to include projectId for BugsTable
   const mappedBugs = project.bugs?.map((bug) => ({
-    id: bug._id,                  // map _id to id
+    id: bug._id, // map _id to id
     title: bug.title,
     status: bug.status,
     priority: bug.priority,
     severity: bug.severity,
     projectId: { name: project.name },
     created: bug.createdAt || new Date().toISOString(),
-}));
-
+  }));
 
   return (
     <div className="w-full h-full bg-[var(--accent-light)] p-6 overflow-auto space-y-6">
       {/* HEADER */}
       <div className="flex flex-col sm:flex-row sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-[var(--primary)]">{project.name}</h1>
+          <h1 className="text-2xl font-bold text-[var(--primary)]">
+            {project.name}
+          </h1>
           <p className="text-sm text-gray-500">Project ID: {project._id}</p>
         </div>
 
@@ -110,28 +111,34 @@ const ProjectDetail = () => {
         </span>
 
         <span className="flex items-center gap-1 text-sm">
-          <FiCheckCircle /> Progress: <strong>{project.progressPercentage}%</strong>
+          <FiCheckCircle /> Progress:{" "}
+          <strong>{project.progressPercentage}%</strong>
         </span>
       </PressedContainer>
 
       {/* MAIN GRID */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* PROJECT INFO */}
-        <PressedContainer className="p-6 bg-white rounded-xl border space-y-3">
-          <h2 className="font-semibold text-lg text-[var(--primary)]">Project Information</h2>
+        <PressedContainer className="p-6 pt-0! bg-white rounded-xl border space-y-3">
+        <h2 className="font-semibold bg-black/10 max-w-60 p-1 shadow-2xl text-lg text-[var(--primary)] border-b border-gray-500  text-center rounded-b-2xl hover:bg-black/60 hover:text-white">
+            Project Information
+          </h2>
 
           <p>
             <FiClock className="inline mr-1" />
-            <strong>Start:</strong> {new Date(project.startDate).toLocaleDateString()}
+            <strong>Start:</strong>{" "}
+            {new Date(project.startDate).toLocaleDateString()}
           </p>
 
           <p>
             <FiAlertTriangle className="inline mr-1" />
-            <strong>Deadline:</strong> {new Date(project.endDate).toLocaleDateString()}
+            <strong>Deadline:</strong>{" "}
+            {new Date(project.endDate).toLocaleDateString()}
           </p>
           <p>
             <FiClock className="inline mr-1" />
-            <strong>tester:</strong>  <strong>{project.tester?.name || "N/A"}</strong>
+            <strong>tester:</strong>{" "}
+            <strong>{project.tester?.name || "N/A"}</strong>
           </p>
 
           <p>
@@ -140,15 +147,19 @@ const ProjectDetail = () => {
         </PressedContainer>
 
         {/* DESCRIPTION */}
-        <PressedContainer className="p-6 bg-white rounded-xl border space-y-4">
-          <h2 className="font-semibold text-lg text-[var(--primary)]">Description</h2>
-          <p className="text-sm text-gray-700 leading-relaxed">{project.description}</p>
+        <PressedContainer className="p-6 pt-0! bg-white rounded-xl border space-y-3">
+        <h2 className="font-semibold bg-black/10 max-w-40 p-1 shadow-2xl text-lg text-[var(--primary)] border-b border-gray-500  text-center rounded-b-2xl hover:bg-black/60 hover:text-white">
+            Description
+          </h2>
+          <p className="text-sm text-gray-700 leading-relaxed">
+            {project.description}
+          </p>
         </PressedContainer>
       </div>
 
       {/* BUGS TABLE */}
-      <PressedContainer className="p-6 bg-white rounded-xl border space-y-4">
-        <h2 className="font-semibold text-lg text-[var(--primary)]">Bugs</h2>
+      <PressedContainer className="p-6 pt-0! bg-white rounded-xl border space-y-3">
+        <h2 className="font-semibold bg-black/10 max-w-30 p-1 shadow-2xl text-lg text-[var(--primary)] border-b border-gray-500  text-center rounded-b-2xl hover:bg-black/60 hover:text-white">Bugs</h2>
         {mappedBugs?.length > 0 ? (
           <BugsTable bugs={mappedBugs} onView={handleViewBug} />
         ) : (
@@ -157,7 +168,7 @@ const ProjectDetail = () => {
       </PressedContainer>
 
       {/* ATTACHMENTS */}
-{/* <PressedContainer className="p-6 bg-white rounded-xl border space-y-4">
+      {/* <PressedContainer className="p-6 bg-white rounded-xl border space-y-4">
   <h2 className="font-semibold text-lg text-[var(--primary)]">Attachments</h2>
 
   {project.files?.length > 0 ? (
@@ -211,9 +222,11 @@ const ProjectDetail = () => {
   )}
 </PressedContainer> */}
 
-{/* ATTACHMENTS */}
-<PressedContainer className="p-6 bg-white rounded-xl border space-y-4">
-  <h2 className="font-semibold text-lg text-[var(--primary)]">Attachments</h2>
+      {/* ATTACHMENTS */}
+      <PressedContainer className="p-6 pt-0! bg-white rounded-xl border space-y-3">
+        <h2 className="font-semibold bg-black/10 max-w-40 p-1 shadow-2xl text-lg text-[var(--primary)] border-b border-gray-500  text-center rounded-b-2xl hover:bg-black/60 hover:text-white">
+          Attachments
+        </h2>
 
         {project.files?.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
@@ -278,14 +291,13 @@ const ProjectDetail = () => {
       </PressedContainer>
 
       {/* PREVIEW MODAL */}
-      <PreviewModal
-        preview={preview}
-        onClose={() => setPreview(null)}
-      />
+      <PreviewModal preview={preview} onClose={() => setPreview(null)} />
 
       {/* MILESTONES */}
-      <PressedContainer className="p-6 bg-white rounded-xl border space-y-4">
-        <h2 className="font-semibold text-lg text-[var(--primary)]">Milestones</h2>
+      <PressedContainer className="p-6 pt-0! bg-white rounded-xl border space-y-3">
+        <h2 className="font-semibold bg-black/10 max-w-40  p-1 shadow-2xl text-lg text-[var(--primary)] border-b border-gray-500  text-center rounded-b-2xl hover:bg-black/60 hover:text-white">
+          Milestones
+        </h2>
         {project.milestones?.length > 0 ? (
           <ul className="space-y-2">
             {project.milestones.map((m, i) => (
