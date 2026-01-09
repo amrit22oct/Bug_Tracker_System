@@ -100,7 +100,7 @@ const PrimaryDropdown = ({
                     : "bg-[var(--accent-light)] text-black"
                 }
                 shadow-[0_6px_0_var(--primary-hover)]
-                hover:-translate-y-[1px] hover:rotateX-[2deg] hover:shadow-[0_2px_0_var(--primary-hover)]
+                hover:-translate-y-[1px] hover:rotateX-[2deg] hover:shadow-[0_3px_0_var(--primary-hover)]
                 active:translate-y-[1px] active:rotateX-[-2deg] active:shadow-[0_4px_0_var(--primary-hover)]
               `}
             >
